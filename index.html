@@ -3,45 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقع ألعاب gohn 🎮</title>
+    <title>موقع ألعاب gohn | مزرعة الأساطير 🌾</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #121212;
             color: #ffffff;
             text-align: center;
-            padding: 50px 20px;
+            padding: 20px;
             margin: 0;
+            user-select: none;
         }
         h1 {
             color: #00ffcc;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        p {
-            color: #aaaaaa;
-            font-size: 1.2rem;
+            font-size: 2.2rem;
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
         }
         .container {
-            max-width: 600px;
+            max-width: 900px;
             margin: 0 auto;
             background: #1e1e1e;
-            padding: 30px;
+            padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 25px rgba(0,0,0,0.7);
         }
         .btn {
             background-color: #00ffcc;
             color: #121212;
-            padding: 12px 25px;
+            padding: 10px 20px;
             text-decoration: none;
             font-weight: bold;
             border-radius: 25px;
             display: inline-block;
-            margin-top: 20px;
             cursor: pointer;
             border: none;
-            font-size: 1.1rem;
+            font-size: 1rem;
             transition: 0.3s;
         }
         .btn:hover {
@@ -50,17 +47,54 @@
         }
         .user-profile {
             display: none;
-            margin-top: 20px;
+            margin: 10px auto;
             background: #2a2a2a;
-            padding: 15px;
+            padding: 10px;
             border-radius: 10px;
+            max-width: 400px;
         }
         .user-avatar {
-            width: 80px;
-            height: 80px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            border: 3px solid #00ffcc;
-            margin-bottom: 10px;
+            border: 2px solid #00ffcc;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+        /* تصميم شاشة اللعبة */
+        #game-wrapper {
+            margin-top: 20px;
+            position: relative;
+            display: inline-block;
+            border: 4px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        canvas {
+            display: block;
+            background-color: #3b7a57;
+            cursor: crosshair;
+        }
+        .instructions {
+            background: #252525;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: right;
+            font-size: 0.95rem;
+            border-right: 4px solid #00ffcc;
+        }
+        .instructions ul {
+            margin: 5px 0 0 0;
+            padding-right: 20px;
+        }
+        .instructions li {
+            margin-bottom: 5px;
+            color: #ccc;
+        }
+        .instructions strong {
+            color: #00ffcc;
         }
     </style>
 
@@ -70,18 +104,30 @@
 </head>
 <body>
     <div class="container">
-        <h1>أهلاً بك في موقع ألعاب gohn! 🎮</h1>
-        <p>قم بتسجيل الدخول لحفظ تقدمك واللعب مع الآخرين.</p>
+        <h1>مزرعة الأساطير السعيدة 🌾🚜</h1>
         
-        <!-- زر تسجيل الدخول -->
-        <button id="login-btn" class="btn" onclick="loginWithGoogle()">تسجيل الدخول بحساب جوجل 🚀</button>
+        <!-- أزرار تسجيل الدخول والبروفايل -->
+        <button id="login-btn" class="btn" onclick="loginWithGoogle()">تسجيل الدخول بحساب جوجل لحفظ هويتك 🚀</button>
 
-        <!-- بروفايل اللاعب (هيظهر بعد تسجيل الدخول) -->
         <div id="user-profile" class="user-profile">
             <img id="user-img" class="user-avatar" src="" alt="صورة اللاعب">
-            <h3 id="user-name">اسم اللاعب</h3>
-            <p id="user-email">البريد الإلكتروني</p>
-            <button class="btn" style="background-color: #ff4d4d; color: white;" onclick="logout()">تسجيل الخروج</button>
+            <span id="user-name" style="font-weight: bold; color: #00ffcc;">اسم اللاعب</span>
+            <button class="btn" style="background-color: #ff4d4d; color: white; padding: 5px 12px; font-size: 0.85rem; margin-right: 15px;" onclick="logout()">خروج</button>
+        </div>
+
+        <!-- شاشة اللعبة الكبيرة -->
+        <div id="game-wrapper">
+            <canvas id="gameCanvas" width="800" height="500"></canvas>
+        </div>
+
+        <!-- تعليمات اللعبة -->
+        <div class="instructions">
+            <strong>🎮 طريقة اللعب والتحكم:</strong>
+            <ul>
+                <li><strong>الحركة:</strong> استخدم أسهم الكيبورد ⬅️ ➡️ ⬆️ ⬇️ أو الأزرار <strong>W, A, S, D</strong> للتحرك بالبطل.</li>
+                <li><strong>الأدوات والزراعة:</strong> اختر الأداة من شريط الأدوات بالأسفل بالضغط بالماوس عليها (أو باستخدام الأرقام 1 إلى 6 في الكيبورد).</li>
+                <li><strong>استخدام الأداة:</strong> اضغط بالماوس (كليك يسار) على الأرض القريبة منك لـ (حرث الأرض 🌾، ريها بالماء 💧، زراعة البذور 🌱، أو حصد المحصول الناضج 💰).</li>
+            </ul>
         </div>
     </div>
 
@@ -102,6 +148,8 @@
         const auth = firebase.auth();
         const provider = new firebase.auth.GoogleAuthProvider();
 
+        let playerName = "المزارع الصغير";
+
         // دالة تسجيل الدخول بجوجل
         function loginWithGoogle() {
             auth.signInWithPopup(provider)
@@ -110,36 +158,536 @@
                 })
                 .catch((error) => {
                     console.error("حدث خطأ أثناء تسجيل الدخول:", error.message);
-                    alert("عذراً، حدث خطأ أثناء الاتصال بجوجل: " + error.message);
                 });
         }
 
         // دالة تسجيل الخروج
         function logout() {
             auth.signOut().then(() => {
+                playerName = "المزارع الصغير";
                 console.log("تم تسجيل الخروج");
             });
         }
 
-        // مراقبة حالة اللاعب (هل هو مسجل دخول أم لا حالياً؟)
+        // مراقبة حالة اللاعب
         auth.onAuthStateChanged((user) => {
             const loginBtn = document.getElementById('login-btn');
             const userProfile = document.getElementById('user-profile');
             
             if (user) {
-                // اللاعب مسجل دخوله حالياً
                 loginBtn.style.display = 'none';
                 userProfile.style.display = 'block';
-                
                 document.getElementById('user-img').src = user.photoURL;
-                document.getElementById('user-name').innerText = `أهلاً بك، ${user.displayName}! 👋`;
-                document.getElementById('user-email').innerText = user.email;
+                document.getElementById('user-name').innerText = user.displayName;
+                playerName = user.displayName; // تحديث اسم اللاعب في اللعبة
             } else {
-                // اللاعب غير مسجل دخول
                 loginBtn.style.display = 'inline-block';
                 userProfile.style.display = 'none';
+                playerName = "المزارع الصغير";
             }
         });
+
+        // ==========================================
+        //        برمجة محرك اللعبة بالـ Canvas
+        // ==========================================
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // أحجام الشبكة (الأرض)
+        const TILE_SIZE = 50;
+        const ROWS = 8;
+        const COLS = 16;
+        const gridStartX = 0;
+        const gridStartY = 50; // سطر علوي لعرض النتائج
+
+        // بيانات اللاعب
+        const player = {
+            x: 400,
+            y: 250,
+            width: 32,
+            height: 48,
+            speed: 4,
+            vx: 0,
+            vy: 0,
+            frame: 0,
+            moving: false,
+            coins: 100,
+            selectedTool: 'hoe' // الأداة الافتراضية
+        };
+
+        // أنواع المحاصيل وإعداداتها
+        const cropConfig = {
+            wheat: { name: "قمح", seedCost: 10, sellValue: 25, growTime: 5000, color: "#ffd700" },
+            tomato: { name: "طماطم", seedCost: 20, sellValue: 55, growTime: 8000, color: "#ff4d4d" },
+            pumpkin: { name: "قرع عسلي", seedCost: 40, sellValue: 120, growTime: 12000, color: "#ff9900" }
+        };
+
+        // تعريف شريط الأدوات بالأسفل
+        const tools = [
+            { id: 'hoe', name: 'فأس الحرث 🌾', cost: 0 },
+            { id: 'water', name: 'مرش الماء 💧', cost: 0 },
+            { id: 'seed_wheat', name: 'بذر قمح 🌱 (10$)', cost: 10, type: 'wheat' },
+            { id: 'seed_tomato', name: 'بذر طماطم 🍅 (20$)', cost: 20, type: 'tomato' },
+            { id: 'seed_pumpkin', name: 'بذر قرع 🎃 (40$)', cost: 40, type: 'pumpkin' },
+            { id: 'harvest', name: 'المنجل 🧺', cost: 0 }
+        ];
+
+        // مصفوفة الأرض (الشبكة الثنائية)
+        const map = [];
+        for (let r = 0; r < ROWS; r++) {
+            map[r] = [];
+            for (let c = 0; c < COLS; c++) {
+                map[r][c] = {
+                    tilled: false,
+                    watered: false,
+                    waterTimer: 0,
+                    crop: null, // يحتوي على معلومات المحصول إذا تم زرعه
+                    plantTime: 0,
+                    stage: 0 // مراحل النمو من 0 إلى 3
+                };
+            }
+        }
+
+        // أنظمة المؤثرات البصرية الجمالية
+        const particles = [];
+        const floatingTexts = [];
+
+        // إضافة نص طائر كأثر جمالي
+        function spawnFloatingText(x, y, text, color = "#ffd700") {
+            floatingTexts.push({ x, y, text, color, alpha: 1, vy: -1.5 });
+        }
+
+        // إضافة رذاذ ماء عند الري
+        function spawnWaterParticles(x, y) {
+            for (let i = 0; i < 8; i++) {
+                particles.push({
+                    x: x + Math.random() * TILE_SIZE,
+                    y: y + Math.random() * TILE_SIZE,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2 - 1,
+                    radius: Math.random() * 3 + 1,
+                    alpha: 1,
+                    color: '#33ccff'
+                });
+            }
+        }
+
+        // لوحة التحكم في حركة الكيبورد
+        const keys = {};
+        window.addEventListener('keydown', e => {
+            keys[e.key.toLowerCase()] = true;
+            // أزرار الاختصار السريع للأدوات (1-6)
+            if (e.key >= '1' && e.key <= '6') {
+                player.selectedTool = tools[parseInt(e.key) - 1].id;
+            }
+        });
+        window.addEventListener('keyup', e => {
+            keys[e.key.toLowerCase()] = false;
+        });
+
+        // النقر بالماوس للتفاعل مع الأرض أو اختيار الأدوات
+        canvas.addEventListener('mousedown', handleCanvasClick);
+
+        function handleCanvasClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            // 1. هل الضغطة على شريط الأدوات في الأسفل؟
+            if (mouseY >= 430 && mouseY <= 490) {
+                const toolWidth = 110;
+                const startX = (canvas.width - (tools.length * toolWidth + (tools.length - 1) * 10)) / 2;
+                for (let i = 0; i < tools.length; i++) {
+                    const x = startX + i * (toolWidth + 10);
+                    if (mouseX >= x && mouseX <= x + toolWidth) {
+                        player.selectedTool = tools[i].id;
+                        break;
+                    }
+                }
+                return;
+            }
+
+            // 2. التفاعل مع البلاطات في المزرعة
+            const gridX = Math.floor((mouseX - gridStartX) / TILE_SIZE);
+            const gridY = Math.floor((mouseY - gridStartY) / TILE_SIZE);
+
+            // التحقق من أن الضغطة داخل حدود المزرعة
+            if (gridX >= 0 && gridX < COLS && gridY >= 0 && gridY < ROWS) {
+                // حساب المسافة بين اللاعب والبلاطة (يجب أن يكون قريباً ليتفاعل معها)
+                const tileCenterX = gridX * TILE_SIZE + TILE_SIZE/2;
+                const tileCenterY = gridY * TILE_SIZE + TILE_SIZE/2 + gridStartY;
+                const playerCenterX = player.x + player.width/2;
+                const playerCenterY = player.y + player.height/2;
+
+                const dist = Math.hypot(tileCenterX - playerCenterX, tileCenterY - playerCenterY);
+                if (dist > 120) {
+                    spawnFloatingText(playerCenterX, player.y, "اقترب خطوة لتصل!", "#ff4d4d");
+                    return; // بعيد جداً
+                }
+
+                interactWithTile(gridX, gridY);
+            }
+        }
+
+        // دالة التفاعل مع البلاطة بناءً على الأداة النشطة
+        function interactWithTile(col, row) {
+            const tile = map[row][col];
+            const tool = player.selectedTool;
+
+            if (tool === 'hoe') {
+                if (!tile.tilled) {
+                    tile.tilled = true;
+                    spawnFloatingText(col * TILE_SIZE + 20, row * TILE_SIZE + gridStartY, "تم الحرث! 🌾", "#d2b48c");
+                }
+            } 
+            else if (tool === 'water') {
+                if (tile.tilled && !tile.watered) {
+                    tile.watered = true;
+                    tile.waterTimer = Date.now();
+                    spawnWaterParticles(col * TILE_SIZE, row * TILE_SIZE + gridStartY);
+                    spawnFloatingText(col * TILE_SIZE + 20, row * TILE_SIZE + gridStartY, "ريّ 💧", "#33ccff");
+                }
+            } 
+            else if (tool.startsWith('seed_')) {
+                const seedType = tool.replace('seed_', '');
+                const cost = cropConfig[seedType].seedCost;
+
+                if (!tile.tilled) {
+                    spawnFloatingText(col * TILE_SIZE + 20, row * TILE_SIZE + gridStartY, "احرث الأرض أولاً!", "#ff4d4d");
+                    return;
+                }
+                if (tile.crop) {
+                    spawnFloatingText(col * TILE_SIZE + 20, row * TILE_SIZE + gridStartY, "مزروعة بالفعل!", "#ff4d4d");
+                    return;
+                }
+
+                if (player.coins >= cost) {
+                    player.coins -= cost;
+                    tile.crop = {
+                        type: seedType,
+                        stage: 0,
+                        plantTime: Date.now()
+                    };
+                    spawnFloatingText(col * TILE_SIZE + 20, row * TILE_SIZE + gridStartY, `زرعت ${cropConfig[seedType].name} 🌱`, "#00ffcc");
+                } else {
+                    spawnFloatingText(col * TILE_SIZE + 20, row * TILE_SIZE + gridStartY, "الذهب لا يكفي! 💰", "#ff4d4d");
+                }
+            } 
+            else if (tool === 'harvest') {
+                if (tile.crop) {
+                    if (tile.stage === 3) { // ناضج بالكامل
+                        const val = cropConfig[tile.crop.type].sellValue;
+                        player.coins += val;
+                        spawnFloatingText(col * TILE_SIZE + 25, row * TILE_SIZE + gridStartY, `+${val}$ 💰`, "#ffd700");
+                        tile.crop = null;
+                        tile.tilled = false; // تعود أرضاً عادية بعد الحصاد
+                        tile.watered = false;
+                        tile.stage = 0;
+                    } else {
+                        spawnFloatingText(col * TILE_SIZE + 20, row * TILE_SIZE + gridStartY, "لم تنضج بعد! ⏳", "#ff9900");
+                    }
+                } else {
+                    spawnFloatingText(col * TILE_SIZE + 20, row * TILE_SIZE + gridStartY, "لا يوجد محصول هنا!", "#cccccc");
+                }
+            }
+        }
+
+        // تحديث منطق اللعبة وحساب الوقت والنمو وحركة البطل
+        function update() {
+            // حركات اللاعب
+            player.vx = 0;
+            player.vy = 0;
+            player.moving = false;
+
+            if (keys['arrowup'] || keys['w']) { player.vy = -player.speed; player.moving = true; }
+            if (keys['arrowdown'] || keys['s']) { player.vy = player.speed; player.moving = true; }
+            if (keys['arrowleft'] || keys['a']) { player.vx = -player.speed; player.moving = true; }
+            if (keys['arrowright'] || keys['d']) { player.vx = player.speed; player.moving = true; }
+
+            player.x += player.vx;
+            player.y += player.vy;
+
+            // حظر خروج اللاعب خارج حدود شاشة اللعب
+            if (player.x < 0) player.x = 0;
+            if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
+            if (player.y < gridStartY) player.y = gridStartY;
+            if (player.y > 420 - player.height) player.y = 420 - player.height;
+
+            // تحديث فريم حركة اللاعب
+            if (player.moving) {
+                player.frame += 0.15;
+            } else {
+                player.frame = 0;
+            }
+
+            // تحديث نمو النباتات تلقائياً مع مرور الوقت
+            const now = Date.now();
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    const tile = map[r][c];
+                    if (tile.crop && tile.stage < 3) {
+                        const config = cropConfig[tile.crop.type];
+                        // لو الأرض مروية، ينمو النبات بسرعة مضاعفة!
+                        const speedMultiplier = tile.watered ? 1 : 0.4; 
+                        const elapsed = now - tile.crop.plantTime;
+                        const targetStage = Math.floor((elapsed / config.growTime) * speedMultiplier * 3);
+                        
+                        if (targetStage > tile.stage) {
+                            tile.stage = Math.min(targetStage, 3);
+                        }
+                    }
+
+                    // تجفيف المياه من التربة بعد 10 ثواني
+                    if (tile.watered && now - tile.waterTimer > 10000) {
+                        tile.watered = false;
+                    }
+                }
+            }
+
+            // تحديث حركة الجسيمات المائية
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= 0.02;
+                if (p.alpha <= 0) particles.splice(i, 1);
+            }
+
+            // تحديث حركة النصوص الطائرة
+            for (let i = floatingTexts.length - 1; i >= 0; i--) {
+                const ft = floatingTexts[i];
+                ft.y += ft.vy;
+                ft.alpha -= 0.015;
+                if (ft.alpha <= 0) floatingTexts.splice(i, 1);
+            }
+        }
+
+        // دالة الرسم وعرض الأشكال على الـ Canvas
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. رسم بلاطات شبكة المزرعة الجميلة
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    const tile = map[r][c];
+                    const x = c * TILE_SIZE;
+                    const y = r * TILE_SIZE + gridStartY;
+
+                    // تلوين الحشائش والمربعات التفاعلية
+                    if (tile.tilled) {
+                        ctx.fillStyle = tile.watered ? '#5c3a21' : '#8b5a2b'; // طين رطب أو جاف
+                    } else {
+                        // لون عشب أخضر كلاسيكي مع حدود خفيفة جداً
+                        ctx.fillStyle = (r + c) % 2 === 0 ? '#4fa26b' : '#479561';
+                    }
+                    ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                    ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+                    ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
+
+                    // رسم المحاصيل ونموها
+                    if (tile.crop) {
+                        const crop = tile.crop;
+                        const config = cropConfig[crop.type];
+                        
+                        ctx.save();
+                        // تمركز المحصول في البلاطة
+                        ctx.translate(x + TILE_SIZE/2, y + TILE_SIZE/2);
+
+                        if (tile.stage === 0) {
+                            // برعم أخضر صغير جداً
+                            ctx.fillStyle = '#7cfc00';
+                            ctx.beginPath();
+                            ctx.arc(0, 8, 4, 0, Math.PI * 2);
+                            ctx.fill();
+                        } 
+                        else if (tile.stage === 1) {
+                            // ساق صغيرة وأوراق
+                            ctx.strokeStyle = '#228b22';
+                            ctx.lineWidth = 3;
+                            ctx.beginPath();
+                            ctx.moveTo(0, 15);
+                            ctx.lineTo(0, 2);
+                            ctx.stroke();
+                            // أوراق الشجر
+                            ctx.fillStyle = '#228b22';
+                            ctx.beginPath();
+                            ctx.ellipse(-3, 5, 3, 2, Math.PI/4, 0, Math.PI*2);
+                            ctx.ellipse(3, 8, 3, 2, -Math.PI/4, 0, Math.PI*2);
+                            ctx.fill();
+                        } 
+                        else if (tile.stage === 2) {
+                            // نبات ناضج شبه كامل وبداية ظهور الثمار
+                            ctx.strokeStyle = '#228b22';
+                            ctx.lineWidth = 4;
+                            ctx.beginPath();
+                            ctx.moveTo(0, 15);
+                            ctx.lineTo(0, -5);
+                            ctx.stroke();
+                            
+                            ctx.fillStyle = config.color;
+                            ctx.beginPath();
+                            ctx.arc(0, -3, 6, 0, Math.PI*2);
+                            ctx.fill();
+                        } 
+                        else if (tile.stage === 3) {
+                            // محصول عملاق ناضج كلياً وجاهز للحصاد بلمعان ذهبي
+                            ctx.shadowBlur = 8;
+                            ctx.shadowColor = config.color;
+
+                            ctx.fillStyle = config.color;
+                            ctx.beginPath();
+                            if (crop.type === 'wheat') {
+                                // رسم السنبلة
+                                ctx.fillRect(-3, -15, 6, 25);
+                                ctx.arc(0, -15, 5, 0, Math.PI*2);
+                            } else if (crop.type === 'tomato') {
+                                // طماطم دائرية حمراء
+                                ctx.arc(0, 0, 12, 0, Math.PI*2);
+                            } else if (crop.type === 'pumpkin') {
+                                // قرع برتقالي كبير
+                                ctx.ellipse(0, 2, 14, 11, 0, 0, Math.PI*2);
+                            }
+                            ctx.fill();
+                            
+                            // اللمسة الخضراء في الأعلى
+                            ctx.fillStyle = '#006400';
+                            ctx.fillRect(-2, -14, 4, 4);
+                        }
+                        ctx.restore();
+                    }
+                }
+            }
+
+            // 2. رسم رذاذ المياه (الجزيئات)
+            particles.forEach(p => {
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // 3. رسم المزارع الأسطوري (البطل)
+            ctx.save();
+            ctx.translate(player.x, player.y);
+
+            // تمايل خفيف أثناء المشي والتحرك
+            let sway = 0;
+            if (player.moving) {
+                sway = Math.sin(player.frame) * 4;
+            }
+
+            // القدمين والتمثيل الحركي لها
+            ctx.fillStyle = '#3e2723';
+            let leftLegOffset = player.moving ? Math.sin(player.frame) * 5 : 0;
+            let rightLegOffset = player.moving ? -Math.sin(player.frame) * 5 : 0;
+            ctx.fillRect(4, 40 + leftLegOffset, 8, 8); // قدم يسرى
+            ctx.fillRect(20, 40 + rightLegOffset, 8, 8); // قدم يمنى
+
+            // جسم المزارع (قميص أحمر وسروبال أزرق)
+            ctx.fillStyle = '#d32f2f'; // قميص أحمر
+            ctx.fillRect(2, 16, 28, 16);
+            ctx.fillStyle = '#1565c0'; // بنطلون الجينز الأزرق
+            ctx.fillRect(4, 28, 24, 12);
+
+            // الأيدي
+            ctx.fillStyle = '#ffdbac';
+            ctx.fillRect(-2, 18 + sway/2, 4, 12);
+            ctx.fillRect(30, 18 - sway/2, 4, 12);
+
+            // الرأس والبشرة
+            ctx.fillStyle = '#ffdbac';
+            ctx.fillRect(8, 2, 16, 15);
+
+            // قبعة القش الجميلة (بطل ريفي)
+            ctx.fillStyle = '#fdd835';
+            ctx.fillRect(-4, 0, 40, 4); // حافة القبعة
+            ctx.fillRect(4, -10, 24, 10); // سقف القبعة
+            ctx.fillStyle = '#ffb300';
+            ctx.fillRect(4, -2, 24, 2); // شريط برتقالي للقبعة
+
+            // عيون سوداء لطيفة
+            ctx.fillStyle = '#000';
+            ctx.fillRect(11, 6, 3, 3);
+            ctx.fillRect(18, 6, 3, 3);
+
+            ctx.restore();
+
+            // 4. رسم النصوص الحية الطائرة فوق الشاشة
+            floatingTexts.forEach(ft => {
+                ctx.save();
+                ctx.globalAlpha = ft.alpha;
+                ctx.fillStyle = ft.color;
+                ctx.font = "bold 16px Arial";
+                ctx.fillText(ft.text, ft.x, ft.y);
+                ctx.restore();
+            });
+
+            // 5. شريط المعلومات العلوي (Header)
+            ctx.fillStyle = 'rgba(30, 30, 30, 0.9)';
+            ctx.fillRect(0, 0, canvas.width, gridStartY);
+            
+            // اسم المزرعة المستند لـ Firebase
+            ctx.fillStyle = '#00ffcc';
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'right';
+            ctx.fillText(`👨‍🌾 مالك المزرعة: ${playerName}`, canvas.width - 20, 32);
+
+            // رصيد الذهب والعملات
+            ctx.fillStyle = '#ffd700';
+            ctx.font = 'bold 20px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(`💰 الرصيد والذهب: ${player.coins}$`, 20, 32);
+
+            // 6. رسم شريط الأدوات بالأسفل بالكامل
+            ctx.fillStyle = 'rgba(20, 20, 20, 0.95)';
+            ctx.fillRect(0, 420, canvas.width, 80);
+
+            const toolWidth = 110;
+            const startX = (canvas.width - (tools.length * toolWidth + (tools.length - 1) * 10)) / 2;
+
+            tools.forEach((t, i) => {
+                const x = startX + i * (toolWidth + 10);
+                const y = 435;
+
+                // تمييز الأداة المختارة حالياً بحدود النيون الأخضر الفاقع
+                if (player.selectedTool === t.id) {
+                    ctx.strokeStyle = '#00ffcc';
+                    ctx.lineWidth = 3;
+                    ctx.fillStyle = '#2d2d2d';
+                } else {
+                    ctx.strokeStyle = '#555';
+                    ctx.lineWidth = 1;
+                    ctx.fillStyle = '#1e1e1e';
+                }
+
+                ctx.fillRect(x, y, toolWidth, 50);
+                ctx.strokeRect(x, y, toolWidth, 50);
+
+                // اسم الأداة والرمز
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(t.name, x + toolWidth/2, y + 30);
+
+                // رقم الاختصار بالكيبورد
+                ctx.fillStyle = '#888';
+                ctx.font = '10px Arial';
+                ctx.fillText(`[${i+1}]`, x + 15, y + 15);
+            });
+        }
+
+        // حلقة اللعبة الأساسية (Game Loop) لضمان 60 فريم بالثانية
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // إقلاع وبدء اللعبة تلقائياً
+        gameLoop();
     </script>
 </body>
 </html>
