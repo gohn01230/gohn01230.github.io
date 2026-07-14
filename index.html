@@ -16,6 +16,7 @@
         h1 {
             color: #00ffcc;
             font-size: 2.5rem;
+            margin-bottom: 10px;
         }
         p {
             color: #aaaaaa;
@@ -38,19 +39,107 @@
             border-radius: 25px;
             display: inline-block;
             margin-top: 20px;
+            cursor: pointer;
+            border: none;
+            font-size: 1.1rem;
             transition: 0.3s;
         }
         .btn:hover {
             background-color: #00b38f;
             transform: scale(1.05);
         }
+        .user-profile {
+            display: none;
+            margin-top: 20px;
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #00ffcc;
+            margin-bottom: 10px;
+        }
     </style>
+
+    <!-- استدعاء ملفات Firebase السحابية لتشغيل تسجيل الدخول -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>أهلاً بك في موقع ألعاب gohn! 🎮</h1>
-        <p>هنا ستجد أروع ألعاب الويب مثل لعبة الثعبان، الذاكرة، والقفز قريباً جداً.</p>
-        <a href="#" class="btn">ابدأ اللعب الآن</a>
+        <p>قم بتسجيل الدخول لحفظ تقدمك واللعب مع الآخرين.</p>
+        
+        <!-- زر تسجيل الدخول -->
+        <button id="login-btn" class="btn" onclick="loginWithGoogle()">تسجيل الدخول بحساب جوجل 🚀</button>
+
+        <!-- بروفايل اللاعب (هيظهر بعد تسجيل الدخول) -->
+        <div id="user-profile" class="user-profile">
+            <img id="user-img" class="user-avatar" src="" alt="صورة اللاعب">
+            <h3 id="user-name">اسم اللاعب</h3>
+            <p id="user-email">البريد الإلكتروني</p>
+            <button class="btn" style="background-color: #ff4d4d; color: white;" onclick="logout()">تسجيل الخروج</button>
+        </div>
     </div>
+
+    <script>
+        // كود الـ firebaseConfig الخاص بك للربط بالسيرفر
+        const firebaseConfig = {
+            apiKey: "AIzaSyA5LlGHl9djJsx_Rs3evjd8Xzpn0e25IHI",
+            authDomain: "gohn-games.firebaseapp.com",
+            projectId: "gohn-games",
+            storageBucket: "gohn-games.firebasestorage.app",
+            messagingSenderId: "837388013481",
+            appId: "1:837388013481:web:3d1c87fd31442284653eb8",
+            measurementId: "G-8PBX8E8D15"
+        };
+
+        // تشغيل Firebase في الموقع
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        // دالة تسجيل الدخول بجوجل
+        function loginWithGoogle() {
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    console.log("تم تسجيل الدخول بنجاح!", result.user);
+                })
+                .catch((error) => {
+                    console.error("حدث خطأ أثناء تسجيل الدخول:", error.message);
+                    alert("عذراً، حدث خطأ أثناء الاتصال بجوجل: " + error.message);
+                });
+        }
+
+        // دالة تسجيل الخروج
+        function logout() {
+            auth.signOut().then(() => {
+                console.log("تم تسجيل الخروج");
+            });
+        }
+
+        // مراقبة حالة اللاعب (هل هو مسجل دخول أم لا حالياً؟)
+        auth.onAuthStateChanged((user) => {
+            const loginBtn = document.getElementById('login-btn');
+            const userProfile = document.getElementById('user-profile');
+            
+            if (user) {
+                // اللاعب مسجل دخوله حالياً
+                loginBtn.style.display = 'none';
+                userProfile.style.display = 'block';
+                
+                document.getElementById('user-img').src = user.photoURL;
+                document.getElementById('user-name').innerText = `أهلاً بك، ${user.displayName}! 👋`;
+                document.getElementById('user-email').innerText = user.email;
+            } else {
+                // اللاعب غير مسجل دخول
+                loginBtn.style.display = 'inline-block';
+                userProfile.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
