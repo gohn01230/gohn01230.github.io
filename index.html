@@ -67,7 +67,7 @@
             margin-left: 10px;
         }
         
-        /* تصميم الواجهة الجانبية (شاشة اللعبة + المتجر والترقيات) */
+        /* تصميم الواجهة الجانبية */
         .game-layout {
             display: flex;
             flex-wrap: wrap;
@@ -273,8 +273,10 @@
         }
     </style>
 
+    <!-- استدعاء مكتبات Firebase إصدار 10 المتوافق سحابياً -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
 <body>
     <!-- مؤشر حفظ البيانات -->
@@ -283,6 +285,7 @@
     <div class="container">
         <h1>مزرعة الأساطير السعيدة 🌾🚜</h1>
         
+        <!-- زر تسجيل الدخول السحابي بجوجل -->
         <button id="login-btn" class="btn" onclick="loginWithGoogle()">تسجيل الدخول بحساب جوجل لحفظ هويتك 🚀</button>
 
         <div id="user-profile" class="user-profile">
@@ -423,14 +426,17 @@
             storageBucket: "gohn-games.firebasestorage.app",
             messagingSenderId: "837388013481",
             appId: "1:837388013481:web:3d1c87fd31442284653eb8",
-            measurementId: "G-8PBX8E8D15"
+            measurementId: "G-8PBX8E8D15",
+            databaseURL: "https://gohn-games-default-rtdb.firebaseio.com" // رابط قاعدة البيانات السحابية للحفظ
         };
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const database = firebase.database();
         const provider = new firebase.auth.GoogleAuthProvider();
 
         let playerName = "المزارع الصغير";
+        let currentUser = null;
 
         function loginWithGoogle() {
             auth.signInWithPopup(provider).catch((error) => {
@@ -441,23 +447,33 @@
         function logout() {
             auth.signOut().then(() => {
                 playerName = "المزارع الصغير";
+                currentUser = null;
+                location.reload(); // إعادة تحميل للتنظيف وبدء جلسة جديدة
             });
         }
 
+        // مراقبة حالة تسجيل الدخول وتنزيل البيانات السحابية تلقائياً فور تسجيل الدخول
         auth.onAuthStateChanged((user) => {
             const loginBtn = document.getElementById('login-btn');
             const userProfile = document.getElementById('user-profile');
             
             if (user) {
+                currentUser = user;
                 loginBtn.style.display = 'none';
                 userProfile.style.display = 'block';
                 document.getElementById('user-img').src = user.photoURL;
                 document.getElementById('user-name').innerText = user.displayName;
                 playerName = user.displayName;
+                
+                // جلب بيانات الحساب السحابية فور تسجيل الدخول بنجاح
+                loadCloudData(user.uid);
             } else {
                 loginBtn.style.display = 'inline-block';
                 userProfile.style.display = 'none';
                 playerName = "المزارع الصغير";
+                currentUser = null;
+                // في حال عدم تسجيل الدخول، يتم جلب البيانات المحلية كالمعتاد
+                loadGame();
             }
         });
 
@@ -471,7 +487,7 @@
         const ROWS = 7;
         const COLS = 17;
         const gridStartX = 6;
-        const gridStartY = 165; // إعطاء مساحة مريحة لرؤية النجوم، الشمس، القمر والتلال
+        const gridStartY = 165;
 
         // بيانات اللاعب الأساسية
         const player = {
@@ -503,7 +519,7 @@
             cow: { name: "بقرة", emoji: "🐄", cost: 650, produceInterval: 45000, sellValue: 65 }
         };
 
-        let animals = []; // لتخزين الحيوانات النشطة بالمزرعة
+        let animals = []; // لتخزين الحيوانات النشطة بالمرعى
 
         // أنواع المحاصيل وإعداداتها
         const cropConfig = {
@@ -526,7 +542,7 @@
             }
         }
 
-        // تفاصيل البيئة المولدة عشوائياً (زهور برية ملونة)
+        // تفاصيل البيئة المولدة عشوائياً
         const flowers = [];
         for (let i = 0; i < 25; i++) {
             flowers.push({
@@ -537,7 +553,6 @@
             });
         }
 
-        // المؤثرات البصرية المتطايرة والجزيئات
         const particles = [];
         const floatingTexts = [];
         const smokeParticles = [];
@@ -566,14 +581,13 @@
             });
         }
 
-        // تغيير وتحديد الأداة النشطة
+        // تحديد الأداة النشطة
         function selectTool(toolId) {
             player.selectedTool = toolId;
             document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`btn-${toolId}`).classList.add('active');
         }
 
-        // أزرار الاختصار السريع (1-6) في الكيبورد
         const keys = {};
         window.addEventListener('keydown', e => {
             keys[e.key.toLowerCase()] = true;
@@ -588,7 +602,6 @@
             keys[e.key.toLowerCase()] = false;
         });
 
-        // النقر بالماوس في الـ Canvas للتفاعل الزراعي
         canvas.addEventListener('mousedown', e => {
             const rect = canvas.getBoundingClientRect();
             const mouseX = e.clientX - rect.left;
@@ -695,14 +708,12 @@
             }
         }
 
-        // شراء الحيوانات
         function buyAnimal(type) {
             const config = animalConfig[type];
             if (player.coins >= config.cost) {
                 player.coins -= config.cost;
                 updateCoinsUI();
                 
-                // إضافة الحيوان في موقع عشوائي بالمرعى الأخضر
                 animals.push({
                     type: type,
                     x: 100 + Math.random() * (canvas.width - 200),
@@ -719,7 +730,6 @@
             }
         }
 
-        // ترقية خزان المياه
         function upgradeWaterTank() {
             const cost = upgrades.waterTankLevel * 200;
             if (player.coins >= cost) {
@@ -739,7 +749,6 @@
             }
         }
 
-        // ترقية الأسمدة وسرعة النمو
         function upgradeGrowthSpeed() {
             const cost = upgrades.growthSpeedLevel * 300;
             if (player.coins >= cost) {
@@ -761,10 +770,12 @@
         }
 
         // ==========================================
-        //    نظام الحفظ التلقائي والتقدم في الخلفية
+        //  نظام الحفظ المزدوج (Local Storage + السحابة)
         // ==========================================
-        function saveGame() {
-            const saveState = {
+        
+        // بناء الكائن المحفوظ الموحد لضمان التوافق التام
+        function buildSaveObject() {
+            return {
                 coins: player.coins,
                 water: player.water,
                 maxWater: player.maxWater,
@@ -787,16 +798,51 @@
                 }))),
                 lastSavedTime: Date.now()
             };
-            localStorage.setItem('gohn_legends_farm_save', JSON.stringify(saveState));
-            showSaveIndicator();
         }
 
+        function saveGame() {
+            const saveState = buildSaveObject();
+            
+            // 1. الحفظ المحلي المعتاد في المتصفح
+            localStorage.setItem('gohn_legends_farm_save', JSON.stringify(saveState));
+            showSaveIndicator();
+
+            // 2. الحفظ السحابي فوراً إذا كان اللاعب مسجلاً دخوله
+            if (currentUser) {
+                database.ref('users/' + currentUser.uid + '/farmState').set(saveState)
+                .catch(err => console.error("فشل الرفع السحابي: ", err));
+            }
+        }
+
+        // استرجاع البيانات محلياً (عند عدم وجود إنترنت أو عدم تسجيل الدخول)
         function loadGame() {
             const savedDataRaw = localStorage.getItem('gohn_legends_farm_save');
             if (!savedDataRaw) return;
+            applyLoadedData(savedDataRaw);
+        }
 
+        // استرجاع البيانات سحابياً للاعب المسجل
+        function loadCloudData(uid) {
+            database.ref('users/' + uid + '/farmState').once('value').then((snapshot) => {
+                const cloudData = snapshot.val();
+                if (cloudData) {
+                    applyLoadedData(JSON.stringify(cloudData));
+                    // تحديث الـ Local Storage بآخر نسخة سحابية مستقرة
+                    localStorage.setItem('gohn_legends_farm_save', JSON.stringify(cloudData));
+                } else {
+                    // إذا لم توجد بيانات سحابية للاعب الجديد، يتم الحفظ التلقائي لأول مرة
+                    saveGame();
+                }
+            }).catch(err => {
+                console.error("تعذر تحميل البيانات من السحابة: ", err);
+                loadGame(); // بديل محلي سريع
+            });
+        }
+
+        // تطبيق البيانات المدخلة وتوزيعها على المتغيرات الحية
+        function applyLoadedData(rawJSON) {
             try {
-                const saveState = JSON.parse(savedDataRaw);
+                const saveState = JSON.parse(rawJSON);
                 player.coins = saveState.coins || 100;
                 player.water = saveState.water !== undefined ? saveState.water : 5;
                 player.maxWater = saveState.maxWater || 5;
@@ -844,54 +890,45 @@
                     }
                 }
 
-                // حساب وتطبيق أرباح الخلفية (Offline Progression)
+                // معالجة أرباح غياب اللاعب في الخلفية (Offline Progression)
                 const offlineMs = Date.now() - saveState.lastSavedTime;
-                if (offlineMs > 5000) { // لو اللاعب غاب أكتر من 5 ثواني
+                if (offlineMs > 5000) {
                     processOfflineProgress(offlineMs);
                 }
 
             } catch (e) {
-                console.error("فشل تحميل البيانات المحفوظة، جاري بدء مألوف جديد:", e);
+                console.error("فشل تحليل وفك ضغط البيانات:", e);
             }
         }
 
-        // معالجة أرباح غياب اللاعب في الخلفية
         function processOfflineProgress(offlineMs) {
             let totalOfflineEarnings = 0;
             
-            // 1. حساب أرباح الحيوانات المتراكمة
             animals.forEach(animal => {
                 const config = animalConfig[animal.type];
                 const productionsCount = Math.floor(offlineMs / config.produceInterval);
                 if (productionsCount > 0) {
                     totalOfflineEarnings += productionsCount * config.sellValue;
-                    // تحديث وقت الإنتاج الأخير للحيوان لكي لا يتم حسابه فورياً مجدداً
                     animal.lastProduced = Date.now();
                 }
             });
 
-            // 2. معالجة نمو المحاصيل المتسارع في الخلفية
             const growthMultiplier = 1 + (upgrades.growthSpeedLevel - 1) * 0.20;
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
                     const tile = map[r][c];
                     if (tile.crop && tile.stage < 3) {
-                        // المحصول ينمو أسرع بمرتين في الخلفية إذا كانت الأرض مروية
                         const wateringSpeedBonus = tile.watered ? 1.5 : 0.6;
-                        const config = cropConfig[tile.crop.type];
-                        
-                        // تعديل تاريخ بذر البذور افتراضياً للخلف ليعكس الزمن الذي مر
                         tile.crop.plantTime -= Math.floor(offlineMs * wateringSpeedBonus * growthMultiplier);
                     }
                 }
             }
 
-            // إضافة الأرباح للاعب فورياً وعرض رسالة ترحيبية رقيقة
             if (totalOfflineEarnings > 0) {
                 player.coins += totalOfflineEarnings;
                 updateCoinsUI();
                 setTimeout(() => {
-                    alert(`💤 أهلاً بعودتك يا بطل! 🌾\nمزرعتك السعيدة كانت تعمل في غيابك، وقد جمعت حيواناتك الأليفة أرباحاً هائلة لك بلغت: +${totalOfflineEarnings}$ ذهبة! 🪙🐄🐓`);
+                    alert(`💤 أهلاً بعودتك يا بطل! 🌾\nمزرعتك السعيدة كانت تعمل في غيابك، وقد جمعت حيواناتك أرباحاً هائلة لك بلغت: +${totalOfflineEarnings}$ ذهبة! 🪙🐄🐓`);
                 }, 1200);
             }
         }
@@ -904,14 +941,13 @@
             }, 1800);
         }
 
-        // حفظ تلقائي كل 5 ثوانٍ
+        // التكرار المستمر للحفظ كل 5 ثوانٍ
         setInterval(saveGame, 5000);
 
         // ==========================================
         //            تحديث منطق وحركة اللعبة
         // ==========================================
         function update() {
-            // حركة اللاعب
             player.vx = 0;
             player.vy = 0;
             player.moving = false;
@@ -924,10 +960,9 @@
             player.x += player.vx;
             player.y += player.vy;
 
-            // قيود الحدود المريحة
             if (player.x < 0) player.x = 0;
             if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
-            if (player.y < gridStartY - 30) player.y = gridStartY - 30; // لا يعبر السياج الخشبي والبيت
+            if (player.y < gridStartY - 30) player.y = gridStartY - 30;
             if (player.y > canvas.height - player.height) player.y = canvas.height - player.height;
 
             if (player.moving) {
@@ -936,7 +971,7 @@
                 player.frame = 0;
             }
 
-            // ميكانيكية إعادة تعبئة المياه التلقائية والسريعة من البحيرة
+            // ميكانيكية إعادة تعبئة المياه
             const distToLake = Math.hypot(player.x - 670, player.y - 110);
             if (distToLake < 90 && player.water < player.maxWater) {
                 player.water = player.maxWater;
@@ -944,10 +979,8 @@
                 spawnFloatingText(player.x + 10, player.y, "تعبئة مياه نقية! 💧", "#00ffcc");
             }
 
-            // تحديث حركة وإنتاج الحيوانات في الوقت الفعلي
             const now = Date.now();
             animals.forEach(ani => {
-                // حركة عشوائية وبطيئة تضفي حياة على اللعبة
                 if (Math.random() < 0.02) {
                     ani.vx = (Math.random() - 0.5) * 0.7;
                     ani.vy = (Math.random() - 0.5) * 0.5;
@@ -955,24 +988,21 @@
                 ani.x += ani.vx;
                 ani.y += ani.vy;
 
-                // إبقاء الحيوانات بالمرعى
                 if (ani.x < 20) ani.x = 20;
                 if (ani.x > canvas.width - 30) ani.x = canvas.width - 30;
                 if (ani.y < gridStartY + 20) ani.y = gridStartY + 20;
                 if (ani.y > canvas.height - 35) ani.y = canvas.height - 35;
 
-                // نظام الإنتاج التلقائي الحيوي
                 const config = animalConfig[ani.type];
                 if (now - ani.lastProduced >= config.produceInterval) {
                     ani.lastProduced = now;
                     player.coins += config.sellValue;
                     updateCoinsUI();
                     spawnFloatingText(ani.x, ani.y - 12, `+${config.sellValue}$ ${config.emoji}`, "#ffd700");
-                    spawnWaterParticles(ani.x - 10, ani.y - 10, '#ffd700'); // جزيئات ذهبية
+                    spawnWaterParticles(ani.x - 10, ani.y - 10, '#ffd700');
                 }
             });
 
-            // نمو المحاصيل وتجفيف مياه الري
             const growthMultiplier = 1 + (upgrades.growthSpeedLevel - 1) * 0.20;
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
@@ -987,14 +1017,12 @@
                             tile.stage = Math.min(targetStage, 3);
                         }
                     }
-                    // تجفيف المياه بعد 10 ثوانٍ
                     if (tile.watered && now - tile.waterTimer > 10000) {
                         tile.watered = false;
                     }
                 }
             }
 
-            // توليد دخان مدخنة الكوخ الصاعد في الهواء
             if (Math.random() < 0.04) {
                 smokeParticles.push({
                     x: 112,
@@ -1006,7 +1034,6 @@
                 });
             }
 
-            // تحديث جزيئات الدخان الصاعد
             for (let i = smokeParticles.length - 1; i >= 0; i--) {
                 const s = smokeParticles[i];
                 s.x += s.vx;
@@ -1016,7 +1043,6 @@
                 if (s.alpha <= 0) smokeParticles.splice(i, 1);
             }
 
-            // تحديث جزيئات الماء والذهب
             for (let i = particles.length - 1; i >= 0; i--) {
                 const p = particles[i];
                 p.x += p.vx;
@@ -1025,7 +1051,6 @@
                 if (p.alpha <= 0) particles.splice(i, 1);
             }
 
-            // حركة قناديل الليل (اليراعات) بشكل متمايل مريح للأعصاب
             fireflies.forEach(f => {
                 f.angle += (Math.random() - 0.5) * 0.4;
                 f.x += Math.cos(f.angle) * f.speed;
@@ -1037,7 +1062,6 @@
                 if (f.y > canvas.height) f.y = gridStartY;
             });
 
-            // تحديث وتلاشي النصوص العائمة
             for (let i = floatingTexts.length - 1; i >= 0; i--) {
                 const ft = floatingTexts[i];
                 ft.y += ft.vy;
@@ -1052,14 +1076,9 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // ------------------------------------------
-            //  1. رسم سماء الغلاف الجوي الديناميكية (Dynamic Sky)
-            // ------------------------------------------
-            // نستخدم دورة يوم كامل مدتها 50 ثانية
             const dayCycleDuration = 50000;
             const cycleTime = Date.now() % dayCycleDuration;
-            const cyclePercent = cycleTime / dayCycleDuration; // من 0 إلى 1
-            const radAngle = cyclePercent * Math.PI * 2; // زاوية مدارية كاملة
+            const cyclePercent = cycleTime / dayCycleDuration;
 
             let skyGradient = ctx.createLinearGradient(0, 0, 0, 150);
             let timeText = "";
@@ -1067,7 +1086,6 @@
             let timeIcon = "☀️";
 
             if (cyclePercent < 0.1) {
-                // الفجر (Dawn)
                 skyGradient.addColorStop(0, '#211c38');
                 skyGradient.addColorStop(0.5, '#e65c40');
                 skyGradient.addColorStop(1, '#ffc371');
@@ -1075,7 +1093,6 @@
                 remainingTime = Math.ceil((0.1 - cyclePercent) * dayCycleDuration / 1000);
                 timeIcon = "🌅";
             } else if (cyclePercent < 0.5) {
-                // النهار الساطع (Day)
                 skyGradient.addColorStop(0, '#53a0fd');
                 skyGradient.addColorStop(0.6, '#a1caff');
                 skyGradient.addColorStop(1, '#e3f2fd');
@@ -1083,7 +1100,6 @@
                 remainingTime = Math.ceil((0.5 - cyclePercent) * dayCycleDuration / 1000);
                 timeIcon = "☀️";
             } else if (cyclePercent < 0.6) {
-                // الغروب الدافئ (Sunset)
                 skyGradient.addColorStop(0, '#210e26');
                 skyGradient.addColorStop(0.5, '#880e4f');
                 skyGradient.addColorStop(1, '#ff7043');
@@ -1091,7 +1107,6 @@
                 remainingTime = Math.ceil((0.6 - cyclePercent) * dayCycleDuration / 1000);
                 timeIcon = "🌇";
             } else {
-                // الليل الساحر (Night)
                 skyGradient.addColorStop(0, '#040b14');
                 skyGradient.addColorStop(0.6, '#0f1d30');
                 skyGradient.addColorStop(1, '#1b2a4a');
@@ -1103,7 +1118,6 @@
             ctx.fillStyle = skyGradient;
             ctx.fillRect(0, 0, canvas.width, 150);
 
-            // رسم نجوم متلألئة تظهر في أوقات الليل والفجر والغروب فقط
             if (cyclePercent >= 0.5 || cyclePercent < 0.1) {
                 let starAlphaMultiplier = (cyclePercent >= 0.6) ? 1 : 0.4;
                 ctx.save();
@@ -1116,22 +1130,16 @@
                 ctx.restore();
             }
 
-            // ------------------------------------------
-            // 2. مدار الشمس والقمر الفيزيائي البصري (Sun & Moon Orbit)
-            // ------------------------------------------
-            // نأخذ زاوية المدار بحيث تدور بشكل قوس نصف قطري رائع عبر الشاشة
             const orbitCenterX = canvas.width / 2;
             const orbitCenterY = 160;
             const orbitRadiusX = canvas.width / 2.1;
             const orbitRadiusY = 100;
 
-            // الشمس تظهر في النصف الأول من الدورة (0.0 إلى 0.5)
             if (cyclePercent < 0.5) {
-                const sunAngle = Math.PI + (cyclePercent / 0.5) * Math.PI; // حركة من اليسار لليمين
+                const sunAngle = Math.PI + (cyclePercent / 0.5) * Math.PI;
                 const sunX = orbitCenterX + Math.cos(sunAngle) * orbitRadiusX;
                 const sunY = orbitCenterY + Math.sin(sunAngle) * orbitRadiusY;
 
-                // وهج الشمس المتدرج
                 ctx.save();
                 let sunGlow = ctx.createRadialGradient(sunX, sunY, 2, sunX, sunY, 32);
                 sunGlow.addColorStop(0, '#ffffff');
@@ -1144,49 +1152,38 @@
                 ctx.fill();
                 ctx.restore();
             } else {
-                // القمر يظهر في النصف الثاني من الدورة (0.5 إلى 1.0)
                 const moonPercent = (cyclePercent - 0.5) / 0.5;
                 const moonAngle = Math.PI + moonPercent * Math.PI;
                 const moonX = orbitCenterX + Math.cos(moonAngle) * orbitRadiusX;
                 const moonY = orbitCenterY + Math.sin(moonAngle) * orbitRadiusY;
 
-                // رسم الهلال الفضي المضيء بجمال فائق ومريح جداً
                 ctx.save();
                 ctx.shadowBlur = 15;
                 ctx.shadowColor = '#e0f7fa';
                 
-                // القمر الخارجي
                 ctx.fillStyle = '#ffffff';
                 ctx.beginPath();
                 ctx.arc(moonX, moonY, 15, 0, Math.PI * 2);
                 ctx.fill();
                 
-                // طرح دائرة أخرى لخلق هلال رومانسي ناعم ومريح للأعصاب
-                ctx.shadowBlur = 0; // إلغاء التوهج للقطع الداخلي
-                ctx.fillStyle = (cyclePercent < 0.6) ? '#880e4f' : '#0a1220'; // لون يتماشى مع خلفية السماء المظلمة
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = (cyclePercent < 0.6) ? '#880e4f' : '#0a1220';
                 ctx.beginPath();
                 ctx.arc(moonX - 5, moonY - 3, 13, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.restore();
             }
 
-            // ------------------------------------------
-            //  3. رسم تلال الطبيعة الخضراء المندمجة (Background Hills)
-            // ------------------------------------------
-            ctx.fillStyle = '#3a7952'; // تلال بعيدة داكنة
+            ctx.fillStyle = '#3a7952';
             ctx.beginPath();
             ctx.arc(180, 220, 130, Math.PI, 0);
             ctx.fill();
 
-            ctx.fillStyle = '#428a5c'; // تلال أقرب فاتحة
+            ctx.fillStyle = '#428a5c';
             ctx.beginPath();
             ctx.arc(520, 230, 160, Math.PI, 0);
             ctx.fill();
 
-            // ------------------------------------------
-            //  4. رسم الكوخ الخشبي الدافئ والبحيرة (Barn & Lake)
-            // ------------------------------------------
-            // مدخنة البيت والدخان الصاعد منها
             ctx.fillStyle = '#42332e';
             ctx.fillRect(108, 70, 14, 25);
             smokeParticles.forEach(s => {
@@ -1196,11 +1193,9 @@
                 ctx.fill();
             });
 
-            // الكوخ الخشبي الريفي الدافئ
             ctx.fillStyle = '#6d4c41';
             ctx.fillRect(40, 90, 90, 60);
 
-            // سقف الكوخ الأحمر الدافئ
             ctx.fillStyle = '#c62828';
             ctx.beginPath();
             ctx.moveTo(30, 90);
@@ -1209,15 +1204,13 @@
             ctx.closePath();
             ctx.fill();
 
-            // باب الكوخ الخشبي
             ctx.fillStyle = '#3e2723';
             ctx.fillRect(72, 120, 24, 30);
-            ctx.fillStyle = '#ffd700'; // مقبض ذهبي
+            ctx.fillStyle = '#ffd700';
             ctx.beginPath();
             ctx.arc(77, 135, 2, 0, Math.PI * 2);
             ctx.fill();
 
-            // نافذة دافئة ومضيئة بلون العسل
             ctx.save();
             ctx.fillStyle = '#ffe082';
             ctx.shadowBlur = 8;
@@ -1228,7 +1221,6 @@
             ctx.strokeRect(52, 105, 15, 15);
             ctx.restore();
 
-            // البحيرة السحرية ذات الأمواج الهادئة في أعلى اليمين
             ctx.save();
             let lakeGrad = ctx.createRadialGradient(650, 110, 20, 650, 110, 80);
             lakeGrad.addColorStop(0, '#4fc3f7');
@@ -1239,12 +1231,10 @@
             ctx.ellipse(650, 110, 90, 42, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // حواف عشبية ناعمة للبحيرة
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
             ctx.lineWidth = 3;
             ctx.stroke();
 
-            // أوراق اللوتس المائية
             ctx.fillStyle = '#2e7d32';
             ctx.beginPath();
             ctx.arc(620, 105, 7, 0, Math.PI * 1.75);
@@ -1254,9 +1244,6 @@
             ctx.fill();
             ctx.restore();
 
-            // ------------------------------------------
-            //  5. رسم السياج الخشبي الفاصل للمزرعة (Fences)
-            // ------------------------------------------
             ctx.strokeStyle = '#4e342e';
             ctx.lineWidth = 3.5;
             ctx.beginPath();
@@ -1268,26 +1255,20 @@
                 ctx.fillRect(i, 145, 5, 18);
             }
 
-            // ------------------------------------------
-            //  6. رسم أرضية العشب وشبكة المزرعة (Farm Grid)
-            // ------------------------------------------
-            ctx.fillStyle = '#4fa26b'; // العشب الأساسي
+            ctx.fillStyle = '#4fa26b';
             ctx.fillRect(0, gridStartY, canvas.width, canvas.height - gridStartY);
 
-            // زهور وحشائش عشوائية نابضة بالبهاء
             flowers.forEach(f => {
                 ctx.fillStyle = f.color;
                 ctx.beginPath();
                 ctx.arc(f.x, f.y, f.size, 0, Math.PI * 2);
                 ctx.fill();
-                // قلب الزهرة
                 ctx.fillStyle = '#ffeb3b';
                 ctx.beginPath();
                 ctx.arc(f.x, f.y, f.size * 0.45, 0, Math.PI * 2);
                 ctx.fill();
             });
 
-            // رسم شبكة بلاطات الأرض الزراعية
             for (let r = 0; r < ROWS; r++) {
                 for (let c = 0; c < COLS; c++) {
                     const tile = map[r][c];
@@ -1297,10 +1278,10 @@
                     if (tile.tilled) {
                         let soilGrad = ctx.createLinearGradient(x, y, x + TILE_SIZE, y + TILE_SIZE);
                         if (tile.watered) {
-                            soilGrad.addColorStop(0, '#2e1c0c'); // تربة مروية مبللة غامقة
+                            soilGrad.addColorStop(0, '#2e1c0c');
                             soilGrad.addColorStop(1, '#1b0e05');
                         } else {
-                            soilGrad.addColorStop(0, '#543d2b'); // تربة محروثة جافة
+                            soilGrad.addColorStop(0, '#543d2b');
                             soilGrad.addColorStop(1, '#3b281b');
                         }
                         ctx.fillStyle = soilGrad;
@@ -1311,7 +1292,6 @@
                     ctx.strokeStyle = 'rgba(0,0,0,0.04)';
                     ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
 
-                    // رسم المحاصيل وتطور مراحل نموها
                     if (tile.crop) {
                         const crop = tile.crop;
                         const config = cropConfig[crop.type];
@@ -1319,14 +1299,12 @@
                         ctx.translate(x + TILE_SIZE/2, y + TILE_SIZE/2);
 
                         if (tile.stage === 0) {
-                            // نبتة صغيرة خضراء ناشئة
                             ctx.fillStyle = '#a3e15c';
                             ctx.beginPath();
                             ctx.arc(0, 6, 3, 0, Math.PI * 2);
                             ctx.fill();
                         } 
                         else if (tile.stage === 1) {
-                            // جذع صغير وأوراق
                             ctx.strokeStyle = '#2e7d32';
                             ctx.lineWidth = 2.5;
                             ctx.beginPath();
@@ -1340,7 +1318,6 @@
                             ctx.fill();
                         } 
                         else if (tile.stage === 2) {
-                            // نمو كبير وظهور ثمار غير ناضجة خفيفة
                             ctx.strokeStyle = '#2e7d32';
                             ctx.lineWidth = 3;
                             ctx.beginPath();
@@ -1353,7 +1330,6 @@
                             ctx.fill();
                         } 
                         else if (tile.stage === 3) {
-                            // ناضجة تماماً وتتألق بريقاً مبهجاً
                             ctx.shadowBlur = 8;
                             ctx.shadowColor = config.color;
                             ctx.fillStyle = config.color;
@@ -1369,7 +1345,6 @@
                             ctx.fill();
                             ctx.shadowBlur = 0;
 
-                            // الجذع الورقي الأخضر اللطيف في الأعلى
                             ctx.fillStyle = '#1b5e20';
                             ctx.fillRect(-1.5, -11, 3, 3);
                         }
@@ -1378,9 +1353,6 @@
                 }
             }
 
-            // ------------------------------------------
-            //  7. رسم مؤشر التحديد الذكي للمربعات (Selector Grid)
-            // ------------------------------------------
             const mouseX = player.x + player.width/2;
             const mouseY = player.y + player.height/2;
             const targetGridX = Math.floor((mouseX - gridStartX) / TILE_SIZE);
@@ -1392,9 +1364,6 @@
                 ctx.strokeRect(targetGridX * TILE_SIZE + gridStartX, targetGridY * TILE_SIZE + gridStartY, TILE_SIZE, TILE_SIZE);
             }
 
-            // ------------------------------------------
-            //  8. رسم جزيئات الماء المتناثرة
-            // ------------------------------------------
             particles.forEach(p => {
                 ctx.save();
                 ctx.globalAlpha = p.alpha;
@@ -1405,83 +1374,64 @@
                 ctx.restore();
             });
 
-            // ------------------------------------------
-            //  9. رسم الحيوانات الأليفة في اللعبة (Cute Animals)
-            // ------------------------------------------
             animals.forEach(ani => {
                 ctx.save();
-                // ظل الحيوان
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
                 ctx.beginPath();
                 ctx.ellipse(ani.x + 8, ani.y + 12, 10, 4, 0, 0, Math.PI * 2);
                 ctx.fill();
 
-                // رسم الحيوان بواسطة الرموز التعبيرية عالية الدقة والجمال
                 ctx.font = "24px Arial";
                 ctx.textAlign = "center";
                 ctx.fillText(animalConfig[ani.type].emoji, ani.x + 8, ani.y + 8);
                 ctx.restore();
             });
 
-            // ------------------------------------------
-            //  10. رسم المزارع الأسطوري (The Farmer)
-            // ------------------------------------------
             ctx.save();
             ctx.translate(player.x, player.y);
 
-            // ظل البطل تحت الأقدام
             ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
             ctx.beginPath();
             ctx.ellipse(14, 38, 10, 4, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // أقدام المزارع وحركتها المتناوبة
             ctx.fillStyle = '#3e2723';
             let leftLegOffset = player.moving ? Math.sin(player.frame) * 4 : 0;
             let rightLegOffset = player.moving ? -Math.sin(player.frame) * 4 : 0;
             ctx.fillRect(4, 35 + leftLegOffset, 6, 7);
             ctx.fillRect(18, 35 + rightLegOffset, 6, 7);
 
-            // السروال واللباس الملون
             ctx.fillStyle = '#c62828';
             ctx.fillRect(2, 14, 24, 13);
             ctx.fillStyle = '#1565c0';
             ctx.fillRect(4, 25, 20, 11);
 
-            // البشرة والوجه والعيون
             ctx.fillStyle = '#ffdbac';
             ctx.fillRect(7, 2, 14, 13);
-            ctx.fillStyle = '#000000'; // عيون سوداء ودودة
+            ctx.fillStyle = '#000000';
             ctx.fillRect(10, 6, 2.5, 2.5);
             ctx.fillRect(16, 6, 2.5, 2.5);
 
-            // قبعة المزارع القشية الجميلة
             ctx.fillStyle = '#ffe082';
             ctx.fillRect(-3, 0, 34, 3);
             ctx.fillRect(3, -8, 22, 8);
-            ctx.fillStyle = '#ff8f00'; // شريط قماش برتقالي على القبعة
+            ctx.fillStyle = '#ff8f00';
             ctx.fillRect(3, -2, 22, 2);
 
             ctx.restore();
 
-            // ------------------------------------------
-            //  11. تأثير النهار والليل التفاعلي المريح جداً للأعصاب
-            // ------------------------------------------
             ctx.save();
             if (cyclePercent > 0.1 && cyclePercent < 0.5) {
-                // نهار - لا شيء لتغييره (مضاء بالكامل)
+                // نهار
             } else if (cyclePercent >= 0.5 && cyclePercent < 0.6) {
-                // تظليل الغروب البنفسجي الدافئ
                 let factor = (cyclePercent - 0.5) / 0.1;
                 ctx.fillStyle = `rgba(230, 81, 0, ${factor * 0.22})`;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             } else if (cyclePercent >= 0.6 || cyclePercent < 0.1) {
-                // ليل ساحر مريح وهادئ
                 let alpha = (cyclePercent >= 0.6) ? ((cyclePercent - 0.6) / 0.4) : ((0.1 - cyclePercent) / 0.1);
                 ctx.fillStyle = `rgba(10, 18, 30, ${alpha * 0.52})`;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // رسم قناديل الليل (اليراعات المضيئة)
                 fireflies.forEach(f => {
                     ctx.fillStyle = `rgba(173, 255, 47, ${f.alpha * alpha})`;
                     ctx.shadowBlur = 8;
@@ -1494,9 +1444,6 @@
             }
             ctx.restore();
 
-            // ------------------------------------------
-            //  12. رسم النصوص الطائرة العائمة
-            // ------------------------------------------
             floatingTexts.forEach(ft => {
                 ctx.save();
                 ctx.globalAlpha = ft.alpha;
@@ -1506,9 +1453,6 @@
                 ctx.restore();
             });
 
-            // ------------------------------------------
-            //  13. مؤشر الساعة وسير التوقيت في أعلى اليسار
-            // ------------------------------------------
             ctx.fillStyle = 'rgba(15, 15, 15, 0.72)';
             ctx.fillRect(12, 12, 230, 36);
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
@@ -1520,15 +1464,13 @@
             ctx.fillText(`${timeIcon} ${timeText} (في غضون ${remainingTime}ث)`, 24, 34);
         }
 
-        // تشغيل محرك اللعبة الرئيسي
         function gameLoop() {
             update();
             draw();
             requestAnimationFrame(gameLoop);
         }
 
-        // بدء التحميل وقراءة البيانات أول تشغيل للعبة
-        loadGame();
+        // بدء الدورة البرمجية فوراً
         gameLoop();
     </script>
 </body>
