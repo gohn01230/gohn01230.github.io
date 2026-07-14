@@ -3,116 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة تسجيل الدخول | موقع gohn 🚀</title>
+    <title>بوابة gohn الرقمية 🚀</title>
     <style>
+        /* إعدادات وتنسيقات التصميم الأساسية */
+        :root {
+            --primary: #00ffcc;
+            --primary-hover: #00b38f;
+            --bg-dark: #0a0f0d;
+            --card-bg: rgba(25, 30, 28, 0.75);
+            --border-glow: rgba(0, 255, 204, 0.15);
+            --text-main: #ffffff;
+            --text-muted: #a0aec0;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: radial-gradient(circle, #16221f 0%, #080d0c 100%);
-            color: #ffffff;
-            text-align: center;
-            padding: 20px;
+            background: radial-gradient(circle at center, #14221f 0%, var(--bg-dark) 100%);
+            color: var(--text-main);
             margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* الهيدر (شريط التنقل العلوي) */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            background: rgba(10, 15, 13, 0.5);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* الأزرار المشتركة */
+        .btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            color: #0c1210;
+            padding: 10px 24px;
+            font-weight: bold;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 204, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.1);
+        }
+
+        /* المحتوى الرئيسي للموقع */
+        main {
+            flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-        .container {
-            max-width: 500px;
-            width: 100%;
-            background: rgba(25, 25, 25, 0.85);
             padding: 40px 20px;
+        }
+
+        .glass-card {
+            max-width: 800px;
+            width: 100%;
+            background: var(--card-bg);
             border-radius: 24px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
+            padding: 40px;
+            box-sizing: border-box;
+            border: 1px solid var(--border-glow);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            text-align: center;
         }
-        h1 {
-            color: #00ffcc;
-            font-size: 2rem;
-            margin-bottom: 30px;
-            text-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
-        }
-        .btn {
-            background: linear-gradient(135deg, #00ffcc 0%, #00b38f 100%);
-            color: #121212;
-            padding: 12px 28px;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 30px;
-            display: inline-block;
-            cursor: pointer;
-            border: none;
-            font-size: 1rem;
-            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
-            transition: all 0.3s ease;
-        }
-        .btn:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 6px 20px rgba(0, 255, 204, 0.5);
-        }
-        .user-profile {
-            display: none;
-            margin-top: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid #00ffcc;
+
+        /* واجهة ما قبل تسجيل الدخول */
+        .hero-section h1 {
+            font-size: 2.5rem;
+            margin-top: 0;
             margin-bottom: 15px;
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+            background: linear-gradient(to left, #ffffff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .user-name {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: #fff;
+
+        .hero-section p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+
+        /* واجهة لوحة التحكم الشخصية (بعد تسجيل الدخول) */
+        .dashboard {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+            margin-bottom: 15px;
+        }
+
+        .user-welcome {
+            font-size: 1.8rem;
+            font-weight: 700;
             margin-bottom: 5px;
         }
+
         .user-email {
-            font-size: 0.9rem;
-            color: #aaa;
-            margin-bottom: 20px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
         }
-        .logout-btn {
-            background: #ff4d4d;
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+
+        /* شبكة الأقسام الداخلية القابلة للتوسيع */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+            text-align: right;
         }
-        .logout-btn:hover {
-            background: #ff3333;
-            box-shadow: 0 6px 20px rgba(255, 77, 77, 0.5);
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .feature-icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .feature-title {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .feature-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* تذييل الصفحة */
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: rgba(10, 15, 13, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
         }
     </style>
 
-    <!-- استدعاء مكتبات Firebase (إصدار compat لسهولة الدمج) -->
+    <!-- استدعاء مكتبات Firebase للتحقق من الهوية -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 </head>
 <body>
 
-    <div class="container">
-        <h1>بوابة تسجيل الدخول الذكية 🔐</h1>
-        
-        <!-- زر تسجيل الدخول (يختفي بعد الدخول) -->
-        <button id="login-btn" class="btn" onclick="loginWithGoogle()">تسجيل الدخول باستخدام Google 🚀</button>
+    <!-- الهيدر العلوي -->
+    <header>
+        <a href="#" class="logo">⚡ gohn</a>
+        <!-- سيظهر زر الخروج السريع هنا للمستخدم المسجل دخوله -->
+        <div id="nav-auth-area"></div>
+    </header>
 
-        <!-- واجهة حساب المستخدم (تظهر بعد تسجيل الدخول بنجاح) -->
-        <div id="user-profile" class="user-profile">
-            <img id="user-img" class="user-avatar" src="" alt="صورة المستخدم">
-            <div id="user-name" class="user-name">اسم المستخدم</div>
-            <div id="user-email" class="user-email">البريد الإلكتروني</div>
-            <button class="btn logout-btn" onclick="logout()">تسجيل الخروج 🚪</button>
+    <!-- المحتوى واللوحة الرئيسية -->
+    <main>
+        <div class="glass-card">
+            
+            <!-- واجهة ما قبل تسجيل الدخول (Hero Section) -->
+            <div id="guest-view" class="hero-section">
+                <h1>مرحباً بك في عالم gohn الرقمي 🪐</h1>
+                <p>مساحتك الخاصة للألعاب، الأدوات الذكية والمشاريع البرمجية المبتكرة. سجل دخولك الآن لتصل إلى لوحتك الشخصية وتبدأ الرحلة معنا.</p>
+                <button class="btn" onclick="loginWithGoogle()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M12.24 10.285V13.4h6.887C18.2 15.614 15.645 18 12.24 18c-3.86 0-7-3.14-7-7s3.14-7 7-7c1.7 0 3.3.65 4.5 1.8l2.423-2.424C17.347 1.6 14.93 1 12.24 1 6.58 1 2 5.58 2 11.24s4.58 10.24 10.24 10.24c5.795 0 10.254-4.074 10.254-10.24 0-.695-.083-1.36-.23-1.956H12.24z"/></svg>
+                    الدخول بحساب Google
+                </button>
+            </div>
+
+            <!-- واجهة لوحة التحكم الشخصية (Dashboard) -->
+            <div id="user-view" class="dashboard">
+                <div class="user-header">
+                    <img id="user-img" class="user-avatar" src="" alt="صورة المستخدم">
+                    <div id="user-name" class="user-welcome">اسم المستخدم</div>
+                    <div id="user-email" class="user-email">البريد الإلكتروني</div>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 30px 0;">
+
+                <!-- شبكة الخدمات والأقسام (مستعدة لربطها بصفحاتك الجديدة) -->
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <span class="feature-icon">🎮</span>
+                        <div class="feature-title">ألعابي المفضلة</div>
+                        <div class="feature-desc">استعرض مكتبة الألعاب الخاصة بك، والنتائج القياسية التي حققتها سابقاً.</div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🛠️</span>
+                        <div class="feature-title">أدوات المطور</div>
+                        <div class="feature-desc">مجموعة من الأدوات البرمجية المفيدة والمصممة لتسهيل أعمالك اليومية.</div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">⚙️</span>
+                        <div class="feature-title">إعدادات الحساب</div>
+                        <div class="feature-desc">تحكم في تفضيلات حسابك، وتخصيص المظهر، والخصوصية.</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary" onclick="logout()">تسجيل الخروج 🚪</button>
+            </div>
+
         </div>
-    </div>
+    </main>
+
+    <!-- التذييل السفلي للموقع -->
+    <footer>
+        <p>© 2026 جميع الحقوق محفوظة لـ <a href="#">موقع ألعاب gohn</a>. تم التطوير بشغف 💻</p>
+    </footer>
 
     <script>
-        // إعدادات Firebase الخاصة بك
+        // تهيئة Firebase بالإعدادات المعتمدة لمشروعك
         const firebaseConfig = {
             apiKey: "AIzaSyA5LlGHl9djJsx_Rs3evjd8Xzpn0e25IHI",
             authDomain: "gohn-games.firebaseapp.com",
@@ -123,43 +302,46 @@
             measurementId: "G-8PBX8E8D15"
         };
 
-        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const provider = new firebase.auth.GoogleAuthProvider();
 
-        // دالة تسجيل الدخول عبر Google (بأسلوب النافذة المنبثقة)
+        // دوال تسجيل الدخول والخروج
         function loginWithGoogle() {
             auth.signInWithPopup(provider).catch((error) => {
                 console.error("حدث خطأ أثناء تسجيل الدخول:", error.message);
-                alert("تعذر تسجيل الدخول، يرجى المحاولة مرة أخرى.");
             });
         }
 
-        // دالة تسجيل الخروج
         function logout() {
             auth.signOut().catch((error) => {
                 console.error("حدث خطأ أثناء تسجيل الخروج:", error.message);
             });
         }
 
-        // مراقبة حالة تسجيل الدخول وتغيير الواجهة تلقائياً
+        // مراقبة وتحديث حالة المستخدم بشكل ديناميكي
         auth.onAuthStateChanged((user) => {
-            const loginBtn = document.getElementById('login-btn');
-            const userProfile = document.getElementById('user-profile');
+            const guestView = document.getElementById('guest-view');
+            const userView = document.getElementById('user-view');
+            const navAuthArea = document.getElementById('nav-auth-area');
             
             if (user) {
-                // المستخدم مسجل دخوله حالياً
-                loginBtn.style.display = 'none';
-                userProfile.style.display = 'block';
+                // إخفاء واجهة الزائر وعرض لوحة التحكم الشخصية
+                guestView.style.display = 'none';
+                userView.style.display = 'block';
                 
-                document.getElementById('user-img').src = user.photoURL || 'https://via.placeholder.com/80';
-                document.getElementById('user-name').innerText = user.displayName || "مستخدم مجهول";
+                // تحديث بيانات الملف الشخصي
+                document.getElementById('user-img').src = user.photoURL || 'https://via.placeholder.com/100';
+                document.getElementById('user-name').innerText = `أهلاً بك، ${user.displayName || "صديقنا الرائع"} 👋`;
                 document.getElementById('user-email').innerText = user.email || "";
+
+                // إضافة زر خروج سريع في الهيدر تجميلياً لراحة الاستخدام
+                navAuthArea.innerHTML = `<button class="btn btn-secondary" style="padding: 6px 16px; font-size: 0.85rem;" onclick="logout()">خروج 🚪</button>`;
             } else {
-                // المستخدم غير مسجل دخوله
-                loginBtn.style.display = 'inline-block';
-                userProfile.style.display = 'none';
+                // العودة لوضع الزائر الأصلي
+                guestView.style.display = 'block';
+                userView.style.display = 'none';
+                navAuthArea.innerHTML = '';
             }
         });
     </script>
