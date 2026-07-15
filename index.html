@@ -275,9 +275,10 @@
         }
     </style>
 
-    <!-- استدعاء مكتبات Firebase للتحقق من الهوية -->
+    <!-- استدعاء مكتبات Firebase للتحقق من الهوية وقاعدة البيانات السحابية -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -310,6 +311,7 @@
                         <img id="user-img" class="user-avatar" src="" alt="صورة المستخدم">
                         <div id="user-name" class="user-welcome">اسم المستخدم</div>
                         <div id="user-email" class="user-email">البريد الإلكتروني</div>
+                        <div id="user-highscore" style="margin-top: 10px; color: var(--primary); font-weight: bold; font-size: 1.1rem;">أفضل رقم قياسي لك: جاري التحميل...</div>
                     </div>
 
                     <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 30px 0;">
@@ -356,13 +358,13 @@
                     <button class="btn btn-secondary" onclick="goBackToMenu()">⬅️ العودة للوحة التحكم</button>
                 </div>
 
-                <!-- 3. قسم الإعدادات (تجريبي) -->
+                <!-- 3. قسم الإعدادات -->
                 <div id="settings-view" class="sub-view">
                     <h2>⚙️ إعدادات الحساب والخصوصية</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 30px;">تكامل خدمات الملف الشخصي السحابية قيد التطوير حالياً.</p>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">تكامل خدمات الملف الشخصي السحابية قيد العمل والتحميل.</p>
                     <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: right;">
                         <p>🔒 <strong>حالة الحساب:</strong> مؤمن عبر حساب Google</p>
-                        <p>🌐 <strong>سيرفر البيانات:</strong> متصل بـ Firebase بنجاح</p>
+                        <p>🌐 <strong>سيرفر البيانات:</strong> متصل بـ Firebase Firestore بنجاح ✅</p>
                     </div>
                     <button class="btn btn-secondary" onclick="goBackToMenu()">⬅️ العودة للوحة التحكم</button>
                 </div>
@@ -391,7 +393,11 @@
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db = firebase.firestore(); // تفعيل قاعدة البيانات السحابية Firestore
         const provider = new firebase.auth.GoogleAuthProvider();
+
+        let currentUser = null;
+        let bestScore = null; // متغير لحفظ أفضل نتيجة سحابياً
 
         // دوال تسجيل الدخول والخروج
         function loginWithGoogle() {
@@ -413,38 +419,75 @@
             const navAuthArea = document.getElementById('nav-auth-area');
             
             if (user) {
+                currentUser = user;
                 guestView.style.display = 'none';
                 userView.style.display = 'block';
-                goBackToMenu(); // التأكد من فتح القائمة الرئيسية افتراضياً عند الدخول
+                goBackToMenu(); 
                 
                 document.getElementById('user-img').src = user.photoURL || 'https://via.placeholder.com/100';
                 document.getElementById('user-name').innerText = `أهلاً بك، ${user.displayName || "صديقنا الرائع"} 👋`;
                 document.getElementById('user-email').innerText = user.email || "";
 
+                // استدعاء البيانات من قاعدة البيانات فور تسجيل الدخول
+                loadUserScore(user.uid);
+
                 navAuthArea.innerHTML = `<button class="btn btn-secondary" style="padding: 6px 16px; font-size: 0.85rem;" onclick="logout()">خروج 🚪</button>`;
             } else {
+                currentUser = null;
                 guestView.style.display = 'block';
                 userView.style.display = 'none';
                 navAuthArea.innerHTML = '';
             }
         });
 
+        // ==================== [نظام السحابة للتخزين - Firestore] ====================
+        
+        // 1. جلب البيانات من السحابة وعرضها
+        function loadUserScore(uid) {
+            db.collection("users").doc(uid).get().then((doc) => {
+                if (doc.exists && doc.data().bestScore !== undefined) {
+                    bestScore = doc.data().bestScore;
+                    document.getElementById('user-highscore').innerText = `أفضل رقم قياسي لك: ${bestScore} ملي ثانية ⚡`;
+                } else {
+                    bestScore = null;
+                    document.getElementById('user-highscore').innerText = `أفضل رقم قياسي لك: لا توجد أرقام مسجلة بعد.`;
+                }
+            }).catch((error) => {
+                console.error("خطأ في قراءة البيانات:", error);
+            });
+        }
+
+        // 2. تحديث وحفظ البيانات في السحابة
+        function saveUserScore(uid, score) {
+            // نقوم بالتحديث فقط إذا كانت النتيجة الجديدة أفضل (أقل زمن بالملي ثانية) أو إذا لم تكن هناك نتيجة سابقة
+            if (bestScore === null || score < bestScore) {
+                bestScore = score;
+                db.collection("users").doc(uid).set({
+                    name: currentUser.displayName,
+                    email: currentUser.email,
+                    bestScore: score,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true })
+                .then(() => {
+                    document.getElementById('user-highscore').innerText = `أفضل رقم قياسي لك: ${score} ملي ثانية ⚡`;
+                    console.log("تم حفظ النتيجة الجديدة بنجاح في السحابة!");
+                })
+                .catch((error) => {
+                    console.error("حدث خطأ أثناء حفظ البيانات السحابية:", error);
+                });
+            }
+        }
+
         // --- نظام التبديل بين الواجهات الداخلية بدون إعادة تحميل الصفحة ---
         function switchView(viewId) {
-            // إخفاء القائمة الرئيسية وكل الأقسام الفرعية
             document.getElementById('menu-view').style.display = 'none';
             const subViews = document.querySelectorAll('.sub-view');
             subViews.forEach(view => view.style.display = 'none');
-
-            // إظهار القسم المطلوب فقط
             document.getElementById(viewId).style.display = 'block';
-            
-            // في حال الخروج من اللعبة، أعد تهيئتها
             if(viewId !== 'game-view') resetGame();
         }
 
         function goBackToMenu() {
-            // العودة للقائمة الرئيسية
             const subViews = document.querySelectorAll('.sub-view');
             subViews.forEach(view => view.style.display = 'none');
             document.getElementById('menu-view').style.display = 'block';
@@ -452,8 +495,8 @@
         }
 
 
-        // ==================== [1] كود لعبة سرعة رد الفعل ====================
-        let gameStatus = "idle"; // idle, waiting, clickable, finished
+        // ==================== [1] كود لعبة سرعة رد الفعل السحابية ====================
+        let gameStatus = "idle"; 
         let startTime, timerTimeout;
         const reactionBox = document.getElementById('reaction-box');
         const gameResult = document.getElementById('game-result');
@@ -468,13 +511,11 @@
 
         function handleReactionClick() {
             if (gameStatus === "idle") {
-                // الانتقال لحالة الانتظار
                 gameStatus = "waiting";
                 reactionBox.style.background = "var(--danger)";
                 reactionBox.innerText = "انتظر اللون الأخضر...";
                 gameResult.innerText = "";
 
-                // تحديد وقت عشوائي بين 1.5 إلى 5 ثوانٍ للتحول للأخضر
                 const randomTime = Math.floor(Math.random() * 3500) + 1500;
                 timerTimeout = setTimeout(() => {
                     gameStatus = "clickable";
@@ -485,7 +526,6 @@
                 }, randomTime);
 
             } else if (gameStatus === "waiting") {
-                // المستخدم ضغط مبكراً جداً
                 clearTimeout(timerTimeout);
                 gameStatus = "idle";
                 reactionBox.style.background = "#1a1a1a";
@@ -493,14 +533,20 @@
                 gameResult.innerText = "لقد ضغطت قبل تحول المربع للون الأخضر ❌";
 
             } else if (gameStatus === "clickable") {
-                // حساب سرعة رد الفعل بالملي ثانية
                 const endTime = Date.now();
                 const reactionTime = endTime - startTime;
                 gameStatus = "finished";
                 reactionBox.style.background = "#1a1a1a";
                 reactionBox.style.color = "var(--text-main)";
                 reactionBox.innerText = "اضغط للعب مجدداً";
+                
                 gameResult.innerHTML = `سرعة رد فعلك هي: <strong style="color: var(--primary);">${reactionTime} ملي ثانية</strong> ⚡`;
+                
+                // حفظ النتيجة السحابية آلياً باسم المستخدم الفريد
+                if (currentUser) {
+                    saveUserScore(currentUser.uid, reactionTime);
+                }
+
                 gameStatus = "idle";
             }
         }
