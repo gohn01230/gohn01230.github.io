@@ -14,6 +14,7 @@
             --border-glow: rgba(0, 255, 204, 0.15);
             --text-main: #ffffff;
             --text-muted: #a0aec0;
+            --danger: #ff4a4a;
         }
 
         body {
@@ -180,6 +181,7 @@
             padding: 20px;
             border-radius: 16px;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .feature-item:hover {
@@ -207,6 +209,56 @@
             line-height: 1.4;
         }
 
+        /* --- الأقسام التفاعلية الجديدة --- */
+        .sub-view {
+            display: none;
+            animation: fadeIn 0.4s ease;
+            text-align: center;
+        }
+
+        /* لعبة سرعة رد الفعل */
+        .game-box {
+            width: 100%;
+            max-width: 500px;
+            height: 250px;
+            margin: 20px auto;
+            border-radius: 15px;
+            background: #1a1a1a;
+            border: 2px dashed rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.1s ease;
+        }
+
+        /* أداة مولد كلمات المرور */
+        .tool-box {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .input-display {
+            width: 100%;
+            background: #111;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px;
+            border-radius: 8px;
+            color: var(--primary);
+            font-size: 1.2rem;
+            text-align: center;
+            font-family: monospace;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
         /* تذييل الصفحة */
         footer {
             text-align: center;
@@ -231,8 +283,7 @@
 
     <!-- الهيدر العلوي -->
     <header>
-        <a href="#" class="logo">⚡ gohn</a>
-        <!-- سيظهر زر الخروج السريع هنا للمستخدم المسجل دخوله -->
+        <a href="#" class="logo" onclick="goBackToMenu()">⚡ gohn</a>
         <div id="nav-auth-area"></div>
     </header>
 
@@ -245,41 +296,77 @@
                 <h1>مرحباً بك في عالم gohn الرقمي 🪐</h1>
                 <p>مساحتك الخاصة للألعاب، الأدوات الذكية والمشاريع البرمجية المبتكرة. سجل دخولك الآن لتصل إلى لوحتك الشخصية وتبدأ الرحلة معنا.</p>
                 <button class="btn" onclick="loginWithGoogle()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;"><path d="M12.24 10.285V13.4h6.887C18.2 15.614 15.645 18 12.24 18c-3.86 0-7-3.14-7-7s3.14-7 7-7c1.7 0 3.3.65 4.5 1.8l2.423-2.424C17.347 1.6 14.93 1 12.24 1 6.58 1 2 5.58 2 11.24s4.58 10.24 10.24 10.24c5.795 0 10.254-4.074 10.254-10.24 0-.695-.083-1.36-.23-1.956H12.24z"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-left: 5px;"><path d="M12.24 10.285V13.4h6.887C18.2 15.614 15.645 18 12.24 18c-3.86 0-7-3.14-7-7s3.14-7 7-7c1.7 0 3.3.65 4.5 1.8l2.423-2.424C17.347 1.6 14.93 1 12.24 1 6.58 1 2 5.58 2 11.24s4.58 10.24 10.24 10.24c5.795 0 10.254-4.074 10.254-10.24 0-.695-.083-1.36-.23-1.956H12.24z"/></svg>
                     الدخول بحساب Google
                 </button>
             </div>
 
             <!-- واجهة لوحة التحكم الشخصية (Dashboard) -->
             <div id="user-view" class="dashboard">
-                <div class="user-header">
-                    <img id="user-img" class="user-avatar" src="" alt="صورة المستخدم">
-                    <div id="user-name" class="user-welcome">اسم المستخدم</div>
-                    <div id="user-email" class="user-email">البريد الإلكتروني</div>
+                
+                <!-- الشاشة الرئيسية للوحة التحكم (Menu View) -->
+                <div id="menu-view">
+                    <div class="user-header">
+                        <img id="user-img" class="user-avatar" src="" alt="صورة المستخدم">
+                        <div id="user-name" class="user-welcome">اسم المستخدم</div>
+                        <div id="user-email" class="user-email">البريد الإلكتروني</div>
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 30px 0;">
+
+                    <!-- شبكة الخدمات التفاعلية -->
+                    <div class="features-grid">
+                        <div class="feature-item" onclick="switchView('game-view')">
+                            <span class="feature-icon">🎮</span>
+                            <div class="feature-title">ألعاب gohn التفاعلية</div>
+                            <div class="feature-desc">العب لعبة اختبار سرعة رد الفعل وقس سرعتك بالملي ثانية!</div>
+                        </div>
+                        <div class="feature-item" onclick="switchView('tools-view')">
+                            <span class="feature-icon">🛠️</span>
+                            <div class="feature-title">أدوات المطور الذكية</div>
+                            <div class="feature-desc">ولد كلمات مرور فائقة الأمان والحماية لحساباتك بضغطة واحدة.</div>
+                        </div>
+                        <div class="feature-item" onclick="switchView('settings-view')">
+                            <span class="feature-icon">⚙️</span>
+                            <div class="feature-title">إعدادات الحساب</div>
+                            <div class="feature-desc">تحكم في تفضيلات حسابك، وتخصيص المظهر، والخصوصية.</div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary" onclick="logout()">تسجيل الخروج 🚪</button>
                 </div>
 
-                <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 30px 0;">
-
-                <!-- شبكة الخدمات والأقسام (مستعدة لربطها بصفحاتك الجديدة) -->
-                <div class="features-grid">
-                    <div class="feature-item">
-                        <span class="feature-icon">🎮</span>
-                        <div class="feature-title">ألعابي المفضلة</div>
-                        <div class="feature-desc">استعرض مكتبة الألعاب الخاصة بك، والنتائج القياسية التي حققتها سابقاً.</div>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">🛠️</span>
-                        <div class="feature-title">أدوات المطور</div>
-                        <div class="feature-desc">مجموعة من الأدوات البرمجية المفيدة والمصممة لتسهيل أعمالك اليومية.</div>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">⚙️</span>
-                        <div class="feature-title">إعدادات الحساب</div>
-                        <div class="feature-desc">تحكم في تفضيلات حسابك، وتخصيص المظهر، والخصوصية.</div>
-                    </div>
+                <!-- 1. قسم الألعاب التفاعلية -->
+                <div id="game-view" class="sub-view">
+                    <h2>🎮 اختبار سرعة رد الفعل</h2>
+                    <p>اضغط على المربع أدناه عندما يتحول لونه إلى <span style="color: var(--primary);">الأخضر</span> بأسرع ما يمكن!</p>
+                    <div id="reaction-box" class="game-box" onclick="handleReactionClick()">اضغط هنا للبدء</div>
+                    <p id="game-result" style="font-size: 1.2rem; min-height: 30px;"></p>
+                    <button class="btn btn-secondary" onclick="goBackToMenu()">⬅️ العودة للوحة التحكم</button>
                 </div>
 
-                <button class="btn btn-secondary" onclick="logout()">تسجيل الخروج 🚪</button>
+                <!-- 2. قسم أدوات المطور -->
+                <div id="tools-view" class="sub-view">
+                    <h2>🛠️ مولد كلمات المرور العشوائية</h2>
+                    <p>احمِ حساباتك بكلمة مرور معقدة وغير قابلة للاختراق.</p>
+                    <div class="tool-box">
+                        <input type="text" id="password-output" class="input-display" readonly placeholder="ستظهر كلمة المرور هنا">
+                        <button class="btn" style="width: 100%; justify-content: center;" onclick="generatePassword()">توليد كلمة مرور ⚡</button>
+                    </div>
+                    <button class="btn btn-secondary" onclick="goBackToMenu()">⬅️ العودة للوحة التحكم</button>
+                </div>
+
+                <!-- 3. قسم الإعدادات (تجريبي) -->
+                <div id="settings-view" class="sub-view">
+                    <h2>⚙️ إعدادات الحساب والخصوصية</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">تكامل خدمات الملف الشخصي السحابية قيد التطوير حالياً.</p>
+                    <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: right;">
+                        <p>🔒 <strong>حالة الحساب:</strong> مؤمن عبر حساب Google</p>
+                        <p>🌐 <strong>سيرفر البيانات:</strong> متصل بـ Firebase بنجاح</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="goBackToMenu()">⬅️ العودة للوحة التحكم</button>
+                </div>
+
             </div>
 
         </div>
@@ -287,12 +374,12 @@
 
     <!-- التذييل السفلي للموقع -->
     <footer>
-        <p>© 2026 جميع الحقوق محفوظة لـ <a href="#">موقع ألعاب gohn</a>. تم التطوير بشغف 💻</p>
+        <p>© 2026 جميع الحقوق محفوظة لـ <a href="#" onclick="goBackToMenu()">موقع ألعاب gohn</a>. تم التطوير بشغف 💻</p>
     </footer>
 
     <script>
         // تهيئة Firebase بالإعدادات المعتمدة لمشروعك
-      const firebaseConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyA5LlGHl9djJsx_Rs3evjd8Xzpn0e25IHI",
             authDomain: "gohn-games.firebaseapp.com",
             projectId: "gohn-games",
@@ -326,24 +413,110 @@
             const navAuthArea = document.getElementById('nav-auth-area');
             
             if (user) {
-                // إخفاء واجهة الزائر وعرض لوحة التحكم الشخصية
                 guestView.style.display = 'none';
                 userView.style.display = 'block';
+                goBackToMenu(); // التأكد من فتح القائمة الرئيسية افتراضياً عند الدخول
                 
-                // تحديث بيانات الملف الشخصي
                 document.getElementById('user-img').src = user.photoURL || 'https://via.placeholder.com/100';
                 document.getElementById('user-name').innerText = `أهلاً بك، ${user.displayName || "صديقنا الرائع"} 👋`;
                 document.getElementById('user-email').innerText = user.email || "";
 
-                // إضافة زر خروج سريع في الهيدر تجميلياً لراحة الاستخدام
                 navAuthArea.innerHTML = `<button class="btn btn-secondary" style="padding: 6px 16px; font-size: 0.85rem;" onclick="logout()">خروج 🚪</button>`;
             } else {
-                // العودة لوضع الزائر الأصلي
                 guestView.style.display = 'block';
                 userView.style.display = 'none';
                 navAuthArea.innerHTML = '';
             }
         });
+
+        // --- نظام التبديل بين الواجهات الداخلية بدون إعادة تحميل الصفحة ---
+        function switchView(viewId) {
+            // إخفاء القائمة الرئيسية وكل الأقسام الفرعية
+            document.getElementById('menu-view').style.display = 'none';
+            const subViews = document.querySelectorAll('.sub-view');
+            subViews.forEach(view => view.style.display = 'none');
+
+            // إظهار القسم المطلوب فقط
+            document.getElementById(viewId).style.display = 'block';
+            
+            // في حال الخروج من اللعبة، أعد تهيئتها
+            if(viewId !== 'game-view') resetGame();
+        }
+
+        function goBackToMenu() {
+            // العودة للقائمة الرئيسية
+            const subViews = document.querySelectorAll('.sub-view');
+            subViews.forEach(view => view.style.display = 'none');
+            document.getElementById('menu-view').style.display = 'block';
+            resetGame();
+        }
+
+
+        // ==================== [1] كود لعبة سرعة رد الفعل ====================
+        let gameStatus = "idle"; // idle, waiting, clickable, finished
+        let startTime, timerTimeout;
+        const reactionBox = document.getElementById('reaction-box');
+        const gameResult = document.getElementById('game-result');
+
+        function resetGame() {
+            gameStatus = "idle";
+            clearTimeout(timerTimeout);
+            reactionBox.style.background = "#1a1a1a";
+            reactionBox.innerText = "اضغط هنا للبدء";
+            gameResult.innerText = "";
+        }
+
+        function handleReactionClick() {
+            if (gameStatus === "idle") {
+                // الانتقال لحالة الانتظار
+                gameStatus = "waiting";
+                reactionBox.style.background = "var(--danger)";
+                reactionBox.innerText = "انتظر اللون الأخضر...";
+                gameResult.innerText = "";
+
+                // تحديد وقت عشوائي بين 1.5 إلى 5 ثوانٍ للتحول للأخضر
+                const randomTime = Math.floor(Math.random() * 3500) + 1500;
+                timerTimeout = setTimeout(() => {
+                    gameStatus = "clickable";
+                    reactionBox.style.background = "var(--primary)";
+                    reactionBox.style.color = "#000";
+                    reactionBox.innerText = "اضغط الآن!!!";
+                    startTime = Date.now();
+                }, randomTime);
+
+            } else if (gameStatus === "waiting") {
+                // المستخدم ضغط مبكراً جداً
+                clearTimeout(timerTimeout);
+                gameStatus = "idle";
+                reactionBox.style.background = "#1a1a1a";
+                reactionBox.innerText = "تسرعت! اضغط لإعادة المحاولة.";
+                gameResult.innerText = "لقد ضغطت قبل تحول المربع للون الأخضر ❌";
+
+            } else if (gameStatus === "clickable") {
+                // حساب سرعة رد الفعل بالملي ثانية
+                const endTime = Date.now();
+                const reactionTime = endTime - startTime;
+                gameStatus = "finished";
+                reactionBox.style.background = "#1a1a1a";
+                reactionBox.style.color = "var(--text-main)";
+                reactionBox.innerText = "اضغط للعب مجدداً";
+                gameResult.innerHTML = `سرعة رد فعلك هي: <strong style="color: var(--primary);">${reactionTime} ملي ثانية</strong> ⚡`;
+                gameStatus = "idle";
+            }
+        }
+
+
+        // ==================== [2] كود أداة توليد كلمات المرور ====================
+        function generatePassword() {
+            const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
+            const passwordLength = 16;
+            let password = "";
+            for (let i = 0; i < passwordLength; i++) {
+                const randomNumber = Math.floor(Math.random() * chars.length);
+                password += chars.substring(randomNumber, randomNumber + 1);
+            }
+            document.getElementById("password-output").value = password;
+        }
     </script>
 </body>
 </html>
