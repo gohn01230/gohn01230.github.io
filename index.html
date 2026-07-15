@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة gohn الرقمية 🚀</title>
     <style>
-        /* إعدادات وتنسيقات التصميم الأساسية */
+        /* تنسيقات التصميم الأساسية */
         :root {
             --primary: #00ffcc;
             --primary-hover: #00b38f;
@@ -29,7 +29,7 @@
             justify-content: space-between;
         }
 
-        /* الهيدر (شريط التنقل العلوي) */
+        /* الهيدر العلوي */
         header {
             display: flex;
             justify-content: space-between;
@@ -89,21 +89,20 @@
             box-shadow: 0 0 10px rgba(0, 255, 204, 0.1);
         }
 
-        /* المحتوى الرئيسي للموقع */
         main {
             flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 40px 20px;
+            padding: 20px;
         }
 
         .glass-card {
-            max-width: 800px;
+            max-width: 850px;
             width: 100%;
             background: var(--card-bg);
             border-radius: 24px;
-            padding: 40px;
+            padding: 30px;
             box-sizing: border-box;
             border: 1px solid var(--border-glow);
             backdrop-filter: blur(15px);
@@ -111,7 +110,7 @@
             text-align: center;
         }
 
-        /* واجهة ما قبل تسجيل الدخول */
+        /* واجهة الزائر */
         .hero-section h1 {
             font-size: 2.5rem;
             margin-top: 0;
@@ -128,7 +127,7 @@
             margin-bottom: 35px;
         }
 
-        /* واجهة لوحة التحكم الشخصية (بعد تسجيل الدخول) */
+        /* لوحة التحكم والتبديل */
         .dashboard {
             display: none;
             animation: fadeIn 0.5s ease;
@@ -143,30 +142,25 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .user-avatar {
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             border: 3px solid var(--primary);
             box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .user-welcome {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 700;
             margin-bottom: 5px;
         }
 
-        .user-email {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        /* شبكة الأقسام الداخلية القابلة للتوسيع */
+        /* شبكة الخدمات */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -209,54 +203,127 @@
             line-height: 1.4;
         }
 
-        /* --- الأقسام التفاعلية الجديدة --- */
         .sub-view {
             display: none;
             animation: fadeIn 0.4s ease;
             text-align: center;
         }
 
-        /* لعبة سرعة رد الفعل */
-        .game-box {
-            width: 100%;
-            max-width: 500px;
-            height: 250px;
-            margin: 20px auto;
-            border-radius: 15px;
-            background: #1a1a1a;
-            border: 2px dashed rgba(255,255,255,0.1);
+        /* ==================== [تنسيقات اللعبة الجديدة] ==================== */
+        .game-header {
             display: flex;
+            justify-content: space-around;
             align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            cursor: pointer;
-            user-select: none;
-            transition: background 0.1s ease;
+            background: rgba(0,0,0,0.4);
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        /* أداة مولد كلمات المرور */
-        .tool-box {
-            max-width: 400px;
-            margin: 20px auto;
-            padding: 20px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 15px;
+        .game-stat {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .game-stat span {
+            color: var(--primary);
+        }
+
+        /* حاوية اللعبة */
+        #game-canvas-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            background: linear-gradient(to bottom, #70c5ff, #bde4ff); /* افتراضي: نهار */
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid var(--border-glow);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            transition: background 2s ease; /* تأثير سلس عند تبدل الليل والنهار */
+        }
+
+        /* الليل */
+        #game-canvas-container.night {
+            background: linear-gradient(to bottom, #0d1b2a, #1b263b);
+        }
+
+        /* الشمس والقمر */
+        .celestial-body {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            top: 40px;
+            right: 10%;
+            transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sun {
+            background: radial-gradient(circle, #fff700 30%, #ffaa00 100%);
+            box-shadow: 0 0 30px #ffaa00;
+        }
+
+        .moon {
+            background: radial-gradient(circle, #f0f0f0 40%, #cccccc 100%);
+            box-shadow: 0 0 20px #ffffff;
+        }
+
+        /* عناصر اللعبة المتساقطة */
+        .game-item {
+            position: absolute;
+            font-size: 2.2rem;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.1s ease;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(420px) rotate(360deg);
+            }
+        }
+
+        /* شريط الـ XP التراكمي */
+        .xp-bar-container {
+            width: 100%;
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .input-display {
-            width: 100%;
-            background: #111;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 12px;
-            border-radius: 8px;
-            color: var(--primary);
-            font-size: 1.2rem;
-            text-align: center;
-            font-family: monospace;
-            margin-bottom: 15px;
-            box-sizing: border-box;
+        .xp-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #00ffcc, #00ff66);
+            transition: width 0.3s ease;
+        }
+
+        /* إشارة التحول بين الليل والنهار */
+        #time-indicator {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .indicator-day {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .indicator-night {
+            background: #d1ecf1;
+            color: #0c5460;
+            text-shadow: 0 0 5px rgba(255,255,255,0.3);
         }
 
         /* تذييل الصفحة */
@@ -275,7 +342,7 @@
         }
     </style>
 
-    <!-- استدعاء مكتبات Firebase للتحقق من الهوية وقاعدة البيانات السحابية -->
+    <!-- استدعاء مكتبات Firebase للتحقق وقاعدة البيانات -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -292,36 +359,39 @@
     <main>
         <div class="glass-card">
             
-            <!-- واجهة ما قبل تسجيل الدخول (Hero Section) -->
+            <!-- واجهة ما قبل تسجيل الدخول -->
             <div id="guest-view" class="hero-section">
                 <h1>مرحباً بك في عالم gohn الرقمي 🪐</h1>
-                <p>مساحتك الخاصة للألعاب، الأدوات الذكية والمشاريع البرمجية المبتكرة. سجل دخولك الآن لتصل إلى لوحتك الشخصية وتبدأ الرحلة معنا.</p>
+                <p>مساحتك الخاصة للألعاب السحابية، الأدوات الذكية والمشاريع البرمجية المبتكرة. سجل دخولك الآن لتسترجع تقدمك المحفوظ وتبدأ اللعب معنا.</p>
                 <button class="btn" onclick="loginWithGoogle()">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-left: 5px;"><path d="M12.24 10.285V13.4h6.887C18.2 15.614 15.645 18 12.24 18c-3.86 0-7-3.14-7-7s3.14-7 7-7c1.7 0 3.3.65 4.5 1.8l2.423-2.424C17.347 1.6 14.93 1 12.24 1 6.58 1 2 5.58 2 11.24s4.58 10.24 10.24 10.24c5.795 0 10.254-4.074 10.254-10.24 0-.695-.083-1.36-.23-1.956H12.24z"/></svg>
                     الدخول بحساب Google
                 </button>
             </div>
 
-            <!-- واجهة لوحة التحكم الشخصية (Dashboard) -->
+            <!-- واجهة لوحة التحكم الشخصية -->
             <div id="user-view" class="dashboard">
                 
-                <!-- الشاشة الرئيسية للوحة التحكم (Menu View) -->
+                <!-- القائمة الرئيسية -->
                 <div id="menu-view">
                     <div class="user-header">
                         <img id="user-img" class="user-avatar" src="" alt="صورة المستخدم">
                         <div id="user-name" class="user-welcome">اسم المستخدم</div>
                         <div id="user-email" class="user-email">البريد الإلكتروني</div>
-                        <div id="user-highscore" style="margin-top: 10px; color: var(--primary); font-weight: bold; font-size: 1.1rem;">أفضل رقم قياسي لك: جاري التحميل...</div>
+                        
+                        <div id="cloud-status" style="margin-top: 10px; padding: 5px 15px; border-radius: 15px; font-size: 0.9rem; background: rgba(0,255,204,0.1); color: var(--primary);">
+                            جاري جلب حسابك السحابي... ☁️
+                        </div>
                     </div>
 
-                    <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 30px 0;">
+                    <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 25px 0;">
 
                     <!-- شبكة الخدمات التفاعلية -->
                     <div class="features-grid">
-                        <div class="feature-item" onclick="switchView('game-view')">
+                        <div class="feature-item" onclick="switchView('game-view'); startGame();">
                             <span class="feature-icon">🎮</span>
-                            <div class="feature-title">ألعاب gohn التفاعلية</div>
-                            <div class="feature-desc">العب لعبة اختبار سرعة رد الفعل وقس سرعتك بالملي ثانية!</div>
+                            <div class="feature-title">مغمر الذهبي: ليل ونهار</div>
+                            <div class="feature-desc">العب الآن واجمع الكنوز مع تقلب الطقس السحري! تقدمك يحفظ تلقائياً.</div>
                         </div>
                         <div class="feature-item" onclick="switchView('tools-view')">
                             <span class="feature-icon">🛠️</span>
@@ -338,13 +408,32 @@
                     <button class="btn btn-secondary" onclick="logout()">تسجيل الخروج 🚪</button>
                 </div>
 
-                <!-- 1. قسم الألعاب التفاعلية -->
+                <!-- 1. واجهة لعبة منقب الكنوز الجديدة -->
                 <div id="game-view" class="sub-view">
-                    <h2>🎮 اختبار سرعة رد الفعل</h2>
-                    <p>اضغط على المربع أدناه عندما يتحول لونه إلى <span style="color: var(--primary);">الأخضر</span> بأسرع ما يمكن!</p>
-                    <div id="reaction-box" class="game-box" onclick="handleReactionClick()">اضغط هنا للبدء</div>
-                    <p id="game-result" style="font-size: 1.2rem; min-height: 30px;"></p>
-                    <button class="btn btn-secondary" onclick="goBackToMenu()">⬅️ العودة للوحة التحكم</button>
+                    <h2>🎮 منقّب الكنوز السحابي: ليل ونهار</h2>
+                    
+                    <div class="game-header">
+                        <div class="game-stat">المستوى (Level): <span id="level-val">1</span></div>
+                        <div class="game-stat">الذهب الحالي 🪙: <span id="gold-val">0</span></div>
+                        <div class="game-stat">نقاط الخبرة (XP): <span id="xp-val">0/100</span></div>
+                    </div>
+
+                    <!-- شريط المستوى والخبرة -->
+                    <div class="xp-bar-container">
+                        <div id="xp-bar-fill" class="xp-bar-fill"></div>
+                    </div>
+
+                    <div id="time-indicator" class="indicator-day">☀️ وقت النهار: اجمع الجواهر والذهب!</div>
+
+                    <!-- حاوية اللعبة والسقوط -->
+                    <div id="game-canvas-container">
+                        <div id="celestial" class="celestial-body sun"></div>
+                    </div>
+
+                    <div style="margin-top: 20px; display: flex; justify-content: center; gap: 15px;">
+                        <button id="game-control-btn" class="btn" onclick="togglePausePlay()">إيقاف مؤقت ⏸️</button>
+                        <button class="btn btn-secondary" onclick="exitGameAndSave()">💾 حفظ والعودة للقائمة</button>
+                    </div>
                 </div>
 
                 <!-- 2. قسم أدوات المطور -->
@@ -393,11 +482,17 @@
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.firestore(); // تفعيل قاعدة البيانات السحابية Firestore
+        const db = firebase.firestore(); 
         const provider = new firebase.auth.GoogleAuthProvider();
 
         let currentUser = null;
-        let bestScore = null; // متغير لحفظ أفضل نتيجة سحابياً
+        
+        // بيانات وحالة اللعبة السحابية للمستخدم
+        let playerStats = {
+            gold: 0,
+            xp: 0,
+            level: 1
+        };
 
         // دوال تسجيل الدخول والخروج
         function loginWithGoogle() {
@@ -428,8 +523,8 @@
                 document.getElementById('user-name').innerText = `أهلاً بك، ${user.displayName || "صديقنا الرائع"} 👋`;
                 document.getElementById('user-email').innerText = user.email || "";
 
-                // استدعاء البيانات من قاعدة البيانات فور تسجيل الدخول
-                loadUserScore(user.uid);
+                // جلب حساب اللاعب فوراً من Firestore
+                loadCloudData(user.uid);
 
                 navAuthArea.innerHTML = `<button class="btn btn-secondary" style="padding: 6px 16px; font-size: 0.85rem;" onclick="logout()">خروج 🚪</button>`;
             } else {
@@ -440,117 +535,271 @@
             }
         });
 
-        // ==================== [نظام السحابة للتخزين - Firestore] ====================
+        // ==================== [نظام السحابة المتطور لتخزين تقدم اللعبة] ====================
         
-        // 1. جلب البيانات من السحابة وعرضها
-        function loadUserScore(uid) {
-            db.collection("users").doc(uid).get().then((doc) => {
-                if (doc.exists && doc.data().bestScore !== undefined) {
-                    bestScore = doc.data().bestScore;
-                    document.getElementById('user-highscore').innerText = `أفضل رقم قياسي لك: ${bestScore} ملي ثانية ⚡`;
+        function loadCloudData(uid) {
+            db.collection("player_saves").doc(uid).get().then((doc) => {
+                const statusDiv = document.getElementById('cloud-status');
+                if (doc.exists) {
+                    playerStats = doc.data();
+                    statusDiv.innerHTML = `مستواك السحابي الحالي: <strong>Level ${playerStats.level}</strong> | الذهب: <strong>${playerStats.gold} 🪙</strong>`;
+                    updateUIStats();
                 } else {
-                    bestScore = null;
-                    document.getElementById('user-highscore').innerText = `أفضل رقم قياسي لك: لا توجد أرقام مسجلة بعد.`;
+                    // حساب جديد بالكامل
+                    playerStats = { gold: 0, xp: 0, level: 1 };
+                    statusDiv.innerHTML = `حساب سحابي جديد! جاهز للمغامرة 🚀`;
+                    saveCloudData();
                 }
             }).catch((error) => {
-                console.error("خطأ في قراءة البيانات:", error);
+                console.error("خطأ في الاتصال بالبيانات السحابية:", error);
             });
         }
 
-        // 2. تحديث وحفظ البيانات في السحابة
-        function saveUserScore(uid, score) {
-            // نقوم بالتحديث فقط إذا كانت النتيجة الجديدة أفضل (أقل زمن بالملي ثانية) أو إذا لم تكن هناك نتيجة سابقة
-            if (bestScore === null || score < bestScore) {
-                bestScore = score;
-                db.collection("users").doc(uid).set({
-                    name: currentUser.displayName,
-                    email: currentUser.email,
-                    bestScore: score,
-                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true })
-                .then(() => {
-                    document.getElementById('user-highscore').innerText = `أفضل رقم قياسي لك: ${score} ملي ثانية ⚡`;
-                    console.log("تم حفظ النتيجة الجديدة بنجاح في السحابة!");
-                })
-                .catch((error) => {
-                    console.error("حدث خطأ أثناء حفظ البيانات السحابية:", error);
-                });
-            }
+        function saveCloudData() {
+            if (!currentUser) return;
+            db.collection("player_saves").doc(currentUser.uid).set(playerStats)
+            .then(() => {
+                const statusDiv = document.getElementById('cloud-status');
+                if(statusDiv) {
+                    statusDiv.innerHTML = `تم حفظ تقدمك السحابي بنجاح! ☁️🔒 (Level ${playerStats.level})`;
+                }
+            }).catch((error) => {
+                console.error("خطأ أثناء حفظ البيانات السحابية:", error);
+            });
         }
 
-        // --- نظام التبديل بين الواجهات الداخلية بدون إعادة تحميل الصفحة ---
+        // تحديث إحصائيات اللعبة على الواجهة
+        function updateUIStats() {
+            document.getElementById('level-val').innerText = playerStats.level;
+            document.getElementById('gold-val').innerText = playerStats.gold;
+            document.getElementById('xp-val').innerText = `${playerStats.xp}/${playerStats.level * 100}`;
+            
+            // تحديث شريط الخبرة بصرياً
+            const xpNeeded = playerStats.level * 100;
+            const percentage = (playerStats.xp / xpNeeded) * 100;
+            document.getElementById('xp-bar-fill').style.width = `${percentage}%`;
+        }
+
+        // تبديل النوافذ
         function switchView(viewId) {
             document.getElementById('menu-view').style.display = 'none';
             const subViews = document.querySelectorAll('.sub-view');
             subViews.forEach(view => view.style.display = 'none');
             document.getElementById(viewId).style.display = 'block';
-            if(viewId !== 'game-view') resetGame();
         }
 
         function goBackToMenu() {
             const subViews = document.querySelectorAll('.sub-view');
             subViews.forEach(view => view.style.display = 'none');
             document.getElementById('menu-view').style.display = 'block';
-            resetGame();
+            stopGameEngine();
+        }
+
+        function exitGameAndSave() {
+            saveCloudData();
+            goBackToMenu();
         }
 
 
-        // ==================== [1] كود لعبة سرعة رد الفعل السحابية ====================
-        let gameStatus = "idle"; 
-        let startTime, timerTimeout;
-        const reactionBox = document.getElementById('reaction-box');
-        const gameResult = document.getElementById('game-result');
+        // ==================== [ميكانيكية لعبة منقب الكنوز: ليل ونهار] ====================
+        let gameActive = false;
+        let isNight = false;
+        let gameTimer = null;
+        let spawnTimer = null;
+        let timeRemainingInCycle = 30; // 30 ثانية لكل دورة (نهار / ليل)
 
-        function resetGame() {
-            gameStatus = "idle";
-            clearTimeout(timerTimeout);
-            reactionBox.style.background = "#1a1a1a";
-            reactionBox.innerText = "اضغط هنا للبدء";
-            gameResult.innerText = "";
+        const canvas = document.getElementById('game-canvas-container');
+        const celestial = document.getElementById('celestial');
+        const timeIndicator = document.getElementById('time-indicator');
+
+        function startGame() {
+            gameActive = true;
+            isNight = false;
+            timeRemainingInCycle = 30;
+            resetCanvas();
+            updateUIStats();
+            
+            // محرك تبدل الليل والنهار ومحرك توليد الكنوز
+            gameTimer = setInterval(updateTimeCycle, 1000);
+            startSpawner();
         }
 
-        function handleReactionClick() {
-            if (gameStatus === "idle") {
-                gameStatus = "waiting";
-                reactionBox.style.background = "var(--danger)";
-                reactionBox.innerText = "انتظر اللون الأخضر...";
-                gameResult.innerText = "";
+        function stopGameEngine() {
+            gameActive = false;
+            clearInterval(gameTimer);
+            clearInterval(spawnTimer);
+            resetCanvas();
+        }
 
-                const randomTime = Math.floor(Math.random() * 3500) + 1500;
-                timerTimeout = setTimeout(() => {
-                    gameStatus = "clickable";
-                    reactionBox.style.background = "var(--primary)";
-                    reactionBox.style.color = "#000";
-                    reactionBox.innerText = "اضغط الآن!!!";
-                    startTime = Date.now();
-                }, randomTime);
-
-            } else if (gameStatus === "waiting") {
-                clearTimeout(timerTimeout);
-                gameStatus = "idle";
-                reactionBox.style.background = "#1a1a1a";
-                reactionBox.innerText = "تسرعت! اضغط لإعادة المحاولة.";
-                gameResult.innerText = "لقد ضغطت قبل تحول المربع للون الأخضر ❌";
-
-            } else if (gameStatus === "clickable") {
-                const endTime = Date.now();
-                const reactionTime = endTime - startTime;
-                gameStatus = "finished";
-                reactionBox.style.background = "#1a1a1a";
-                reactionBox.style.color = "var(--text-main)";
-                reactionBox.innerText = "اضغط للعب مجدداً";
-                
-                gameResult.innerHTML = `سرعة رد فعلك هي: <strong style="color: var(--primary);">${reactionTime} ملي ثانية</strong> ⚡`;
-                
-                // حفظ النتيجة السحابية آلياً باسم المستخدم الفريد
-                if (currentUser) {
-                    saveUserScore(currentUser.uid, reactionTime);
-                }
-
-                gameStatus = "idle";
+        function togglePausePlay() {
+            const btn = document.getElementById('game-control-btn');
+            if(gameActive) {
+                gameActive = false;
+                clearInterval(gameTimer);
+                clearInterval(spawnTimer);
+                btn.innerText = "استئناف اللعب ▶️";
+            } else {
+                gameActive = true;
+                gameTimer = setInterval(updateTimeCycle, 1000);
+                startSpawner();
+                btn.innerText = "إيقاف مؤقت ⏸️";
             }
         }
 
+        function resetCanvas() {
+            // إزالة الكنوز المتساقطة
+            const items = canvas.querySelectorAll('.game-item');
+            items.forEach(item => item.remove());
+            
+            // إرجاع طقس النهار الافتراضي
+            canvas.className = '';
+            celestial.className = 'celestial-body sun';
+            timeIndicator.className = 'indicator-day';
+            timeIndicator.innerText = "☀️ وقت النهار: اجمع الجواهر والذهب!";
+        }
+
+        // محرك تبديل التوقيت (ليل ونهار)
+        function updateTimeCycle() {
+            if (!gameActive) return;
+            timeRemainingInCycle--;
+
+            if (timeRemainingInCycle <= 0) {
+                isNight = !isNight;
+                timeRemainingInCycle = 30; // إعادة التعيين لـ 30 ثانية أخرى
+
+                if (isNight) {
+                    // التحول إلى الليل
+                    canvas.classList.add('night');
+                    celestial.className = 'celestial-body moon';
+                    timeIndicator.className = 'indicator-night';
+                    timeIndicator.innerText = "🌙 حل الليل! احذر الجواهر الملعونة 👹 واقنص البلورات النادرة ✨!";
+                } else {
+                    // التحول إلى النهار
+                    canvas.classList.remove('night');
+                    celestial.className = 'celestial-body sun';
+                    timeIndicator.className = 'indicator-day';
+                    timeIndicator.innerText = "☀️ أشرقت الشمس! الجو دافئ وآمن، اجمع الذهب بحرية!";
+                    saveCloudData(); // حفظ سحابي تلقائي عند انتهاء كل ليلة بنجاح!
+                }
+            } else {
+                // تحديث العداد على اللوحة
+                const modeName = isNight ? "الليل 🌙" : "النهار ☀️";
+                timeIndicator.innerText = `${modeName} (متبقي: ${timeRemainingInCycle} ثانية)`;
+            }
+        }
+
+        // محرك توليد العناصر المتساقطة
+        function startSpawner() {
+            clearInterval(spawnTimer);
+            // تزداد سرعة سقوط وتوليد الجواهر كلما ارتفع مستواك (Level) لزيادة المتعة والصعوبة!
+            const spawnRate = Math.max(1000 - (playerStats.level * 100), 400); 
+            
+            spawnTimer = setInterval(() => {
+                if (!gameActive) return;
+                spawnItem();
+            }, spawnRate);
+        }
+
+        function spawnItem() {
+            const item = document.createElement('div');
+            item.className = 'game-item';
+
+            // تحديد شكل الكنز بناءً على النهار أو الليل
+            let type = "gold"; 
+            let emoji = "🪙";
+
+            const roll = Math.random();
+
+            if (!isNight) {
+                // هدايا النهار: ذهب (70%)، جواهر خضراء (30%)
+                if (roll < 0.7) {
+                    type = "gold";
+                    emoji = "🪙";
+                } else {
+                    type = "gem";
+                    emoji = "💎";
+                }
+            } else {
+                // مخاطر وهدايا الليل: جواهر ملعونة (40%)، ذهب عادي (30%)، كريستال نادر فائق القيمة (30%)
+                if (roll < 0.4) {
+                    type = "cursed";
+                    emoji = "👹"; // الجوهرة الملعونة
+                } else if (roll < 0.7) {
+                    type = "gold";
+                    emoji = "🪙";
+                } else {
+                    type = "rare";
+                    emoji = "✨"; // الكريستال النادر
+                }
+            }
+
+            item.innerText = emoji;
+            
+            // تحديد السرعة والموقع الأفقي العشوائي
+            const xPos = Math.floor(Math.random() * (canvas.offsetWidth - 40));
+            item.style.left = `${xPos}px`;
+            item.style.top = `-50px`;
+
+            // مدة السقوط (تصبح أسرع مع ارتفاع مستواك)
+            const fallDuration = Math.max(4 - (playerStats.level * 0.25), 1.8);
+            item.style.animationDuration = `${fallDuration}s`;
+
+            // حدث الضغط على العنصر وجمعه
+            item.onclick = (e) => {
+                e.stopPropagation();
+                collectItem(type);
+                item.remove();
+            };
+
+            // إزالة العنصر بعد وصوله للأرضية تلقائياً لمنع استهلاك الذاكرة
+            item.addEventListener('animationend', () => {
+                item.remove();
+            });
+
+            canvas.appendChild(item);
+        }
+
+        // جمع الكنوز وتحديث النقاط ومستوى اللعب
+        function collectItem(type) {
+            if (!gameActive) return;
+
+            let goldGained = 0;
+            let xpGained = 0;
+
+            if (type === "gold") {
+                goldGained = 10 + playerStats.level;
+                xpGained = 5;
+            } else if (type === "gem") {
+                goldGained = 25;
+                xpGained = 15;
+            } else if (type === "rare") {
+                goldGained = 100; // قيمة هائلة ليلاً!
+                xpGained = 40;
+            } else if (type === "cursed") {
+                // عقاب لمس الملعون ليلاً
+                goldGained = -30;
+                xpGained = 0;
+                // فلاش أحمر سريع بالخلفية كتحذير بصري وممتع
+                canvas.style.boxShadow = "inset 0 0 40px #ff4a4a";
+                setTimeout(() => { canvas.style.boxShadow = "inset 0 0 20px rgba(0,0,0,0.5)"; }, 200);
+            }
+
+            // تطبيق النقاط
+            playerStats.gold = Math.max(0, playerStats.gold + goldGained);
+            playerStats.xp += xpGained;
+
+            // التحقق من الارتقاء بالمستوى (Level Up)
+            const xpNeeded = playerStats.level * 100;
+            if (playerStats.xp >= xpNeeded) {
+                playerStats.level++;
+                playerStats.xp = 0; // تصفير الخبرة وبدء لفل جديد
+                alert(`✨ تهانينا! لقد ارتقيت إلى المستوى ${playerStats.level} 🚀 السرعة تزداد والمكافآت تكبر!`);
+                saveCloudData(); // حفظ سحابي سريع لتوثيق الفوز
+                startSpawner(); // تحديث سرعة السقوط فوراً
+            }
+
+            updateUIStats();
+        }
 
         // ==================== [2] كود أداة توليد كلمات المرور ====================
         function generatePassword() {
