@@ -14,6 +14,7 @@
             --text-main: #ffffff;
             --text-muted: #a0aec0;
             --danger: #ff4a4a;
+            --success: #2ecc71;
         }
 
         body {
@@ -26,7 +27,6 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            overflow-x: hidden;
         }
 
         header {
@@ -37,7 +37,6 @@
             background: rgba(10, 15, 13, 0.6);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            z-index: 100;
         }
 
         .logo {
@@ -57,7 +56,7 @@
         }
 
         .glass-card {
-            max-width: 900px;
+            max-width: 800px;
             width: 100%;
             background: var(--card-bg);
             border-radius: 24px;
@@ -66,189 +65,178 @@
             border: 1px solid var(--border-glow);
             backdrop-filter: blur(15px);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        /* لوحة التحكم العلوية */
+        .game-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
             text-align: center;
         }
 
-        /* واجهة اللعبة */
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 12px 20px;
-            border-radius: 14px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            flex-wrap: wrap;
-            gap: 10px;
+        .stat-box h3 {
+            margin: 0 0 5px 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
         }
 
-        .game-stat {
-            font-size: 1.05rem;
+        .stat-box p {
+            margin: 0;
+            font-size: 1.4rem;
             font-weight: bold;
-        }
-
-        .game-stat span {
             color: var(--primary);
-            text-shadow: 0 0 8px rgba(0, 255, 204, 0.5);
         }
 
-        /* شريط الـ XP */
+        /* شريط المستوى */
         .xp-container {
             width: 100%;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
+            height: 8px;
+            background: rgba(255,255,255,0.1);
             border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 20px;
         }
 
         .xp-fill {
             height: 100%;
             width: 0%;
             background: linear-gradient(to right, #00ffcc, #00ff66);
-            transition: width 0.2s ease;
+            transition: width 0.3s ease;
         }
 
-        #game-container {
-            width: 100%;
-            height: 450px;
-            position: relative;
-            background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d); /* نهار ساحر كالغسق */
+        /* ساحة العمل واللعب */
+        .game-playground {
+            height: 250px;
+            background: linear-gradient(to bottom, #87ceeb, #e0f6ff);
             border-radius: 16px;
+            position: relative;
             overflow: hidden;
             border: 2px solid var(--border-glow);
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
-            cursor: none; /* إخفاء الماوس داخل اللعبة ليكون التحكم بالمدفع رائعاً */
-            transition: background 3s ease;
-        }
-
-        #game-container.night {
-            background: linear-gradient(to bottom, #090a0f, #121520, #1b2234); /* ليل عميق */
-        }
-
-        /* مدفع الليزر */
-        #player-cannon {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            width: 50px;
-            height: 50px;
-            background: radial-gradient(circle, #00ffcc 30%, #0088cc 100%);
-            border-radius: 10px 10px 0 0;
-            transform: translateX(-50%);
-            box-shadow: 0 0 15px var(--primary);
-            transition: left 0.05s linear;
-        }
-
-        #player-cannon::before {
-            content: '';
-            position: absolute;
-            top: -15px;
-            left: 20px;
-            width: 10px;
-            height: 15px;
-            background: #ffffff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px #ffffff;
-        }
-
-        /* كائنات اللعبة */
-        .laser {
-            position: absolute;
-            width: 4px;
-            height: 25px;
-            background: #00ffcc;
-            box-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
-            border-radius: 2px;
-        }
-
-        .enemy {
-            position: absolute;
-            width: 35px;
-            height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.6rem;
-            user-select: none;
-            transition: transform 0.1s linear;
+            flex-direction: column;
+            transition: background 2s ease;
         }
 
-        /* أجواء الخلفية */
-        .sky-body {
-            position: absolute;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            top: 40px;
-            right: 8%;
-            transition: all 3s ease;
-        }
-
-        .sun {
-            background: radial-gradient(circle, #fff700 30%, #ff5500 100%);
-            box-shadow: 0 0 40px #ffaa00;
-        }
-
-        .moon {
-            background: radial-gradient(circle, #f0f0f0 40%, #8899a6 100%);
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+        .game-playground.night {
+            background: linear-gradient(to bottom, #0f172a, #1e293b);
         }
 
         #time-badge {
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 0.9rem;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0,0,0,0.6);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
             font-weight: bold;
-            margin-bottom: 15px;
-            background: rgba(0,0,0,0.4);
             border: 1px solid var(--border-glow);
+        }
+
+        /* زر التفاعل المركزي (المنجم أو الوحش) */
+        .action-target {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            cursor: pointer;
+            user-select: none;
+            background: rgba(255,255,255,0.1);
+            border: 3px solid #ffffff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            transition: transform 0.1s ease, background 0.3s;
+        }
+
+        .action-target:active {
+            transform: scale(0.9);
+        }
+
+        /* شريط صحة سور القرية أثناء الليل */
+        .wall-hp-container {
+            width: 80%;
+            height: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: absolute;
+            bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: none; /* يظهر ليلاً فقط */
+        }
+
+        .wall-hp-fill {
+            height: 100%;
+            width: 100%;
+            background: var(--success);
+            transition: width 0.2s ease;
+        }
+
+        /* متجر التطويرات في الأسفل */
+        .upgrades-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .upgrade-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 14px;
+            padding: 15px;
+            text-align: right;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upgrade-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 0.95rem;
+            color: var(--primary);
+        }
+
+        .upgrade-info p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
         }
 
         .btn {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
             color: #0c1210;
-            padding: 10px 24px;
+            padding: 8px 16px;
             font-weight: bold;
-            border-radius: 30px;
+            border-radius: 20px;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.2);
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
         }
 
-        .btn:hover {
+        .btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 255, 204, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 255, 204, 0.3);
         }
 
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-main);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: none;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--primary);
-        }
-
-        /* تأثيرات واجهة الاهتزاز عند تلقي الضرر */
-        .shake {
-            animation: shakeScreen 0.2s ease-in-out 2;
-        }
-
-        @keyframes shakeScreen {
-            0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(-4px, 4px); }
-            75% { transform: translate(4px, -4px); }
+        .btn:disabled {
+            background: #3a3a3a;
+            color: #777;
+            cursor: not-allowed;
         }
 
         footer {
@@ -264,369 +252,338 @@
 <body>
 
     <header>
-        <a href="#" class="logo">⚡ gohn Games</a>
-        <div>
-            <button class="btn btn-secondary" onclick="resetSave()">🔄 تصفير الذاكرة</button>
-        </div>
+        <a href="#" class="logo">⚡ القرية السحابية</a>
+        <button class="btn" style="background: var(--danger); color: white;" onclick="resetAllData()">🔄 تصفير الذاكرة</button>
     </header>
 
     <main>
         <div class="glass-card">
-            <h2>🛸 مدافع الليل والنهار: قاعدة بيانات JS المحفوظة</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px;">حرك الماوس أو إصبعك لتوجه المدفع، واضغط أو انقر داخل المربع لإطلاق الليزر وتدمير الأهداف المحلقة!</p>
+            <h2 style="text-align: center; margin-top: 0; color: #fff;">🛡️ حامي القرية: ليل ونهار (مستقرة وبدون جلتشات)</h2>
+            <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+                اجمع الذهب نهاراً بالضغط على المنجم، ووظف العمال، ودافع عن قريتك ضد الوحوش ليلاً!
+            </p>
 
-            <!-- لوحة إحصائيات اللعبة المتصلة بـ LocalStorage -->
-            <div class="game-header">
-                <div class="game-stat">المستوى (Level): <span id="lbl-level">1</span></div>
-                <div class="game-stat">الذهب الكلي 🪙: <span id="lbl-gold">0</span></div>
-                <div class="game-stat">نقاط الخبرة (XP): <span id="lbl-xp">0/100</span></div>
+            <!-- الإحصائيات -->
+            <div class="game-stats">
+                <div class="stat-box">
+                    <h3>الذهب الحالي 🪙</h3>
+                    <p id="stat-gold">0</p>
+                </div>
+                <div class="stat-box">
+                    <h3>المستوى (Level) ⭐</h3>
+                    <p id="stat-level">1</p>
+                </div>
+                <div class="stat-box">
+                    <h3>إنتاج العمال التلقائي 🛠️</h3>
+                    <p id="stat-income">0/ثانية</p>
+                </div>
             </div>
 
+            <!-- شريط الـ XP -->
             <div class="xp-container">
-                <div id="xp-fill-bar" class="xp-fill"></div>
+                <div id="xp-fill" class="xp-fill"></div>
             </div>
 
-            <div id="time-badge">☀️ وقت النهار (نشاط معتدل)</div>
+            <!-- ساحة التفاعل الرئيسية -->
+            <div id="playground" class="game-playground">
+                <div id="time-badge">☀️ نهار (متبقي 15 ثانية)</div>
+                
+                <!-- زر الضغط المركزي -->
+                <div id="action-btn" class="action-target" onclick="handleTargetClick()">⛏️</div>
+                <div id="action-label" style="margin-top: 15px; font-weight: bold; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">اضغط للتنقيب واستخراج الذهب!</div>
 
-            <!-- حاوية اللعب والتحرك -->
-            <div id="game-container">
-                <div id="sky-element" class="sky-body sun"></div>
-                <div id="player-cannon"></div>
+                <!-- شريط سور القرية ليلاً -->
+                <div id="wall-hp-wrapper" class="wall-hp-container">
+                    <div id="wall-hp-fill" class="wall-hp-fill"></div>
+                </div>
             </div>
 
-            <div style="margin-top: 20px; display: flex; justify-content: center; gap: 15px;">
-                <button id="btn-pause" class="btn" onclick="togglePlayState()">إيقاف مؤقت ⏸️</button>
-                <button class="btn btn-secondary" onclick="saveGameToBrowser()">💾 حفظ يدوي سريع</button>
+            <!-- متجر الترقيات والتطويرات -->
+            <div class="upgrades-grid">
+                <!-- ترقية ضربة التنقيب -->
+                <div class="upgrade-card">
+                    <div class="upgrade-info">
+                        <h4 id="up1-title">قوة الفأس ⛏️ (مستوى 1)</h4>
+                        <p id="up1-desc">تزيد ضربتك اليدوية بـ +1 ذهب.</p>
+                    </div>
+                    <button id="btn-up1" class="btn" onclick="buyUpgrade('click')">تطوير (100 🪙)</button>
+                </div>
+
+                <!-- توظيف عمال مناجم تلقائيين -->
+                <div class="upgrade-card">
+                    <div class="upgrade-info">
+                        <h4 id="up2-title">عمال المناجم 👨‍🔧 (عدد 0)</h4>
+                        <p id="up2-desc">ينتجون تلقائياً +1 ذهب كل ثانية.</p>
+                    </div>
+                    <button id="btn-up2" class="btn" onclick="buyUpgrade('miner')">توظيف (150 🪙)</button>
+                </div>
+
+                <!-- تقوية سور القرية للدفاع ليلاً -->
+                <div class="upgrade-card">
+                    <div class="upgrade-info">
+                        <h4 id="up3-title">صحة السور 🧱 (مستوى 1)</h4>
+                        <p id="up3-desc">تزيد صحة دفاعك ضد هجمات الوحوش.</p>
+                    </div>
+                    <button id="btn-up3" class="btn" onclick="buyUpgrade('wall')">تقوية (200 🪙)</button>
+                </div>
+
+                <!-- ترقية قوة الهجوم ضد وحوش الليل -->
+                <div class="upgrade-card">
+                    <div class="upgrade-info">
+                        <h4 id="up4-title">قوة السيف ⚔️ (مستوى 1)</h4>
+                        <p id="up4-desc">تزيد ضربتك للوحوش ليلاً بـ +5 ضرر.</p>
+                    </div>
+                    <button id="btn-up4" class="btn" onclick="buyUpgrade('sword')">تطوير (250 🪙)</button>
+                </div>
             </div>
         </div>
     </main>
 
     <footer>
-        <p>© 2026 جميع الحقوق محفوظة لـ <a href="#">موقع ألعاب gohn</a>. بياناتك محفوظة تلقائياً في متصفحك! 💾</p>
+        <p>© 2026 جميع بيانات قريتك وجيشك محفوظة تلقائياً في ذاكرة المتصفح! 💾</p>
     </footer>
 
     <script>
-        // ==================== [قاعدة بيانات JavaScript المدمجة] ====================
-        // هذه الدالة تقرأ البيانات المخزنة بالكامل في المتصفح حتى لو تم عمل Refresh
-        function getSavedData() {
-            const saved = localStorage.getItem('gohn_game_save');
+        // ==================== [قاعدة بيانات المتصفح بجافا سكريبت] ====================
+        function getSavedProgress() {
+            const saved = localStorage.getItem('village_defender_save');
             if (saved) {
                 return JSON.parse(saved);
             }
-            return { gold: 0, xp: 0, level: 1 }; // قيم البداية الافتراضية
+            // القيم الافتراضية عند تشغيل اللعبة لأول مرة
+            return {
+                gold: 0,
+                xp: 0,
+                level: 1,
+                clickPower: 1,
+                minerCount: 0,
+                wallMaxHp: 100,
+                swordPower: 10,
+                // مستويات التطوير للشراء
+                upgrades: { click: 1, miner: 0, wall: 1, sword: 1 }
+            };
         }
 
-        // حفظ البيانات فورياً في المتصفح
-        function saveGameToBrowser() {
-            localStorage.setItem('gohn_game_save', JSON.stringify(gameData));
+        function saveProgress() {
+            localStorage.setItem('village_defender_save', JSON.stringify(game));
             updateUI();
         }
 
-        // مسح الذاكرة وتصفير النقاط بالكامل
-        function resetSave() {
-            if(confirm("هل أنت متأكد أنك تريد تصفير النقاط والذهب والبدء من جديد؟")) {
-                gameData = { gold: 0, xp: 0, level: 1 };
-                saveGameToBrowser();
-                alert("تم تصفير الذاكرة السحابية لمتصفحك بنجاح! 🔄");
+        function resetAllData() {
+            if (confirm("هل تريد تصفير تقدم قريتك بالكامل والبدء من جديد؟")) {
+                localStorage.removeItem('village_defender_save');
+                game = getSavedProgress();
+                saveProgress();
+                location.reload(); // إعادة تحميل الصفحة لتطبيق التغييرات
             }
         }
 
         // ==================== [متغيرات وحالة اللعب] ====================
-        let gameData = getSavedData(); // تحميل البيانات فور فتح الصفحة
-        let isPlaying = true;
-        let isNightTime = false;
-        let cycleTimer = 20; // تغيير الطقس كل 20 ثانية لتسريع الإثارة
-        let lasers = [];
-        let enemies = [];
-        let gameLoopId = null;
-        let enemySpawnTimerId = null;
-        let cycleTimerId = null;
+        let game = getSavedProgress();
+        let isNight = false;
+        let timeRemaining = 15; // 15 ثانية للنهار و15 ثانية لليل (سريع وممتع)
+        
+        // متغيرات المعركة ليلاً
+        let currentMonsterHp = 50;
+        let maxMonsterHp = 50;
+        let currentWallHp = game.wallMaxHp;
 
-        const container = document.getElementById('game-container');
-        const playerCannon = document.getElementById('player-cannon');
-        const skyElement = document.getElementById('sky-element');
+        // عناصر واجهة المستخدم
+        const playground = document.getElementById('playground');
         const timeBadge = document.getElementById('time-badge');
+        const actionBtn = document.getElementById('action-btn');
+        const actionLabel = document.getElementById('action-label');
+        const wallHpWrapper = document.getElementById('wall-hp-wrapper');
+        const wallHpFill = document.getElementById('wall-hp-fill');
 
-        // تحديث الأرقام والواجهات البصرية
-        function updateUI() {
-            document.getElementById('lbl-level').innerText = gameData.level;
-            document.getElementById('lbl-gold').innerText = gameData.gold;
+        // ==================== [ميكانيكية وطقوس اللعبة] ====================
+        
+        // 1. الدورة التلقائية للوقت (الليل والنهار) وكل ثانية
+        setInterval(() => {
+            timeRemaining--;
             
-            const nextLevelXp = gameData.level * 100;
-            document.getElementById('lbl-xp').innerText = `${gameData.xp}/${nextLevelXp}`;
-            
-            const xpPercentage = (gameData.xp / nextLevelXp) * 100;
-            document.getElementById('xp-fill-bar').style.width = `${xpPercentage}%`;
-        }
-
-        // ==================== [ميكانيكية تحرك المدفع وإطلاق الليزر] ====================
-        // التحكم بحركة الفأرة (Mouse)
-        container.addEventListener('mousemove', (e) => {
-            if (!isPlaying) return;
-            const rect = container.getBoundingClientRect();
-            let relativeX = e.clientX - rect.left;
-            // إبقاء المدفع داخل الصندوق
-            relativeX = Math.max(25, Math.min(relativeX, rect.width - 25));
-            playerCannon.style.left = `${relativeX}px`;
-        });
-
-        // إطلاق الليزر عند الضغط
-        container.addEventListener('click', (e) => {
-            if (!isPlaying) return;
-            fireLaser();
-        });
-
-        // التحكم باللمس للهواتف الذكية (Touch Screen)
-        container.addEventListener('touchmove', (e) => {
-            if (!isPlaying) return;
-            const rect = container.getBoundingClientRect();
-            let relativeX = e.touches[0].clientX - rect.left;
-            relativeX = Math.max(25, Math.min(relativeX, rect.width - 25));
-            playerCannon.style.left = `${relativeX}px`;
-        });
-
-        function fireLaser() {
-            // تحديد موقع المدفع لإطلاق الشعاع منه بدقة
-            const cannonLeft = parseFloat(window.getComputedStyle(playerCannon).left);
-            
-            const laser = document.createElement('div');
-            laser.className = 'laser';
-            laser.style.left = `${cannonLeft - 2}px`;
-            laser.style.bottom = '55px'; // فوق المدفع مباشرة
-            container.appendChild(laser);
-            
-            lasers.push({
-                element: laser,
-                y: 55
-            });
-        }
-
-        // ==================== [توليد الأهداف والهابطين من السماء] ====================
-        function spawnEnemy() {
-            if (!isPlaying) return;
-            
-            const enemy = document.createElement('div');
-            enemy.className = 'enemy';
-            
-            // تحديد نوع الكتلة المتساقطة
-            let type = 'normal';
-            let emoji = '📦';
-            
-            const rand = Math.random();
-            if (!isNightTime) {
-                // نهار: كتل ذهبية (70%)، نيازك طاقة زرقاء (30%)
-                if (rand < 0.7) {
-                    type = 'gold-block';
-                    emoji = '🪙';
-                } else {
-                    type = 'blue-crystal';
-                    emoji = '💎';
-                }
-            } else {
-                // ليل: كتل نارية حمراء ملعونة (50%)، كرات طاقة خارقة بنفسجية (50%)
-                if (rand < 0.5) {
-                    type = 'fire-hazard';
-                    emoji = '🔥';
-                } else {
-                    type = 'shadow-crystal';
-                    emoji = '✨';
-                }
+            // إضافة إنتاج عمال المناجم التلقائي في النهار فقط!
+            if (!isNight && game.minerCount > 0) {
+                game.gold += game.minerCount;
+                saveProgress();
             }
-            
-            enemy.innerText = emoji;
-            enemy.dataset.type = type;
-            
-            const containerWidth = container.offsetWidth;
-            const xPos = Math.random() * (containerWidth - 40);
-            enemy.style.left = `${xPos}px`;
-            enemy.style.top = '0px';
-            
-            container.appendChild(enemy);
-            
-            enemies.push({
-                element: enemy,
-                x: xPos,
-                y: 0,
-                speed: 2 + (gameData.level * 0.4) // تزداد سرعة الهبوط تدريجياً مع ارتفاع الليفل لزيادة التحدي والمرح!
-            });
+
+            // محاكاة معركة الليل (الوحش يضرب السور تلقائياً كل ثانية)
+            if (isNight) {
+                currentWallHp -= 10; // الوحش يضرب السور بـ 10 ضرر
+                if (currentWallHp <= 0) {
+                    currentWallHp = 0;
+                    // عقاب هزيمة السور: خسارة بعض الذهب وهرب الوحش!
+                    const loss = Math.floor(game.gold * 0.15); // خسارة 15% من الذهب
+                    game.gold = Math.max(0, game.gold - loss);
+                    alert(`🚨 اخترق الوحش السور ودمر مخازنك! سرق منك ${loss} 🪙 ذهبة! قم بتقوية السور والدفاع.`);
+                    forceDaytime();
+                }
+                updateWallHpBar();
+            }
+
+            // تبدل الأطوار
+            if (timeRemaining <= 0) {
+                toggleTimeCycle();
+            } else {
+                updateTimeBadge();
+            }
+        }, 1000);
+
+        function updateTimeBadge() {
+            const modeText = isNight ? "🌙 ليل" : "☀️ نهار";
+            timeBadge.innerText = `${modeText} (متبقي ${timeRemaining} ثانية)`;
         }
 
-        // ==================== [دورة تحديث محرك اللعبة الرئيسي] ====================
-        function updateGame() {
-            if (!isPlaying) return;
-
-            // 1. تحديث وحركة أشعة الليزر للأعلى
-            for (let i = lasers.length - 1; i >= 0; i--) {
-                let l = lasers[i];
-                l.y += 8; // سرعة انطلاق الليزر للأعلى
-                l.element.style.bottom = `${l.y}px`;
+        function toggleTimeCycle() {
+            isNight = !isNight;
+            timeRemaining = 15; // إعادة ضبط المؤقت
+            
+            if (isNight) {
+                // دخول الليل
+                playground.classList.add('night');
+                actionBtn.innerText = "👾";
+                actionLabel.innerText = "احذر! وحش يهاجم قريتك! اضغط عليه بسرعة لقتله!";
                 
-                // تدمير الشعاع إذا خرج من الشاشة
-                if (l.y > 450) {
-                    l.element.remove();
-                    lasers.splice(i, 1);
-                }
-            }
-
-            // 2. تحديث حركة الكتل المتساقطة للأسفل
-            for (let j = enemies.length - 1; j >= 0; j--) {
-                let e = enemies[j];
-                e.y += e.speed;
-                e.element.style.top = `${e.y}px`;
-
-                // إذا لمست الكتلة الأرض تفقد نقاط خبرة كعقاب بسيط!
-                if (e.y > 420) {
-                    if (e.dataset.type !== 'fire-hazard') {
-                        // الكتل النارية في الليل لا تضرك إذا سقطت بل تضرك إذا فجرتها!
-                        gameData.xp = Math.max(0, gameData.xp - 10);
-                        saveGameToBrowser();
-                    }
-                    e.element.remove();
-                    enemies.splice(j, 1);
-                    continue;
-                }
-
-                // 3. كشف التصادم بين الليزر والكتل (Collision Detection)
-                for (let i = lasers.length - 1; i >= 0; i--) {
-                    let l = lasers[i];
-                    
-                    // حساب المسافة بدقة بين شعاع الليزر والكتلة
-                    const laserLeft = parseFloat(l.element.style.left);
-                    const laserTop = 450 - l.y; 
-                    
-                    const enemyLeft = e.x;
-                    const enemyTop = e.y;
-
-                    if (
-                        laserLeft > enemyLeft - 10 &&
-                        laserLeft < enemyLeft + 40 &&
-                        laserTop > enemyTop - 15 &&
-                        laserTop < enemyTop + 35
-                    ) {
-                        // حدوث تفجير وتصادم ناجح!
-                        handleExplosion(e.dataset.type);
-                        
-                        // إزالة العناصر المصطدمة فوراً
-                        e.element.remove();
-                        enemies.splice(j, 1);
-                        
-                        l.element.remove();
-                        lasers.splice(i, 1);
-                        break; 
-                    }
-                }
-            }
-
-            gameLoopId = requestAnimationFrame(updateGame);
-        }
-
-        // معالجة تدمير الكتل وإعطاء الجوائز والمستوى
-        function handleExplosion(type) {
-            let goldGained = 0;
-            let xpGained = 0;
-
-            if (type === 'gold-block') {
-                goldGained = 15;
-                xpGained = 10;
-            } else if (type === 'blue-crystal') {
-                goldGained = 30;
-                xpGained = 20;
-            } else if (type === 'shadow-crystal') {
-                goldGained = 60; // مكافأة ضخمة في الليل!
-                xpGained = 40;
-            } else if (type === 'fire-hazard') {
-                // عقاب تفجير كتلة النار ليلاً!
-                goldGained = -20;
-                xpGained = 0;
-                // إحداث هزة حركية وحمراء بالكامل في الشاشة لجعل اللعبة حماسية وتفاعلية
-                container.classList.add('shake');
-                container.style.border = "2px solid #ff4a4a";
-                setTimeout(() => {
-                    container.classList.remove('shake');
-                    container.style.border = "2px solid var(--border-glow)";
-                }, 400);
-            }
-
-            gameData.gold = Math.max(0, gameData.gold + goldGained);
-            gameData.xp += xpGained;
-
-            // رفع اللفل عند امتلاء شريط الخبرة
-            const nextLevelXp = gameData.level * 100;
-            if (gameData.xp >= nextLevelXp) {
-                gameData.level++;
-                gameData.xp = 0;
-                alert(`🎉 كفوو! لقد ارتقيت للمستوى رقم ${gameData.level} والآن اللعبة أصبحت أسرع وأكثر حماساً!`);
-                saveGameToBrowser();
-                restartSpawner();
-            }
-
-            saveGameToBrowser(); // حفظ البيانات فوراً في Local Storage
-        }
-
-        // ==================== [نظام تبدل الليل والنهار] ====================
-        function toggleWeatherCycle() {
-            if (!isPlaying) return;
-            cycleTimer--;
-
-            if (cycleTimer <= 0) {
-                isNightTime = !isNightTime;
-                cycleTimer = 20; // 20 ثانية للدورة الجديدة
-
-                if (isNightTime) {
-                    container.classList.add('night');
-                    skyElement.className = 'sky-body moon';
-                    timeBadge.style.color = '#00ffcc';
-                    timeBadge.innerText = "🌙 وقت الليل: احذر نيران (🔥) واقتنص بلورات (✨)!";
-                } else {
-                    container.classList.remove('night');
-                    skyElement.className = 'sky-body sun';
-                    timeBadge.style.color = '#fff700';
-                    timeBadge.innerText = "☀️ وقت النهار: فجّر الكتل والذهب المتساقط بحرية!";
-                }
+                // تجهيز معركة الدفاع
+                maxMonsterHp = game.level * 60;
+                currentMonsterHp = maxMonsterHp;
+                currentWallHp = game.wallMaxHp;
+                
+                wallHpWrapper.style.display = 'block';
+                updateWallHpBar();
             } else {
-                const text = isNightTime ? "الليل 🌙" : "النهار ☀️";
-                timeBadge.innerText = `${text} (متبقي لتبدل الطقس: ${cycleTimer} ثانية)`;
+                // دخول النهار
+                forceDaytime();
             }
+            saveProgress();
         }
 
-        // ==================== [تشغيل وإيقاف اللعبة] ====================
-        function startEngine() {
-            isPlaying = true;
+        function forceDaytime() {
+            isNight = false;
+            timeRemaining = 15;
+            playground.classList.remove('night');
+            actionBtn.innerText = "⛏️";
+            actionLabel.innerText = "اضغط للتنقيب واستخراج الذهب!";
+            wallHpWrapper.style.display = 'none';
             updateUI();
-            
-            // تشغيل الرسوم المتحركة الأساسية
-            gameLoopId = requestAnimationFrame(updateGame);
-            
-            // توليد الأعداء بشكل مستمر حسب الليفل
-            restartSpawner();
-            
-            // توقيت الليل والنهار
-            cycleTimerId = setInterval(toggleWeatherCycle, 1000);
         }
 
-        function restartSpawner() {
-            clearInterval(enemySpawnTimerId);
-            const rate = Math.max(1200 - (gameData.level * 100), 500); // تزداد غزارة الهبوط مع الليفل!
-            enemySpawnTimerId = setInterval(spawnEnemy, rate);
+        function updateWallHpBar() {
+            const pct = (currentWallHp / game.wallMaxHp) * 100;
+            wallHpFill.style.width = `${pct}%`;
         }
 
-        function togglePlayState() {
-            const btn = document.getElementById('btn-pause');
-            if (isPlaying) {
-                isPlaying = false;
-                cancelAnimationFrame(gameLoopId);
-                clearInterval(enemySpawnTimerId);
-                clearInterval(cycleTimerId);
-                btn.innerText = "استئناف اللعب ▶️";
+        // ==================== [التفاعل عند الضغط (الضرب أو الحفر)] ====================
+        function handleTargetClick() {
+            if (!isNight) {
+                // نهار: تنقيب عن الذهب يدويًا
+                game.gold += game.clickPower;
+                game.xp += 5; // جمع الذهب يعطيك خبرة لزيادة ليفلك
+                checkLevelUp();
+                saveProgress();
             } else {
-                btn.innerText = "إيقاف مؤقت ⏸️";
-                startEngine();
+                // ليل: ضرب الوحش وتقليل نقاط صحته
+                currentMonsterHp -= game.swordPower;
+                if (currentMonsterHp <= 0) {
+                    // قتل الوحش بنجاح!
+                    const goldPrize = game.level * 50;
+                    const xpPrize = game.level * 40;
+                    game.gold += goldPrize;
+                    game.xp += xpPrize;
+                    
+                    alert(`⚔️ وحش مقتول! حصلت على جائزة دفاع: ${goldPrize} 🪙 و ${xpPrize} XP!`);
+                    
+                    checkLevelUp();
+                    forceDaytime(); // عودة الأمان فوراً بمجرد قتل الوحش!
+                } else {
+                    actionLabel.innerText = `صحة الوحش: ${currentMonsterHp}/${maxMonsterHp} 👾 (اضغط لضربه)`;
+                }
+                saveProgress();
             }
         }
 
-        // تشغيل اللعبة مباشرة عند فتح الصفحة
+        // ارتقاء المستويات
+        function checkLevelUp() {
+            const xpNeeded = game.level * 100;
+            if (game.xp >= xpNeeded) {
+                game.level++;
+                game.xp = 0;
+                alert(`🎉 مبروك! ارتقت قريتك للمستوى (Level ${game.level})! زادت أرباحك وتضاعفت مكافآتك!`);
+            }
+        }
+
+        // ==================== [نظام المتجر والشراء والتحديثات] ====================
+        function buyUpgrade(type) {
+            if (type === 'click') {
+                const cost = game.upgrades.click * 100;
+                if (game.gold >= cost) {
+                    game.gold -= cost;
+                    game.clickPower += 1;
+                    game.upgrades.click += 1;
+                }
+            } else if (type === 'miner') {
+                const cost = (game.upgrades.miner + 1) * 150;
+                if (game.gold >= cost) {
+                    game.gold -= cost;
+                    game.minerCount += 1;
+                    game.upgrades.miner += 1;
+                }
+            } else if (type === 'wall') {
+                const cost = game.upgrades.wall * 200;
+                if (game.gold >= cost) {
+                    game.gold -= cost;
+                    game.wallMaxHp += 50;
+                    game.upgrades.wall += 1;
+                }
+            } else if (type === 'sword') {
+                const cost = game.upgrades.sword * 250;
+                if (game.gold >= cost) {
+                    game.gold -= cost;
+                    game.swordPower += 8;
+                    game.upgrades.sword += 1;
+                }
+            }
+            saveProgress();
+        }
+
+        // ==================== [تحديث الشاشات واللوحات والأزرار] ====================
+        function updateUI() {
+            document.getElementById('stat-gold').innerText = game.gold;
+            document.getElementById('stat-level').innerText = game.level;
+            document.getElementById('stat-income').innerText = `+${game.minerCount}/ث`;
+
+            // شريط الـ XP
+            const xpNeeded = game.level * 100;
+            const xpPct = (game.xp / xpNeeded) * 100;
+            document.getElementById('xp-fill').style.width = `${xpPct}%`;
+
+            // تحديث تكاليف ونصوص المتجر
+            const up1Cost = game.upgrades.click * 100;
+            document.getElementById('up1-title').innerText = `قوة الفأس ⛏️ (مستوى ${game.upgrades.click})`;
+            document.getElementById('btn-up1').innerText = `تطوير (${up1Cost} 🪙)`;
+            document.getElementById('btn-up1').disabled = (game.gold < up1Cost);
+
+            const up2Cost = (game.upgrades.miner + 1) * 150;
+            document.getElementById('up2-title').innerText = `عمال المناجم 👨‍🔧 (عدد ${game.minerCount})`;
+            document.getElementById('btn-up2').innerText = `توظيف (${up2Cost} 🪙)`;
+            document.getElementById('btn-up2').disabled = (game.gold < up2Cost);
+
+            const up3Cost = game.upgrades.wall * 200;
+            document.getElementById('up3-title').innerText = `صحة السور 🧱 (مستوى ${game.upgrades.wall})`;
+            document.getElementById('btn-up3').innerText = `تقوية (${up3Cost} 🪙)`;
+            document.getElementById('btn-up3').disabled = (game.gold < up3Cost);
+
+            const up4Cost = game.upgrades.sword * 250;
+            document.getElementById('up4-title').innerText = `قوة السيف ⚔️ (مستوى ${game.upgrades.sword})`;
+            document.getElementById('btn-up4').innerText = `تطوير (${up4Cost} 🪙)`;
+            document.getElementById('btn-up4').disabled = (game.gold < up4Cost);
+        }
+
+        // تشغيل اللعبة وتحديث الواجهة مباشرة عند فتح الصفحة
         window.onload = () => {
-            startEngine();
+            updateUI();
+            updateTimeBadge();
         };
     </script>
 </body>
