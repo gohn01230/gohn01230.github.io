@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة gohn الرقمية 🚀</title>
     <style>
-        /* إعدادات وتنسيقات التصميم الأساسية */
+        /* تصميم عصري بنمط الـ Cyberpunk / Dark Neon */
         * {
             margin: 0;
             padding: 0;
@@ -13,20 +13,20 @@
         }
 
         :root {
-            --primary: #00ffcc;
-            --primary-hover: #00b38f;
-            --secondary: #ff006e;
-            --accent: #8338ec;
-            --bg-dark: #0a0f0d;
-            --card-bg: rgba(25, 30, 28, 0.75);
-            --border-glow: rgba(0, 255, 204, 0.15);
-            --text-main: #ffffff;
-            --text-muted: #a0aec0;
+            --primary: #00f0ff; /* نيون أزرق */
+            --primary-glow: rgba(0, 240, 255, 0.3);
+            --secondary: #ff007f; /* نيون فوشيا */
+            --secondary-glow: rgba(255, 0, 127, 0.3);
+            --accent: #9d4edd;
+            --bg-dark: #060913;
+            --card-bg: rgba(11, 17, 32, 0.85);
+            --text-main: #f0f4f8;
+            --text-muted: #8a99ad;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: radial-gradient(circle at center, #14221f 0%, var(--bg-dark) 100%);
+            background: radial-gradient(circle at top, #0f172a 0%, var(--bg-dark) 100%);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
@@ -35,423 +35,344 @@
             overflow-x: hidden;
         }
 
-        /* الهيدر (شريط التنقل العلوي) */
+        /* الهيدر العلوي */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 5%;
-            background: rgba(10, 15, 13, 0.5);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px 8%;
+            background: rgba(6, 9, 19, 0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--primary-glow);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            animation: pulse 2s ease-in-out infinite;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px var(--primary-glow);
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-
-        /* الأزرار المشتركة */
+        /* الأزرار الاحترافية مع تأثير التوهج */
         .btn {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-            color: #0c1210;
-            padding: 12px 28px;
-            font-weight: 700;
-            border-radius: 30px;
+            background: linear-gradient(135deg, var(--primary) 0%, #00b8d4 100%);
+            color: #020617;
+            padding: 14px 32px;
+            font-weight: 800;
+            border-radius: 12px;
             border: none;
             cursor: pointer;
-            font-size: 0.95rem;
-            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.2);
+            font-size: 1rem;
+            box-shadow: 0 0 15px var(--primary-glow);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: left 0.3s ease;
-            z-index: -1;
-        }
-
-        .btn:hover::before {
-            left: 100%;
+            gap: 10px;
         }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 255, 204, 0.4);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 25px var(--primary);
         }
 
-        .btn:active {
-            transform: scale(0.95);
-        }
+        .btn:active { transform: scale(0.98); }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.03);
             color: var(--text-main);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: none;
         }
 
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+            background: rgba(255, 0, 127, 0.1);
+            border-color: var(--secondary);
+            box-shadow: 0 0 15px var(--secondary-glow);
+            color: white;
         }
 
-        /* المحتوى الرئيسي للموقع */
+        /* الكارت الزجاجي الرئيسي بتصميم جديد */
         main {
             flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 40px 20px;
-            perspective: 1000px;
+            padding: 60px 20px;
         }
 
         .glass-card {
-            max-width: 800px;
+            max-width: 750px;
             width: 100%;
             background: var(--card-bg);
             border-radius: 24px;
-            padding: 40px;
-            box-sizing: border-box;
-            border: 1px solid var(--border-glow);
-            backdrop-filter: blur(15px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 
-                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            animation: slideUp 0.6s ease-out;
+            padding: 45px;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            backdrop-filter: blur(25px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8), 
+                        inset 0 1px 1px rgba(255, 255, 255, 0.05);
         }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* واجهة ما قبل تسجيل الدخول */
-        .hero-section {
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
+        /* قسم الزائر */
         .hero-section h1 {
-            font-size: 2.8rem;
-            margin-top: 0;
+            font-size: 3rem;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, #ffffff 0%, var(--primary) 50%, var(--secondary) 100%);
+            background: linear-gradient(135deg, #fff 30%, var(--primary) 70%, var(--secondary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 900;
-            text-shadow: 0 0 30px rgba(0, 255, 204, 0.1);
-            line-height: 1.3;
         }
 
         .hero-section p {
             color: var(--text-muted);
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             line-height: 1.8;
             margin-bottom: 40px;
         }
 
-        /* زر تسجيل الدخول */
-        .login-button-wrapper {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn-google {
-            background: linear-gradient(135deg, #4285F4 0%, #34A853 100%);
-            font-size: 1rem;
-            padding: 14px 32px;
-            box-shadow: 0 6px 20px rgba(66, 133, 244, 0.3);
-        }
-
-        /* معلومات إضافية */
-        .hero-info {
-            margin-top: 50px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-        }
-
-        .info-item {
-            text-align: center;
-        }
-
-        .info-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            display: inline-block;
-        }
-
-        .info-title {
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-        }
-
-        .info-desc {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        /* واجهة لوحة التحكم الشخصية */
-        .dashboard {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
+        /* البروفايل */
         .user-header {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            margin-bottom: 30px;
+            gap: 25px;
+            margin-bottom: 35px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .user-avatar {
-            width: 120px;
-            height: 120px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
-            border: 4px solid var(--primary);
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.4);
-            margin-bottom: 20px;
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
             object-fit: cover;
         }
 
         .user-welcome {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #fff;
+            margin-bottom: 5px;
         }
 
-        .user-email {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
+        .user-email { color: var(--text-muted); font-size: 0.95rem; }
 
-        /* --- 🕹️ تنسيقات اللعبة الجديدة --- */
+        /* 🕹️ منطقة اللعبة المطورة */
         .game-container {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(0, 255, 204, 0.2);
-            border-radius: 16px;
-            padding: 25px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 0, 127, 0.15);
+            border-radius: 20px;
+            padding: 30px;
             text-align: center;
-            margin: 20px 0;
+            margin: 30px 0;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
         }
 
         .game-stats {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-            font-weight: bold;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
         .stat-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px 20px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 1rem;
         }
 
-        .stat-highlight {
-            color: var(--primary);
-        }
-
-        .stat-secondary {
-            color: var(--secondary);
+        .stat-box span {
+            display: block;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-top: 5px;
         }
 
         .game-click-btn {
-            width: 150px;
-            height: 150px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
             border: none;
             background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
             color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-size: 1.6rem;
+            font-weight: 900;
             cursor: pointer;
-            box-shadow: 0 0 25px rgba(255, 0, 110, 0.4);
+            box-shadow: 0 0 30px rgba(255, 0, 127, 0.4);
             transition: transform 0.1s ease, box-shadow 0.3s ease;
-            margin: 15px auto;
+            margin: 20px auto;
             display: block;
-            outline: none;
         }
 
         .game-click-btn:active {
             transform: scale(0.92);
-            box-shadow: 0 0 35px rgba(255, 0, 110, 0.7);
+            box-shadow: 0 0 45px var(--secondary);
         }
 
         .game-click-btn:disabled {
-            background: #333;
-            color: #777;
+            background: #1e293b;
+            color: #475569;
             box-shadow: none;
             cursor: not-allowed;
         }
 
-        /* تذييل الصفحة */
+        /* 🏆 تصميم جدول المتصدرين الجديد واعتمد على Firestore تلقائياً */
+        .leaderboard-section {
+            margin-top: 35px;
+            text-align: right;
+        }
+
+        .leaderboard-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .leaderboard-table th, .leaderboard-table td {
+            padding: 14px 20px;
+            text-align: right;
+        }
+
+        .leaderboard-table th {
+            background: rgba(0, 240, 255, 0.08);
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+        }
+
+        .leaderboard-table tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: background 0.2s;
+        }
+
+        .leaderboard-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .rank-badge {
+            background: #334155;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .rank-1 { background: #eab308; color: #000; } /* ذهبي */
+        .rank-2 { background: #94a3b8; color: #000; } /* فضي */
+        .rank-3 { background: #b45309; color: #fff; } /* برونزي */
+
         footer {
             text-align: center;
-            padding: 20px;
-            font-size: 0.85rem;
+            padding: 25px;
+            font-size: 0.9rem;
             color: var(--text-muted);
-            background: rgba(10, 15, 13, 0.3);
             border-top: 1px solid rgba(255, 255, 255, 0.02);
         }
 
-        footer a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        hr {
-            border: 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            margin: 30px 0;
-        }
-
-        @media (max-width: 768px) {
-            .hero-section h1 { font-size: 2rem; }
-            .glass-card { padding: 25px; }
-            .game-stats { flex-direction: column; gap: 10px; }
-        }
+        footer a { color: var(--primary); text-decoration: none; }
     </style>
 
-    <!-- استدعاء مكتبات Firebase القديمة والموثوقة بموقعك -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-    <!-- الهيدر العلوي -->
     <header>
-        <a href="#" class="logo">⚡ gohn</a>
+        <a href="#" class="logo">⚡ GOHN</a>
         <div id="nav-auth-area"></div>
     </header>
 
-    <!-- المحتوى الرئيسي -->
     <main>
         <div class="glass-card">
             
             <!-- واجهة الزائر -->
-            <div id="guest-view" class="hero-section">
-                <h1>🌟 مرحباً بك في عالم gohn الرقمي</h1>
-                <p>مساحتك الخاصة للألعاب المشوقة، الأدوات الذكية والمشاريع البرمجية المبتكرة. سجل دخولك الآن وابدأ الرحلة المثيرة معنا!</p>
-                
-                <div class="login-button-wrapper">
-                    <button class="btn btn-google" onclick="loginWithGoogle()">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12.24 10.285V13.4h6.887C18.2 15.614 15.645 18 12.24 18c-3.86 0-7-3.14-7-7s3.14-7 7-7c1.7 0 3.3.65 4.5 1.8l2.423-2.424C17.347 1.6 14.93 1 12.24 1 6.58 1 2 5.58 2 11.24s4.58 10.24 10.24 10.24c5.795 0 10.254-4.074 10.254-10.24 0-.695-.083-1.36-.23-1.956H12.24z"/>
-                        </svg>
-                        دخول عبر Google
-                    </button>
-                </div>
-
-                <div class="hero-info">
-                    <div class="info-item">
-                        <div class="info-icon">🎮</div>
-                        <div class="info-title">ألعاب ممتعة</div>
-                        <div class="info-desc">العب واستمتع بتجارب فريدة</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-icon">🔒</div>
-                        <div class="info-title">آمن وموثوق</div>
-                        <div class="info-desc">بيانات محمية تماماً</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-icon">⚡</div>
-                        <div class="info-title">سريع جداً</div>
-                        <div class="info-desc">أداء عالي ورائع</div>
-                    </div>
-                </div>
+            <div id="guest-view" class="hero-section" style="text-align: center;">
+                <h1>بوابة GOHN الرقمية</h1>
+                <p>تحدى أصدقائك في أسرع الألعاب السحابية، وسجّل اسمك الآن في قائمة المتصدرين العالمية!</p>
+                <button class="btn" onclick="loginWithGoogle()">تسجيل الدخول عبر Google 🚀</button>
             </div>
 
             <!-- لوحة التحكم الشخصية واللعبة -->
             <div id="user-view" class="dashboard">
                 <div class="user-header">
-                    <img id="user-img" class="user-avatar" src="" alt="صورة المستخدم">
-                    <div id="user-name" class="user-welcome">اسم المستخدم</div>
-                    <div id="user-email" class="user-email">البريد الإلكتروني</div>
+                    <img id="user-img" class="user-avatar" src="" alt="Avatar">
+                    <div>
+                        <div id="user-name" class="user-welcome">اسم المستخدم</div>
+                        <div id="user-email" class="user-email">البريد الإلكتروني</div>
+                    </div>
                 </div>
 
-                <hr>
-
-                <!-- 🕹️ واجهة اللعبة المدمجة -->
+                <!-- اللعبة -->
                 <div class="game-container">
-                    <h2 style="color: var(--primary); margin-bottom: 15px;">⚡ تحدي النقر السريع ⚡</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 15px; font-size: 0.9rem;">اضغط على الزر بأقصى سرعة قبل انتهاء الوقت لحفظ سكورك العالي!</p>
+                    <h2 style="color: var(--secondary); margin-bottom: 20px; font-weight: 900;">🎯 تحدي النقرات الخارقة 🎯</h2>
                     
                     <div class="game-stats">
-                        <div class="stat-box">النقاط الحالية: <span id="current-score" class="stat-highlight">0</span></div>
-                        <div class="stat-box">الوقت المتبقي: <span id="game-timer" class="stat-secondary">30</span> ثانية</div>
-                        <div class="stat-box">أعلى سكور لك: <span id="best-score" style="color: #ffb703;">جاري التحميل..</span></div>
+                        <div class="stat-box">النقاط الحالية <span id="current-score" style="color: var(--primary);">0</span></div>
+                        <div class="stat-box">الوقت المتبقي <span id="game-timer" style="color: var(--secondary);">30</span></div>
+                        <div class="stat-box">رقمك القياسي <span id="best-score" style="color: #eab308;">..</span></div>
                     </div>
 
-                    <button id="click-btn" class="game-click-btn" onclick="handleClick()" disabled>اضغط هنا! 🔥</button>
-                    <br>
-                    <button id="start-game-btn" class="btn" onclick="startGame()">ابدأ التحدي 🚀</button>
+                    <button id="click-btn" class="game-click-btn" onclick="handleClick()" disabled>إضغط! 🔥</button>
+                    <button id="start-game-btn" class="btn" style="margin-top: 20px; width: 100%; justify-content: center;" onclick="startGame()">ابدأ المعركة ⚔️</button>
                 </div>
 
-                <br>
+                <!-- 🏆 جدول المتصدرين الحقيقي المتصل بقاعدة البيانات -->
+                <div class="leaderboard-section">
+                    <div class="leaderboard-title">🏆 قائمة أفضل 5 لاعبين على السيرفر</div>
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 15%">الترتيب</th>
+                                <th style="width: 55%">اللاعب</th>
+                                <th style="width: 30%">أعلى سكور</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-rows">
+                            <tr>
+                                <td colspan="3" style="text-align: center; color: var(--text-muted);">جاري تحميل قائمة الأبطال...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <br><br>
                 <button class="btn btn-secondary" style="width: 100%; justify-content: center;" onclick="logout()">تسجيل الخروج 🚪</button>
             </div>
 
         </div>
     </main>
 
-    <!-- التذييل -->
     <footer>
-        <p>© 2026 موقع <a href="#">gohn الرقمي</a> | تم البناء بـ ❤️ و 🚀</p>
+        <p>© 2026 بوابة <a href="#">GOHN</a> الرقمية | جيل جديد من الألعاب السحابية</p>
     </footer>
 
     <script>
-        // 1. إعدادات Firebase الخاصة بك
+        // إعدادات Firebase الخاصة بك
         const firebaseConfig = {
             apiKey: "AIzaSyA5LlGHl9djJsx_Rs3evjd8Xzpn0e25IHI",
             authDomain: "gohn-games.firebaseapp.com",
@@ -462,13 +383,11 @@
             measurementId: "G-8PBX8E8D15"
         };
 
-        // 2. تهيئة الخدمات
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const provider = new firebase.auth.GoogleAuthProvider();
         const db = firebase.firestore();
 
-        // متغيرات اللعبة واللاعب الحالي
         let currentUser = null;
         let score = 0;
         let timeLeft = 30;
@@ -476,105 +395,98 @@
         let gameActive = false;
         let userBestScore = 0;
 
-        // تسجيل الدخول
         function loginWithGoogle() {
-            auth.signInWithPopup(provider).catch((error) => {
-                console.error("خطأ في تسجيل الدخول:", error.message);
-                alert("حدث خطأ: " + error.message);
-            });
+            auth.signInWithPopup(provider).catch((err) => alert(err.message));
         }
 
-        // تسجيل الخروج
         function logout() {
             resetGame();
-            auth.signOut().catch((error) => {
-                console.error("خطأ في تسجيل الخروج:", error.message);
-            });
+            auth.signOut();
         }
 
-        // مراقبة حالة المستخدم
         auth.onAuthStateChanged((user) => {
-            const guestView = document.getElementById('guest-view');
-            const userView = document.getElementById('user-view');
-            const navAuthArea = document.getElementById('nav-auth-area');
-            
             if (user) {
                 currentUser = user;
-                guestView.style.display = 'none';
-                userView.style.display = 'block';
+                document.getElementById('guest-view').style.display = 'none';
+                document.getElementById('user-view').style.display = 'block';
                 
-                document.getElementById('user-img').src = user.photoURL || 'https://via.placeholder.com/120?text=' + user.displayName?.charAt(0).toUpperCase();
-                document.getElementById('user-name').innerText = `مرحباً، ${user.displayName || "صديقنا"} 👋`;
-                document.getElementById('user-email').innerText = user.email || "بلا بريد";
-
-                navAuthArea.innerHTML = `<button class="btn btn-secondary" style="padding: 8px 18px; font-size: 0.9rem;" onclick="logout()">خروج 🚪</button>`;
+                document.getElementById('user-img').src = user.photoURL || '';
+                document.getElementById('user-name').innerText = user.displayName;
+                document.getElementById('user-email').innerText = user.email;
+                document.getElementById('nav-auth-area').innerHTML = `<button class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;" onclick="logout()">خروج 🚪</button>`;
                 
-                // حفظ بيانات الدخول الأساسية
-                saveUserToDatabase(user);
-                // جلب أعلى سكور مسجل للاعب من الـ Firestore
                 loadUserBestScore(user.uid);
-
+                fetchGlobalLeaderboard(); // تشغيل دالة جلب قائمة المتصدرين
             } else {
                 currentUser = null;
-                guestView.style.display = 'block';
-                userView.style.display = 'none';
-                navAuthArea.innerHTML = '';
+                document.getElementById('guest-view').style.display = 'block';
+                document.getElementById('user-view').style.display = 'none';
+                document.getElementById('nav-auth-area').innerHTML = '';
             }
         });
 
-        // حفظ بيانات الدخول الأساسية في Firestore
-        function saveUserToDatabase(user) {
-            db.collection("users").doc(user.uid).set({
-                name: user.displayName,
-                email: user.email,
-                lastLogin: new Date().toISOString()
-            }, { merge: true })
-            .catch((error) => console.error("خطأ في حفظ المستخدم:", error));
-        }
-
-        // 📊 جلب أعلى سكور للاعب من قاعدة البيانات
         function loadUserBestScore(uid) {
             db.collection("leaderboard").doc(uid).get().then((doc) => {
-                if (doc.exists) {
-                    userBestScore = doc.data().highScore || 0;
-                } else {
-                    userBestScore = 0;
-                }
+                userBestScore = doc.exists ? (doc.data().highScore || 0) : 0;
                 document.getElementById('best-score').innerText = userBestScore;
-            }).catch((error) => {
-                console.error("خطأ في جلب السكور:", error);
-                document.getElementById('best-score').innerText = "0";
-            });
+            }).catch(() => document.getElementById('best-score').innerText = "0");
         }
 
-        // 🕹️ ميكانيكية اللعبة
+        // 🔥 الدالة السحرية لعرض البيانات من الـ Firestore فوراً في الموقع وترتيبها من الأعلى للأقل
+        function fetchGlobalLeaderboard() {
+            db.collection("leaderboard")
+              .orderBy("highScore", "desc") // ترتيب تنازلي حسب السكور الأعلى
+              .limit(5)                     // جلب أفضل 5 لاعبين فقط
+              .onSnapshot((snapshot) => {   // استماع مباشر للتغييرات (Real-time)
+                  const tbody = document.getElementById('leaderboard-rows');
+                  tbody.innerHTML = ""; // تنظيف الجدول القديم
+
+                  if (snapshot.empty) {
+                      tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">لا توجد سكورات مسجلة بعد، كن الأول! 🏆</td></tr>`;
+                      return;
+                  }
+
+                  let rank = 1;
+                  snapshot.forEach((doc) => {
+                      const data = doc.data();
+                      let badgeClass = `rank-badge rank-${rank}`;
+                      if (rank > 3) badgeClass = `rank-badge`;
+
+                      const rowHTML = `
+                          <tr>
+                              <td><span class="${badgeClass}">${rank}</span></td>
+                              <td style="font-weight: 600;">${data.playerName || 'لاعب مجهول'}</td>
+                              <td style="color: var(--primary); font-weight: bold; font-size: 1.1rem;">${data.highScore || 0}</td>
+                          </tr>
+                      `;
+                      tbody.innerHTML += rowHTML;
+                      rank++;
+                  });
+              }, (error) => {
+                  console.error("خطأ في جلب لوحة المتصدرين:", error);
+              });
+        }
+
         function startGame() {
             if (gameActive) return;
-
-            score = 0;
-            timeLeft = 30;
-            gameActive = true;
-
+            score = 0; timeLeft = 30; gameActive = true;
             document.getElementById('current-score').innerText = score;
             document.getElementById('game-timer').innerText = timeLeft;
             document.getElementById('click-btn').disabled = false;
-            document.getElementById('start-game-btn').innerText = "إعادة اللعب 🔄";
             document.getElementById('start-game-btn').disabled = true;
 
             timerInterval = setInterval(() => {
                 timeLeft--;
                 document.getElementById('game-timer').innerText = timeLeft;
-
-                if (timeLeft <= 0) {
-                    endGame();
-                }
+                if (timeLeft <= 0) endGame();
             }, 1000);
         }
 
         function handleClick() {
-            if (!gameActive) return;
-            score++;
-            document.getElementById('current-score').innerText = score;
+            if (gameActive) {
+                score++;
+                document.getElementById('current-score').innerText = score;
+            }
         }
 
         function endGame() {
@@ -583,9 +495,8 @@
             document.getElementById('click-btn').disabled = true;
             document.getElementById('start-game-btn').disabled = false;
 
-            alert(`🎉 انتهى الوقت! مجموع نقاطك هو: ${score}`);
+            alert(`🎮 انتهت اللعبة! نقاطك الحالية: ${score}`);
 
-            // 💾 مقارنة السكور الحالي بالـ Best Score وحفظه في Firestore لو أعلى!
             if (score > userBestScore && currentUser) {
                 userBestScore = score;
                 document.getElementById('best-score').innerText = userBestScore;
@@ -595,26 +506,18 @@
                     playerEmail: currentUser.email,
                     highScore: userBestScore,
                     achievedAt: new Date().toISOString()
-                })
-                .then(() => {
-                    console.log("🚀 تم تسجيل السكور العالي الجديد في الـ Firestore!");
-                    alert("🥳 مبروك! حققت رقم قياسي جديد وتم حفظه في السيرفر!");
-                })
-                .catch((error) => {
-                    console.error("خطأ أثناء حفظ السكور العالي:", error);
+                }).then(() => {
+                    alert("⚡ رقم قياسي جديد! تم التحديث في لوحة المتصدرين العامة.");
                 });
             }
         }
 
         function resetGame() {
             clearInterval(timerInterval);
-            score = 0;
-            timeLeft = 30;
-            gameActive = false;
+            score = 0; timeLeft = 30; gameActive = false;
             document.getElementById('current-score').innerText = "0";
             document.getElementById('game-timer').innerText = "30";
             document.getElementById('click-btn').disabled = true;
-            document.getElementById('start-game-btn').innerText = "ابدأ التحدي 🚀";
             document.getElementById('start-game-btn').disabled = false;
         }
     </script>
