@@ -77,6 +77,7 @@
             top: 0;
             right: -400px;
             width: 350px;
+            max-width: 90%;
             height: 100vh;
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(20px);
@@ -98,6 +99,36 @@
             font-family: 'Tajawal', sans-serif;
         }
         .admin-form-group textarea { resize: vertical; min-height: 80px; }
+        
+        .admin-game-list {
+            margin-top: 20px;
+            border-top: 2px solid var(--panel-border);
+            padding-top: 15px;
+        }
+        .admin-game-item {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-game-item .game-name { font-weight: 700; font-size: 0.9rem; }
+        .admin-game-item .game-type { font-size: 0.75rem; color: var(--text-muted); }
+        .delete-btn {
+            background: var(--btn-danger-bg);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.8rem;
+            box-shadow: 0 3px 0 var(--btn-danger-shadow);
+        }
+        .delete-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--btn-danger-shadow); }
 
         .container { width: 92%; max-width: 500px; margin-top: 20px; flex: 1; }
 
@@ -195,14 +226,22 @@
         .toast-notification.success { border-left-color: var(--btn-games-bg); }
         .toast-notification.danger { border-left-color: var(--btn-danger-bg); }
 
-        .online-games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        /* بطاقات الألعاب الأفقية */
+        .games-grid-horizontal {
+            display: flex;
+            overflow-x: auto;
             gap: 15px;
             padding: 10px 5px 20px 5px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
         }
+        .games-grid-horizontal::-webkit-scrollbar { height: 6px; }
+        .games-grid-horizontal::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
         .game-cover-card {
+            min-width: 220px;
+            flex-shrink: 0;
+            scroll-snap-align: center;
             background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.6));
             border: 3px solid rgba(255,255,255,0.8);
             border-radius: 20px;
@@ -251,6 +290,8 @@
             background-size: cover;
             background-position: center;
         }
+        .thumb-space { background: linear-gradient(135deg, #0f172a, #1e293b); }
+        .thumb-pvz { background: linear-gradient(135deg, #22c55e, #16a34a); }
         .thumb-xo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
         .thumb-tap { background: linear-gradient(135deg, #f59e0b, #d97706); }
         .thumb-rps { background: linear-gradient(135deg, #ef4444, #dc2626); }
@@ -272,6 +313,16 @@
             margin-top: 5px;
         }
 
+        /* لعبة الفضاء */
+        #space-canvas {
+            background: #0f172a;
+            border-radius: 16px;
+            display: block;
+            margin: 15px auto;
+            max-width: 100%;
+            border: 3px solid rgba(255,255,255,0.5);
+        }
+
         /* لعبة Plants vs Zombies */
         #pvz-canvas {
             background: #4a7c23;
@@ -280,6 +331,7 @@
             margin: 15px auto;
             border: 3px solid #2d5016;
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            max-width: 100%;
         }
         .pvz-controls {
             display: flex;
@@ -296,8 +348,8 @@
             cursor: pointer;
             transition: all 0.2s;
             font-size: 2rem;
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -308,10 +360,6 @@
             border-color: var(--btn-games-bg);
             background: #dcfce7;
             box-shadow: 0 0 10px var(--btn-games-bg);
-        }
-        .plant-selector.disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
         }
 
         .xo-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 280px; margin: 0 auto 20px auto; }
@@ -390,19 +438,15 @@
         <h3>🎮 لوحة تحكم المالك</h3>
         <div class="admin-form-group">
             <label>اسم اللعبة:</label>
-            <input type="text" id="admin-game-name" placeholder="مثال: Plants vs Zombies">
+            <input type="text" id="admin-game-name" placeholder="مثال: لعبة جديدة">
         </div>
         <div class="admin-form-group">
             <label>وصف اللعبة:</label>
-            <textarea id="admin-game-desc" placeholder="وصف قصير للعبة..."></textarea>
+            <textarea id="admin-game-desc" placeholder="وصف قصير..."></textarea>
         </div>
         <div class="admin-form-group">
-            <label>رابط صورة اللعبة (URL):</label>
-            <input type="text" id="admin-game-image" placeholder="https://example.com/image.png">
-        </div>
-        <div class="admin-form-group">
-            <label>كود اللعبة (HTML/JS):</label>
-            <textarea id="admin-game-code" placeholder="ضع كود اللعبة هنا..." style="min-height: 150px; font-family: monospace; font-size: 0.8rem;"></textarea>
+            <label>رابط صورة اللعبة (اختياري):</label>
+            <input type="text" id="admin-game-image" placeholder="https://...">
         </div>
         <div class="admin-form-group">
             <label>نوع اللعبة:</label>
@@ -417,6 +461,11 @@
         </div>
         <button class="btn-3d btn-chat" onclick="addNewGame()">➕ إضافة اللعبة</button>
         <button class="btn-3d btn-danger-3d" style="margin-top: 10px;" onclick="toggleAdminPanel()">❌ إغلاق</button>
+        
+        <div class="admin-game-list" id="admin-game-list">
+            <h4 style="margin-bottom: 10px; color: var(--btn-danger-bg);">🗑️ الألعاب المضافة</h4>
+            <div id="custom-games-list"></div>
+        </div>
     </div>
 
     <div id="challenge-modal">
@@ -448,36 +497,35 @@
         <div id="view-main" style="display:none;">
             <div class="main-panel">
                 
-                <!-- صفحة الألعاب الفردية (أوفلاين) -->
+                <!-- صفحة الألعاب الأوفلاين (بطاقات أفقية) -->
                 <div id="page-games" class="page active">
-                    <h3 style="color:#2b6cb0; margin-bottom:5px; font-weight:800;">🎮 الألعاب الفردية</h3>
-                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">العب بنفسك واجمع الجزر!</p>
+                    <h3 style="color:#2b6cb0; margin-bottom:10px; font-weight:800; text-align:right;">🎮 الألعاب الفردية (أوفلاين)</h3>
+                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px; text-align:right;">العب بنفسك واجمع الجزر! 🥕</p>
                     
-                    <!-- لعبة الفضاء -->
-                    <div style="background: rgba(255,255,255,0.5); border-radius: 20px; padding: 15px; margin-bottom: 15px;">
-                        <h4 style="color:#6366f1; margin-bottom:5px;">🌌 معركة الفضاء</h4>
-                        <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:10px;">دمر الكويكبات واجمع الجزر!</p>
-                        <canvas id="space-canvas" width="400" height="280" style="background: #0f172a; border-radius: 16px; max-width: 100%; border: 2px solid rgba(255,255,255,0.5); margin-bottom: 10px;"></canvas>
-                        <button class="btn-3d btn-games" onclick="startSpaceGame()">ابدأ المعركة 🕹️</button>
-                    </div>
+                    <div class="games-grid-horizontal" id="offline-games-grid">
+                        <!-- بطاقة لعبة الفضاء -->
+                        <div class="game-cover-card" onclick="openOfflineGame('space')">
+                            <div class="game-thumb thumb-space">🚀</div>
+                            <div class="game-info">
+                                <h4>معركة الفضاء</h4>
+                                <p>دمر الكويكبات واجمع الجزر</p>
+                                <span class="game-prize">جائزة: حتى 50 🥕</span>
+                                <span class="game-type-badge" style="background:var(--btn-trade-bg)">أوفلاين 🎮</span>
+                            </div>
+                        </div>
 
-                    <!-- لعبة Plants vs Zombies -->
-                    <div style="background: rgba(255,255,255,0.5); border-radius: 20px; padding: 15px;">
-                        <h4 style="color:#22c55e; margin-bottom:5px;">🌻 Plants vs Zombies</h4>
-                        <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:10px;">دافع عن منزلك ضد الزومبي!</p>
-                        
-                        <div class="pvz-controls">
-                            <div class="plant-selector active" data-plant="sunflower" onclick="selectPVZPlant('sunflower')">🌻<br><small style="font-size:0.7rem">50🥕</small></div>
-                            <div class="plant-selector" data-plant="peashooter" onclick="selectPVZPlant('peashooter')">🟢<br><small style="font-size:0.7rem">100🥕</small></div>
-                            <div class="plant-selector" data-plant="wallnut" onclick="selectPVZPlant('wallnut')">🥜<br><small style="font-size:0.7rem">50🥕</small></div>
+                        <!-- بطاقة لعبة PVZ -->
+                        <div class="game-cover-card" onclick="openOfflineGame('pvz')">
+                            <div class="game-thumb thumb-pvz">🌻</div>
+                            <div class="game-info">
+                                <h4>Plants vs Zombies</h4>
+                                <p>دافع عن منزلك ضد الزومبي</p>
+                                <span class="game-prize">جائزة: 25 🥕</span>
+                                <span class="game-type-badge" style="background:var(--btn-trade-bg)">أوفلاين 🎮</span>
+                            </div>
                         </div>
-                        
-                        <canvas id="pvz-canvas" width="400" height="300"></canvas>
-                        <div style="margin: 10px 0; font-weight: 800;">
-                            الشمس: <span id="pvz-sun" style="color: #fbbf24;">150</span> 🥕 | 
-                            الموجة: <span id="pvz-wave">1</span>
-                        </div>
-                        <button class="btn-3d btn-games" onclick="startPVZGame()">🌻 ابدأ اللعبة</button>
+
+                        <!-- الألعاب الأوفلاين المخصصة ستضاف هنا -->
                     </div>
                 </div>
 
@@ -490,13 +538,43 @@
 
                     <h3 style="color:#2b6cb0; margin-bottom:10px; font-weight:800; text-align: right;">🎮 1️⃣ اختر لعبة للتحدي</h3>
                     
-                    <div class="online-games-grid" id="games-grid">
+                    <div class="games-grid-horizontal" id="online-games-grid">
                         <!-- الألعاب ستضاف هنا ديناميكياً -->
                     </div>
 
                     <div id="selection-hint" class="selection-hint">
                         ✅ تم اختيار اللعبة! الآن اضغط "تحدي ⚔️" بجانب اسم لاعب في القائمة في الأعلى.
                     </div>
+                </div>
+
+                <!-- صفحة لعبة الفضاء -->
+                <div id="page-space" class="page">
+                    <h3 style="color:#6366f1; margin-bottom:5px; font-weight:900;">🚀 معركة الفضاء</h3>
+                    <p style="color:var(--text-muted); margin-bottom:10px; font-size:0.85rem;">دمر الكويكبات واجمع الجزر!</p>
+                    <canvas id="space-canvas" width="400" height="280"></canvas>
+                    <div style="font-weight: 800; margin: 10px 0;">النقاط: <span id="space-score" style="color: var(--btn-chat-bg);">0</span></div>
+                    <button class="btn-3d btn-games" onclick="startSpaceGame()">ابدأ المعركة 🕹️</button>
+                    <button class="btn-3d btn-danger-3d" onclick="exitOfflineGame()">خروج</button>
+                </div>
+
+                <!-- صفحة لعبة PVZ -->
+                <div id="page-pvz" class="page">
+                    <h3 style="color:#22c55e; margin-bottom:5px; font-weight:900;">🌻 Plants vs Zombies</h3>
+                    <p style="color:var(--text-muted); margin-bottom:10px; font-size:0.85rem;">دافع عن منزلك ضد الزومبي!</p>
+                    
+                    <div class="pvz-controls">
+                        <div class="plant-selector active" data-plant="sunflower" onclick="selectPVZPlant('sunflower')">🌻<br><small style="font-size:0.7rem">50🥕</small></div>
+                        <div class="plant-selector" data-plant="peashooter" onclick="selectPVZPlant('peashooter')">🌱<br><small style="font-size:0.7rem">100🥕</small></div>
+                        <div class="plant-selector" data-plant="wallnut" onclick="selectPVZPlant('wallnut')">🥜<br><small style="font-size:0.7rem">50🥕</small></div>
+                    </div>
+                    
+                    <canvas id="pvz-canvas" width="400" height="300"></canvas>
+                    <div style="margin: 10px 0; font-weight: 800;">
+                        ☀️ <span id="pvz-sun" style="color: #fbbf24;">150</span> | 
+                        🌊 الموجة: <span id="pvz-wave">1</span>
+                    </div>
+                    <button class="btn-3d btn-games" onclick="startPVZGame()">🌻 ابدأ اللعبة</button>
+                    <button class="btn-3d btn-danger-3d" onclick="exitOfflineGame()">خروج</button>
                 </div>
 
                 <!-- صفحة إكس أو -->
@@ -602,6 +680,7 @@
                 if(user.email === OWNER_EMAIL) {
                     isAdmin = true;
                     document.getElementById('admin-menu-btn').classList.add('show');
+                    loadCustomGamesForAdmin();
                 }
                 
                 document.getElementById('view-auth').style.display = 'none';
@@ -628,7 +707,8 @@
                     }
                 });
                 
-                loadGames();
+                loadOnlineGames();
+                loadOfflineCustomGames();
                 listenToActivePlayers();
                 listenToChallenges();
             }
@@ -638,6 +718,7 @@
             if(currentUser) db.collection("users_profile").doc(currentUser.uid).update({ status: "offline" });
         });
 
+        // --- نظام إدارة المالك ---
         function toggleAdminPanel() {
             const panel = document.getElementById('admin-panel');
             panel.classList.toggle('show');
@@ -647,35 +728,75 @@
             const name = document.getElementById('admin-game-name').value;
             const desc = document.getElementById('admin-game-desc').value;
             const image = document.getElementById('admin-game-image').value;
-            const code = document.getElementById('admin-game-code').value;
             const type = document.getElementById('admin-game-type').value;
             const prize = parseInt(document.getElementById('admin-game-prize').value);
 
-            if(!name || !code) {
-                showToast("⚠️ يجب إدخال اسم اللعبة والكود على الأقل!", "danger");
+            if(!name) {
+                showToast("⚠️ يجب إدخال اسم اللعبة!", "danger");
                 return;
             }
 
             db.collection("custom_games").add({
-                name, desc, image, code, type, prize,
+                name, desc, image, type, prize,
                 createdBy: currentUser.uid,
                 createdAt: Date.now(),
                 status: "active"
             }).then(() => {
                 showToast("✅ تم إضافة اللعبة بنجاح!", "success");
-                loadGames();
+                loadCustomGamesForAdmin();
+                loadOnlineGames();
+                loadOfflineCustomGames();
                 toggleAdminPanel();
                 document.getElementById('admin-game-name').value = '';
                 document.getElementById('admin-game-desc').value = '';
                 document.getElementById('admin-game-image').value = '';
-                document.getElementById('admin-game-code').value = '';
             }).catch(err => {
                 showToast("❌ خطأ: " + err.message, "danger");
             });
         }
 
-        function loadGames() {
-            const grid = document.getElementById('games-grid');
+        function deleteGame(gameId) {
+            if(!confirm("هل أنت متأكد من حذف هذه اللعبة؟")) return;
+            
+            db.collection("custom_games").doc(gameId).delete().then(() => {
+                showToast("✅ تم حذف اللعبة بنجاح!", "success");
+                loadCustomGamesForAdmin();
+                loadOnlineGames();
+                loadOfflineCustomGames();
+            }).catch(err => {
+                showToast("❌ خطأ في الحذف: " + err.message, "danger");
+            });
+        }
+
+        function loadCustomGamesForAdmin() {
+            const list = document.getElementById('custom-games-list');
+            list.innerHTML = '<p style="color:var(--text-muted); font-size:0.85rem;">جاري التحميل...</p>';
+            
+            db.collection("custom_games").where("status", "==", "active").onSnapshot(snapshot => {
+                if(snapshot.empty) {
+                    list.innerHTML = '<p style="color:var(--text-muted); font-size:0.85rem; text-align:center;">لا توجد ألعاب مضافة</p>';
+                    return;
+                }
+                
+                let html = '';
+                snapshot.forEach(doc => {
+                    const game = doc.data();
+                    html += `
+                        <div class="admin-game-item">
+                            <div>
+                                <div class="game-name">${game.name}</div>
+                                <div class="game-type">${game.type === 'online' ? '👥 أونلاين' : '🎮 أوفلاين'} - ${game.prize} 🥕</div>
+                            </div>
+                            <button class="delete-btn" onclick="deleteGame('${doc.id}')">🗑️ حذف</button>
+                        </div>
+                    `;
+                });
+                list.innerHTML = html;
+            });
+        }
+
+        function loadOnlineGames() {
+            const grid = document.getElementById('online-games-grid');
             grid.innerHTML = '';
 
             const defaultGames = [
@@ -688,11 +809,30 @@
                 grid.appendChild(createGameCard(game.id, game.name, game.desc, game.icon, game.type, game.prize, game.class));
             });
 
-            db.collection("custom_games").where("status", "==", "active").onSnapshot(snapshot => {
+            db.collection("custom_games").where("status", "==", "active").where("type", "==", "online").onSnapshot(snapshot => {
                 snapshot.forEach(doc => {
                     const game = doc.data();
                     const icon = game.image ? `<img src="${game.image}" style="width:100%; height:100%; object-fit:cover; border-radius:16px;">` : '🎮';
                     grid.appendChild(createGameCard(doc.id, game.name, game.desc, icon, game.type, game.prize, null, true));
+                });
+            });
+        }
+
+        function loadOfflineCustomGames() {
+            const grid = document.getElementById('offline-games-grid');
+            
+            // إزالة الألعاب المخصصة القديمة فقط (الافتراضية تبقى)
+            const customCards = grid.querySelectorAll('.custom-offline-card');
+            customCards.forEach(card => card.remove());
+            
+            db.collection("custom_games").where("status", "==", "active").where("type", "==", "offline").onSnapshot(snapshot => {
+                snapshot.forEach(doc => {
+                    const game = doc.data();
+                    const icon = game.image ? `<img src="${game.image}" style="width:100%; height:100%; object-fit:cover; border-radius:16px;">` : '🎮';
+                    const card = createGameCard(doc.id, game.name, game.desc, icon, game.type, game.prize, null, true);
+                    card.classList.add('custom-offline-card');
+                    card.onclick = () => showToast("🎮 هذه اللعبة المخصصة قيد التطوير!", "info");
+                    grid.appendChild(card);
                 });
             });
         }
@@ -702,7 +842,10 @@
             div.className = 'game-cover-card';
             div.dataset.game = id;
             div.dataset.type = type;
-            div.onclick = () => selectGame(id, type);
+            
+            if(type === 'online') {
+                div.onclick = () => selectGame(id, type);
+            }
             
             const typeBadge = type === 'online' ? '<span class="game-type-badge" style="background:var(--btn-games-bg)">أونلاين 👥</span>' : 
                               '<span class="game-type-badge" style="background:var(--btn-trade-bg)">أوفلاين 🎮</span>';
@@ -722,27 +865,40 @@
 
         function selectGame(gameId, gameType) {
             selectedGame = { id: gameId, type: gameType };
-            document.querySelectorAll('.game-cover-card').forEach(card => {
+            document.querySelectorAll('#online-games-grid .game-cover-card').forEach(card => {
                 card.classList.remove('selected');
             });
-            document.querySelector(`.game-cover-card[data-game="${gameId}"]`).classList.add('selected');
+            const targetCard = document.querySelector(`#online-games-grid .game-cover-card[data-game="${gameId}"]`);
+            if(targetCard) targetCard.classList.add('selected');
             document.getElementById('selection-hint').classList.add('show');
             
             const gameName = gameId === 'xo' ? 'إكس أو' : 
                             gameId === 'tap' ? 'حرب السرعة' : 
                             gameId === 'rps' ? 'حجر ورقة مقص' : 'لعبة مخصصة';
             
-            showToast(`تم اختيار: ${gameName} (${gameType === 'online' ? 'أونلاين' : 'أوفلاين'})`, "success", "✅");
+            showToast(`تم اختيار: ${gameName}`, "success", "✅");
+        }
+
+        function openOfflineGame(gameId) {
+            if(gameId === 'space') {
+                switchTab('space');
+                initSpaceCanvas();
+            } else if(gameId === 'pvz') {
+                switchTab('pvz');
+                initPVZCanvas();
+            }
+        }
+
+        function exitOfflineGame() {
+            if(spaceInterval) { clearInterval(spaceInterval); spaceInterval = null; }
+            if(pvzInterval) { clearInterval(pvzInterval); pvzInterval = null; }
+            pvzGameActive = false;
+            switchTab('games');
         }
 
         function sendChallengeTo(targetId, targetName) {
             if(!selectedGame) {
                 showToast("⚠️ يجب اختيار لعبة أولاً!", "danger", "❌");
-                return;
-            }
-            
-            if(selectedGame.type === 'offline') {
-                showToast("⚠️ هذه اللعبة أوفلاين! لا يمكن تحدي لاعب آخر.", "danger", "❌");
                 return;
             }
             
@@ -1041,10 +1197,186 @@
             switchTab("online"); 
         }
 
-        // --- لعبة Plants vs Zombies ---
+        // ================= لعبة الفضاء (مُحسّنة) =================
+        let spaceCanvas, spaceCtx, spaceInterval = null;
+        let playerX = 185, bullets = [], enemies = [], spaceScore = 0, stars = [];
+
+        function initSpaceCanvas() {
+            spaceCanvas = document.getElementById('space-canvas');
+            spaceCtx = spaceCanvas.getContext('2d');
+            stars = [];
+            for(let i=0; i<30; i++) {
+                stars.push({
+                    x: Math.random()*400, 
+                    y: Math.random()*280, 
+                    size: Math.random()*2, 
+                    speed: Math.random()*1+0.5
+                });
+            }
+            
+            // إزالة المستمعين السابقين لتجنب التكرار
+            spaceCanvas.onmousemove = (e) => { 
+                let rect = spaceCanvas.getBoundingClientRect(); 
+                playerX = (e.clientX - rect.left) * (400 / rect.width) - 15; 
+            };
+            spaceCanvas.ontouchmove = (e) => { 
+                e.preventDefault();
+                let rect = spaceCanvas.getBoundingClientRect(); 
+                if(e.touches[0]) playerX = (e.touches[0].clientX - rect.left) * (400 / rect.width) - 15; 
+            };
+        }
+
+        function startSpaceGame() {
+            if(spaceInterval) clearInterval(spaceInterval);
+            bullets = []; enemies = []; spaceScore = 0;
+            document.getElementById('space-score').innerText = '0';
+            
+            spaceInterval = setInterval(() => {
+                spaceCtx.fillStyle = "#0f172a"; 
+                spaceCtx.fillRect(0,0,400,280);
+                
+                // النجوم
+                spaceCtx.fillStyle = "white";
+                for(let s of stars) { 
+                    s.y += s.speed; 
+                    if(s.y > 280) { s.y = 0; s.x = Math.random()*400; }
+                    spaceCtx.fillRect(s.x, s.y, s.size, s.size);
+                }
+                
+                // السفينة
+                spaceCtx.fillStyle = "#6366f1";
+                spaceCtx.beginPath(); 
+                spaceCtx.moveTo(playerX + 15, 230); 
+                spaceCtx.lineTo(playerX + 30, 260); 
+                spaceCtx.lineTo(playerX, 260); 
+                spaceCtx.fill();
+                
+                // إطلاق النار
+                if(Math.random() < 0.08) bullets.push({x: playerX + 13, y: 230});
+                spaceCtx.fillStyle = "#76db41";
+                for(let i = bullets.length - 1; i >= 0; i--) {
+                    let b = bullets[i];
+                    b.y -= 6;
+                    spaceCtx.fillRect(b.x, b.y, 4, 10);
+                    if(b.y < 0) bullets.splice(i, 1);
+                }
+
+                // الأعداء
+                if(Math.random() < 0.04) enemies.push({x: Math.random()*380, y: -10, size: 16});
+                spaceCtx.fillStyle = "#ef4444";
+                for(let i = enemies.length - 1; i >= 0; i--) {
+                    let en = enemies[i];
+                    en.y += 2.2;
+                    spaceCtx.beginPath(); 
+                    spaceCtx.arc(en.x, en.y, en.size/2, 0, Math.PI*2); 
+                    spaceCtx.fill();
+
+                    // اصطدام الرصاص بالأعداء
+                    let hitByBullet = false;
+                    for(let j = bullets.length - 1; j >= 0; j--) {
+                        let b = bullets[j];
+                        if(b.x > en.x - 10 && b.x < en.x + 10 && b.y > en.y - 10 && b.y < en.y + 10) {
+                            bullets.splice(j, 1);
+                            hitByBullet = true;
+                            break;
+                        }
+                    }
+                    
+                    if(hitByBullet) {
+                        enemies.splice(i, 1);
+                        spaceScore += 10;
+                        document.getElementById('space-score').innerText = spaceScore;
+                        continue;
+                    }
+
+                    // اصطدام العدو بالسفينة أو خروجه
+                    if(en.y > 280 || (Math.abs(en.x - (playerX+15)) < 15 && en.y > 230)) {
+                        enemies.splice(i, 1);
+                        clearInterval(spaceInterval);
+                        spaceInterval = null;
+                        
+                        let finalCarrots = Math.floor(spaceScore / 20);
+                        if(finalCarrots > 0 && currentUser) {
+                            let multiplier = (userProfile.luckBoost) ? 2 : 1;
+                            let reward = finalCarrots * multiplier;
+                            db.collection("users_profile").doc(currentUser.uid).update({ 
+                                coins: firebase.firestore.FieldValue.increment(reward), 
+                                luckBoost: false 
+                            });
+                            showToast(`💥 انتهت المعركة! ربحت ${reward} 🥕`, "success", "🥕");
+                        } else {
+                            showToast("💥 انتهت المعركة! حاول مرة أخرى.", "danger", "🛸");
+                        }
+                        return;
+                    }
+                }
+                
+                spaceCtx.fillStyle = "#fff"; 
+                spaceCtx.font = "bold 14px Tajawal"; 
+                spaceCtx.fillText("النقاط: " + spaceScore, 15, 25);
+            }, 1000/35);
+        }
+
+        // ================= لعبة PVZ (مُحسّنة بالكامل) =================
         let pvzCanvas, pvzCtx, pvzInterval;
-        let pvzSun = 150, pvzWave = 1, pvzPlants = [], pvzZombies = [], pvzProjectiles = [], pvzSelectedPlant = 'sunflower';
+        let pvzSun = 150, pvzWave = 1;
+        let pvzPlants = [], pvzZombies = [], pvzProjectiles = [], pvzSunDrops = [];
+        let pvzSelectedPlant = 'sunflower';
         let pvzGameActive = false;
+        let pvzFrameCount = 0;
+
+        function initPVZCanvas() {
+            pvzCanvas = document.getElementById('pvz-canvas');
+            pvzCtx = pvzCanvas.getContext('2d');
+            
+            pvzCanvas.onclick = (e) => {
+                if(!pvzGameActive) return;
+                
+                const rect = pvzCanvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (400 / rect.width);
+                const y = (e.clientY - rect.top) * (300 / rect.height);
+                
+                // التحقق من التقاط شمس ساقطة
+                for(let i = pvzSunDrops.length - 1; i >= 0; i--) {
+                    let drop = pvzSunDrops[i];
+                    if(Math.abs(drop.x - x) < 20 && Math.abs(drop.y - y) < 20) {
+                        pvzSun += 25;
+                        pvzSunDrops.splice(i, 1);
+                        updatePVZUI();
+                        showToast("+25 ☀️", "success", "☀️");
+                        return;
+                    }
+                }
+                
+                // وضع نبات
+                const row = Math.floor(y / 60);
+                const col = Math.floor(x / 80);
+                
+                if(row < 0 || row >= 5 || col < 1 || col > 4) return;
+                
+                const plantCost = pvzSelectedPlant === 'sunflower' ? 50 : 
+                                 pvzSelectedPlant === 'peashooter' ? 100 : 50;
+                
+                if(pvzSun >= plantCost) {
+                    const exists = pvzPlants.some(p => p.row === row && p.col === col);
+                    if(!exists) {
+                        pvzPlants.push({
+                            x: col * 80 + 20,
+                            y: row * 60 + 10,
+                            type: pvzSelectedPlant,
+                            row: row,
+                            col: col,
+                            health: pvzSelectedPlant === 'wallnut' ? 300 : 100,
+                            sunTimer: 0
+                        });
+                        pvzSun -= plantCost;
+                        updatePVZUI();
+                    }
+                } else {
+                    showToast("☀️ لا تملك شمس كافية!", "danger");
+                }
+            };
+        }
 
         function selectPVZPlant(plant) {
             pvzSelectedPlant = plant;
@@ -1060,9 +1392,10 @@
             pvzPlants = [];
             pvzZombies = [];
             pvzProjectiles = [];
+            pvzSunDrops = [];
+            pvzFrameCount = 0;
             
-            pvzCanvas = document.getElementById('pvz-canvas');
-            pvzCtx = pvzCanvas.getContext('2d');
+            updatePVZUI();
             
             if(pvzInterval) clearInterval(pvzInterval);
             pvzInterval = setInterval(pvzGameLoop, 1000/30);
@@ -1071,69 +1404,136 @@
         }
 
         function pvzGameLoop() {
+            pvzFrameCount++;
+            
+            // رسم الخلفية
             pvzCtx.fillStyle = '#4a7c23';
             pvzCtx.fillRect(0, 0, 400, 300);
             
-            pvzCtx.strokeStyle = 'rgba(0,0,0,0.1)';
-            for(let i=0; i<5; i++) {
+            // رسم الخطوط
+            pvzCtx.strokeStyle = 'rgba(0,0,0,0.15)';
+            pvzCtx.lineWidth = 1;
+            for(let i=0; i<=5; i++) {
                 pvzCtx.beginPath();
                 pvzCtx.moveTo(0, i*60);
                 pvzCtx.lineTo(400, i*60);
                 pvzCtx.stroke();
             }
+            for(let i=0; i<=5; i++) {
+                pvzCtx.beginPath();
+                pvzCtx.moveTo(i*80, 0);
+                pvzCtx.lineTo(i*80, 300);
+                pvzCtx.stroke();
+            }
             
-            if(Math.random() < 0.02 + (pvzWave * 0.005)) {
+            // إضافة شمس ساقطة من السماء
+            if(pvzFrameCount % 300 === 0) {
+                pvzSunDrops.push({
+                    x: 50 + Math.random() * 300,
+                    y: 0,
+                    targetY: 50 + Math.random() * 200,
+                    speed: 1
+                });
+            }
+            
+            // تحديث ورسم شمس ساقطة
+            for(let i = pvzSunDrops.length - 1; i >= 0; i--) {
+                let drop = pvzSunDrops[i];
+                if(drop.y < drop.targetY) {
+                    drop.y += drop.speed;
+                }
+                pvzCtx.font = '25px Arial';
+                pvzCtx.fillText('☀️', drop.x - 12, drop.y + 8);
+            }
+            
+            // إضافة زومبي
+            if(pvzFrameCount % Math.max(60, 180 - pvzWave * 20) === 0) {
                 const row = Math.floor(Math.random() * 5);
                 pvzZombies.push({
                     x: 400,
                     y: row * 60 + 15,
-                    speed: 0.3 + (pvzWave * 0.1),
-                    health: 100
+                    row: row,
+                    speed: 0.4 + (pvzWave * 0.08),
+                    health: 100 + pvzWave * 20,
+                    eating: false
                 });
             }
             
-            if(Math.random() < 0.01) {
-                pvzSun += 25;
-                updatePVZUI();
-            }
-            
-            pvzPlants.forEach((plant, index) => {
+            // رسم وتحديث النباتات
+            for(let i = pvzPlants.length - 1; i >= 0; i--) {
+                let plant = pvzPlants[i];
+                
+                // رسم النبات
                 const emoji = plant.type === 'sunflower' ? '🌻' : 
-                             plant.type === 'peashooter' ? '🟢' : '🥜';
-                pvzCtx.font = '40px Arial';
+                             plant.type === 'peashooter' ? '🌱' : '🥜';
+                pvzCtx.font = '35px Arial';
                 pvzCtx.fillText(emoji, plant.x, plant.y + 35);
                 
-                if(plant.type === 'peashooter' && Math.random() < 0.02) {
-                    pvzProjectiles.push({
-                        x: plant.x + 40,
-                        y: plant.y + 20,
-                        speed: 3
-                    });
+                // عباد الشمس ينتج شمس
+                if(plant.type === 'sunflower') {
+                    plant.sunTimer++;
+                    if(plant.sunTimer >= 180) { // كل 6 ثواني
+                        plant.sunTimer = 0;
+                        pvzSunDrops.push({
+                            x: plant.x + 15,
+                            y: plant.y,
+                            targetY: plant.y + 30,
+                            speed: 0.5
+                        });
+                    }
                 }
-            });
+                
+                // بازلاء تطلق
+                if(plant.type === 'peashooter') {
+                    // التحقق من وجود زومبي في نفس الصف
+                    const hasZombieInRow = pvzZombies.some(z => z.row === plant.row && z.x > plant.x);
+                    if(hasZombieInRow && pvzFrameCount % 45 === 0) {
+                        pvzProjectiles.push({
+                            x: plant.x + 40,
+                            y: plant.y + 20,
+                            row: plant.row,
+                            speed: 4
+                        });
+                    }
+                }
+                
+                // جوز الجدار لا يفعل شيئاً سوى الصمود
+            }
             
-            pvzZombies.forEach((zombie, zIndex) => {
-                pvzCtx.font = '40px Arial';
+            // رسم وتحديث الزومبي
+            for(let i = pvzZombies.length - 1; i >= 0; i--) {
+                let zombie = pvzZombies[i];
+                
+                pvzCtx.font = '35px Arial';
                 pvzCtx.fillText('🧟', zombie.x, zombie.y + 35);
                 
-                zombie.x -= zombie.speed;
+                // التحقق من وجود نبات أمامه
+                const plantInPath = pvzPlants.find(p => p.row === zombie.row && Math.abs(p.x + 20 - zombie.x) < 25);
                 
-                if(zombie.x < -20) {
-                    endPVZGame(false);
+                if(plantInPath) {
+                    zombie.eating = true;
+                    // الزومبي يأكل النبات
+                    plantInPath.health -= 0.5;
+                    if(plantInPath.health <= 0) {
+                        pvzPlants.splice(pvzPlants.indexOf(plantInPath), 1);
+                        zombie.eating = false;
+                    }
+                } else {
+                    zombie.eating = false;
+                    zombie.x -= zombie.speed;
                 }
                 
-                pvzPlants.forEach((plant, pIndex) => {
-                    if(Math.abs(zombie.x - plant.x) < 30 && Math.abs(zombie.y - plant.y) < 30) {
-                        if(plant.type === 'wallnut') {
-                            zombie.speed *= 0.5;
-                        } else {
-                            pvzPlants.splice(pIndex, 1);
-                        }
-                    }
-                });
-            });
+                // الزومبي وصل للنهاية
+                if(zombie.x < -20) {
+                    endPVZGame(false);
+                    return;
+                }
+            }
             
-            pvzProjectiles.forEach((proj, pIndex) => {
+            // رسم وتحديث القذائف
+            for(let i = pvzProjectiles.length - 1; i >= 0; i--) {
+                let proj = pvzProjectiles[i];
+                
                 pvzCtx.fillStyle = '#22c55e';
                 pvzCtx.beginPath();
                 pvzCtx.arc(proj.x, proj.y, 6, 0, Math.PI * 2);
@@ -1141,26 +1541,42 @@
                 
                 proj.x += proj.speed;
                 
-                pvzZombies.forEach((zombie, zIndex) => {
-                    if(Math.abs(proj.x - zombie.x) < 20 && Math.abs(proj.y - zombie.y) < 20) {
+                // خارج الشاشة
+                if(proj.x > 420) {
+                    pvzProjectiles.splice(i, 1);
+                    continue;
+                }
+                
+                // إصابة زومبي
+                let hit = false;
+                for(let j = pvzZombies.length - 1; j >= 0; j--) {
+                    let zombie = pvzZombies[j];
+                    if(zombie.row === proj.row && Math.abs(proj.x - zombie.x) < 20) {
                         zombie.health -= 25;
-                        pvzProjectiles.splice(pIndex, 1);
+                        hit = true;
                         
                         if(zombie.health <= 0) {
-                            pvzZombies.splice(zIndex, 1);
+                            pvzZombies.splice(j, 1);
                             pvzSun += 10;
                             updatePVZUI();
                         }
+                        break;
                     }
-                });
-            });
-            
-            if(pvzZombies.length === 0 && Math.random() < 0.005) {
-                pvzWave++;
-                updatePVZUI();
-                showToast(`🌊 الموجة ${pvzWave} قادمة!`, "info");
+                }
+                
+                if(hit) {
+                    pvzProjectiles.splice(i, 1);
+                }
             }
             
+            // زيادة الموجة
+            if(pvzFrameCount > 0 && pvzFrameCount % 900 === 0) {
+                pvzWave++;
+                updatePVZUI();
+                showToast(`🌊 الموجة ${pvzWave}!`, "info", "🌊");
+            }
+            
+            // الفوز بعد 5 موجات
             if(pvzWave > 5) {
                 endPVZGame(true);
             }
@@ -1173,7 +1589,8 @@
 
         function endPVZGame(won) {
             pvzGameActive = false;
-            clearInterval(pvzInterval);
+            if(pvzInterval) clearInterval(pvzInterval);
+            pvzInterval = null;
             
             if(won) {
                 const reward = 25 * (userProfile.luckBoost ? 2 : 1);
@@ -1181,52 +1598,13 @@
                     coins: firebase.firestore.FieldValue.increment(reward),
                     luckBoost: false
                 });
-                showToast(`🏆 فزت! ربحت ${reward} 🥕`, "success");
+                showToast(`🏆 فزت! ربحت ${reward} 🥕`, "success", "🏆");
             } else {
-                showToast("😢 الزومبي اخترق دفاعاتك!", "danger");
+                showToast("😢 الزومبي اخترق دفاعاتك!", "danger", "🧟");
             }
-            
-            setTimeout(() => {
-                switchTab('games');
-            }, 2000);
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const pvzCanvas = document.getElementById('pvz-canvas');
-            if(pvzCanvas) {
-                pvzCanvas.addEventListener('click', (e) => {
-                    if(!pvzGameActive) return;
-                    
-                    const rect = pvzCanvas.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    
-                    const row = Math.floor(y / 60);
-                    const col = Math.floor(x / 80);
-                    
-                    const plantCost = pvzSelectedPlant === 'sunflower' ? 50 : 
-                                     pvzSelectedPlant === 'peashooter' ? 100 : 50;
-                    
-                    if(pvzSun >= plantCost) {
-                        const exists = pvzPlants.some(p => p.row === row && p.col === col);
-                        if(!exists) {
-                            pvzPlants.push({
-                                x: col * 80 + 20,
-                                y: row * 60 + 10,
-                                type: pvzSelectedPlant,
-                                row: row,
-                                col: col
-                            });
-                            pvzSun -= plantCost;
-                            updatePVZUI();
-                        }
-                    } else {
-                        showToast("🥕 ليس لديك cukup شمس!", "danger");
-                    }
-                });
-            }
-        });
-
+        // ================= متجر الترقيات =================
         function buyUpgrade(upgradeType, cost) {
             if((userProfile.coins || 0) >= cost) {
                 let updateData = { coins: firebase.firestore.FieldValue.increment(-cost) };
@@ -1243,46 +1621,22 @@
             }
         }
 
-        let canvas = document.getElementById('space-canvas'), ctx = canvas.getContext('2d');
-        let spaceInterval = null, playerX = 185, bullets = [], enemies = [], spaceScore = 0, stars = [];
-        for(let i=0; i<30; i++) stars.push({x: Math.random()*400, y: Math.random()*280, size: Math.random()*2, speed: Math.random()*1+0.5});
-        canvas.addEventListener('mousemove', (e) => { let rect = canvas.getBoundingClientRect(); playerX = e.clientX - rect.left - 15; });
-        canvas.addEventListener('touchmove', (e) => { let rect = canvas.getBoundingClientRect(); if(e.touches[0]) playerX = e.touches[0].clientX - rect.left - 15; }, { passive: true });
-
-        function startSpaceGame() {
-            if(spaceInterval) clearInterval(spaceInterval);
-            bullets = []; enemies = []; spaceScore = 0;
-            spaceInterval = setInterval(() => {
-                ctx.fillStyle = "#0f172a"; ctx.fillRect(0,0,400,280);
-                ctx.fillStyle = "white"; stars.forEach(s => { s.y += s.speed; if(s.y > 280) s.y = 0; ctx.fillRect(s.x, s.y, s.size, s.size); });
-                ctx.fillStyle = "#6366f1"; ctx.beginPath(); ctx.moveTo(playerX + 15, 230); ctx.lineTo(playerX + 30, 260); ctx.lineTo(playerX, 260); ctx.fill();
-                if(Math.random() < 0.08) bullets.push({x: playerX + 13, y: 230});
-                ctx.fillStyle = "#76db41"; bullets.forEach((b, bi) => { b.y -= 6; ctx.fillRect(b.x, b.y, 4, 10); if(b.y < 0) bullets.splice(bi, 1); });
-                if(Math.random() < 0.04) enemies.push({x: Math.random()*380, y: -10, size: 16});
-                ctx.fillStyle = "#ef4444"; enemies.forEach((en, ei) => {
-                    en.y += 2.2; ctx.beginPath(); ctx.arc(en.x, en.y, en.size/2, 0, Math.PI*2); ctx.fill();
-                    bullets.forEach((b, bi) => { if(b.x > en.x - 10 && b.x < en.x + 10 && b.y > en.y - 10 && b.y < en.y + 10) { enemies.splice(ei, 1); bullets.splice(bi, 1); spaceScore += 10; } });
-                    if(en.y > 280 || (Math.abs(en.x - (playerX+15)) < 15 && en.y > 230)) {
-                        clearInterval(spaceInterval);
-                        let finalCarrots = Math.floor(spaceScore / 20);
-                        if(finalCarrots > 0 && currentUser) {
-                            let multiplier = (userProfile.luckBoost) ? 2 : 1;
-                            let reward = finalCarrots * multiplier;
-                            db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(reward), luckBoost: false });
-                            showToast(`💥 انتهت المعركة! ربحت ${reward} 🥕`, "success", "🥕");
-                        }
-                    }
-                });
-                ctx.fillStyle = "#fff"; ctx.font = "bold 13px Tajawal"; ctx.fillText("النقاط: " + spaceScore, 15, 25);
-            }, 1000/35);
-        }
-
         function switchTab(tab) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById(`page-${tab}`).classList.add('active');
             if(document.getElementById(`nav-${tab}`)) document.getElementById(`nav-${tab}`).classList.add('active');
-            if(tab !== 'games' && spaceInterval) { clearInterval(spaceInterval); spaceInterval = null; }
+            
+            // إيقاف الألعاب عند التنقل
+            if(tab !== 'space' && spaceInterval) { 
+                clearInterval(spaceInterval); 
+                spaceInterval = null; 
+            }
+            if(tab !== 'pvz' && pvzInterval) { 
+                clearInterval(pvzInterval); 
+                pvzInterval = null; 
+                pvzGameActive = false;
+            }
         }
     </script>
 </body>
