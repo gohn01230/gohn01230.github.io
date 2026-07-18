@@ -241,7 +241,7 @@
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(), db = firebase.firestore();
-        
+
         let currentUser = null, userProfile = { coins: 0, highScore: 0 };
         let activeRoomId = null, roomListener = null;
         let pendingChallengeId = null;
@@ -249,7 +249,7 @@
         function login() { 
             auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(err => alert("خطأ في الدخول: " + err.message)); 
         }
-        
+
         auth.onAuthStateChanged(user => {
             if(user) {
                 currentUser = user;
@@ -267,7 +267,6 @@
                 
                 const userRef = db.collection("users_profile").doc(user.uid);
                 
-                // فحص إذا كان المستخدم جديداً لحفظ البيانات الأولية دون مسح الكوينز القديمة
                 userRef.get().then(doc => {
                     if (!doc.exists) {
                         userRef.set({ 
@@ -278,7 +277,6 @@
                             status: "online"
                         });
                     } else {
-                        // تحديث الحالة والاسم فقط، مع الحفاظ على الكوينز والتقدم
                         userRef.update({ 
                             status: "online", 
                             fullName: defaultName, 
@@ -287,7 +285,6 @@
                     }
                 });
 
-                // الاستماع المباشر للتغييرات في بيانات المستخدم (الكوينز والتقدم)
                 userRef.onSnapshot(doc => {
                     if(doc.exists) { 
                         userProfile = doc.data(); 
@@ -307,6 +304,7 @@
 
         window.addEventListener('beforeunload', () => {
             if(currentUser) db.collection("users_profile").doc(currentUser.uid).update({ status: "offline" });
+            if(activeRoomId) exitRPSRoom(); // إنهاء الغرفة إذا أغلق المستخدم المتصفح
         });
 
         // --- نظام التحديات ---
@@ -322,7 +320,6 @@
         }
 
         function listenToIncomingChallenges() {
-            // تم تبسيط الاستعلام لتجنب مشاكل فهارس Firebase (Composite Index)
             db.collection("challenges").where("toId", "==", currentUser.uid).onSnapshot(snapshot => {
                 snapshot.docChanges().forEach(change => {
                     if (change.type === "added") {
@@ -395,27 +392,34 @@
             });
         }
 
-        // --- نظام الأونلاين (Matchmaking) الحقيقي والمصلح ---
+        // --- نظام الأونلاين المعدل لتجنب الأخطاء ---
         function findOrCreateRPSRoom() {
             document.getElementById('rps-arena').style.display = 'block';
             document.getElementById('rps-status').innerHTML = '<span class="loading-spinner"></span> جاري البحث عن خصم...';
             document.getElementById('rps-controls').style.display = 'none';
             document.getElementById('rps-result-display').innerText = "";
 
-            // البحث عن غرفة في انتظار لاعب
-            db.collection("rooms").where("gameType", "==", "rps").where("status", "==", "waiting").limit(1).get().then(snapshot => {
-                if (!snapshot.empty) {
-                    // الانضمام لغرفة موجودة
-                    const room = snapshot.docs[0];
-                    activeRoomId = room.id;
-                    room.ref.update({ 
-                        player2: currentUser.uid, 
-                        p2Name: currentUser.displayName, 
-                        status: "playing" 
-                    });
-                    setupRPSListener(activeRoomId);
-                } else {
-                    // إنشاء غرفة جديدة والانتظار
+            // جلب الغرف المنتظرة
+            db.collection("rooms").where("gameType", "==", "rps").where("status", "==", "waiting").get().then(snapshot => {
+                let joined = false;
+                
+                // البحث عن غرفة لم ينشئها المستخدم نفسه لتجنب دخول اللاعب لغرفته
+                for (let doc of snapshot.docs) {
+                    if (doc.data().player1 !== currentUser.uid) {
+                        activeRoomId = doc.id;
+                        doc.ref.update({ 
+                            player2: currentUser.uid, 
+                            p2Name: currentUser.displayName, 
+                            status: "playing" 
+                        });
+                        setupRPSListener(activeRoomId);
+                        joined = true;
+                        break;
+                    }
+                }
+
+                // إذا لم يجد غرفة مناسبة، ينشئ غرفته الخاصة
+                if (!joined) {
                     db.collection("rooms").add({
                         gameType: "rps", status: "waiting",
                         player1: currentUser.uid, p1Name: currentUser.displayName,
@@ -432,7 +436,16 @@
         function setupRPSListener(roomId) {
             if(roomListener) roomListener();
             roomListener = db.collection("rooms").doc(roomId).onSnapshot(doc => {
-                if(!doc.exists) { exitRPSRoom(); return; }
+                // إذا حُذفت الغرفة أو انسحب الخصم
+                if(!doc.exists) { 
+                    if(activeRoomId === roomId) {
+                        document.getElementById('rps-status').innerText = "تم إنهاء الغرفة أو انسحاب الخصم.";
+                        document.getElementById('rps-controls').style.display = 'none';
+                        setTimeout(() => exitRPSRoom(true), 2000); // تنظيف الغرفة محلياً بعد ثانيتين
+                    }
+                    return; 
+                }
+                
                 let data = doc.data();
                 
                 if (data.status === "waiting") {
@@ -449,7 +462,6 @@
                         resultText = "🤝 تعادل!";
                     } else if(data.winner === currentUser.uid) {
                         resultText = "🏆 مبروك! فزت بـ 30 كوينز!";
-                        // استخدام increment لضمان عدم تضارب البيانات
                         db.collection("users_profile").doc(currentUser.uid).update({ 
                             coins: firebase.firestore.FieldValue.increment(30) 
                         });
@@ -459,8 +471,11 @@
                     document.getElementById('rps-result-display').innerText = resultText;
                     
                     setTimeout(() => {
-                        db.collection("rooms").doc(roomId).delete();
-                        exitRPSRoom();
+                        // ترك أمر الحذف للاعب الأول فقط لتجنب تعارض الحذف المزدوج
+                        if(data.player1 === currentUser.uid) {
+                            db.collection("rooms").doc(roomId).delete();
+                        }
+                        exitRPSRoom(true);
                     }, 4000);
                 }
             });
@@ -478,7 +493,6 @@
                 if(currentUser.uid === data.player1) updateData.p1Choice = choice;
                 else updateData.p2Choice = choice;
 
-                // إذا اختار كلا اللاعبين، نحسب الفائز
                 if((currentUser.uid === data.player1 && data.p2Choice) || (currentUser.uid !== data.player1 && data.p1Choice)) {
                     let c1 = (currentUser.uid === data.player1) ? choice : data.p1Choice;
                     let c2 = (currentUser.uid === data.player1) ? data.p2Choice : choice;
@@ -498,16 +512,30 @@
             });
         }
 
-        function exitRPSRoom() {
-            if(roomListener) roomListener();
+        function exitRPSRoom(skipDbDelete = false) {
+            // إزالة الغرفة من قاعدة البيانات في حالة الانسحاب المتعمد
+            if(activeRoomId && !skipDbDelete) {
+                db.collection("rooms").doc(activeRoomId).get().then(doc => {
+                    if(doc.exists) {
+                        let data = doc.data();
+                        if((data.status === "waiting" && data.player1 === currentUser.uid) || data.status === "playing") {
+                            doc.ref.delete(); 
+                        }
+                    }
+                });
+            }
+            
+            if(roomListener) { roomListener(); roomListener = null; }
             document.getElementById('rps-arena').style.display = 'none';
             document.getElementById('rps-result-display').innerText = "";
             activeRoomId = null;
         }
 
-        // --- لعبة حرب الفضاء مع حفظ التقدم ---
+        // --- لعبة حرب الفضاء المعدلة لمنع تكرار الإسكور ---
         let canvas = document.getElementById('space-canvas'), ctx = canvas.getContext('2d');
         let spaceInterval = null, playerX = 160, bullets = [], enemies = [], spaceScore = 0, stars = [];
+        let isGameOver = false; // متغير مهم لمنع التكرار
+
         for(let i=0; i<40; i++) stars.push({x: Math.random()*350, y: Math.random()*250, size: Math.random()*2, speed: Math.random()*2+1});
 
         canvas.addEventListener('mousemove', (e) => {
@@ -522,8 +550,11 @@
 
         function startSpaceGame() {
             if(spaceInterval) clearInterval(spaceInterval);
-            bullets = []; enemies = []; spaceScore = 0;
+            bullets = []; enemies = []; spaceScore = 0; isGameOver = false;
+            
             spaceInterval = setInterval(() => {
+                if(isGameOver) return; // إيقاف العمليات إذا انتهت اللعبة
+                
                 ctx.fillStyle = "#0f172a"; ctx.fillRect(0,0,350,250);
                 ctx.fillStyle = "white";
                 stars.forEach(s => { 
@@ -543,7 +574,9 @@
 
                 if(Math.random() < 0.04) enemies.push({x: Math.random()*320, y: -20, size: 20});
                 ctx.fillStyle = "#ef4444";
+                
                 enemies.forEach((en, ei) => {
+                    if(isGameOver) return; // منع التكرار داخل اللوب
                     en.y += 3;
                     ctx.beginPath(); ctx.arc(en.x, en.y, en.size/2, 0, Math.PI*2); ctx.fill();
 
@@ -553,11 +586,14 @@
                         }
                     });
 
+                    // شرط الخسارة
                     if(en.y > 250 || (Math.abs(en.x - (playerX+15)) < 15 && Math.abs(en.y - 215) < 15)) {
+                        isGameOver = true;
                         clearInterval(spaceInterval);
+                        spaceInterval = null;
+                        
                         let rewardCoins = Math.floor(spaceScore / 20);
                         
-                        // حفظ التقدم والكوينز بشكل آمن
                         if(currentUser) {
                             let updateData = {};
                             if(rewardCoins > 0) updateData.coins = firebase.firestore.FieldValue.increment(rewardCoins);
@@ -567,7 +603,11 @@
                                 db.collection("users_profile").doc(currentUser.uid).update(updateData);
                             }
                         }
-                        alert(`💥 انتهت اللعبة! نقاطك: ${spaceScore} | كوينز المضافة: ${rewardCoins}`);
+                        
+                        // استخدام setTimeout البسيطة لتجنب تجمد الرسوميات قبل ظهور الرسالة
+                        setTimeout(() => {
+                            alert(`💥 انتهت اللعبة! نقاطك: ${spaceScore} | كوينز المضافة: ${rewardCoins}`);
+                        }, 100);
                     }
                 });
                 ctx.fillStyle = "white"; ctx.font = "bold 14px Tajawal"; ctx.fillText("النقاط: " + spaceScore, 10, 20);
