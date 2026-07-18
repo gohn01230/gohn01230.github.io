@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة gohn الرقمية 🚀</title>
+    <title>منصة GOHN الخارقة للألعاب 🎮</title>
     <style>
-        /* تصميم عصري بنمط الـ Cyberpunk / Dark Neon */
+        /* تصميم سيبراني مستقبلي احترافي */
         * {
             margin: 0;
             padding: 0;
@@ -13,9 +13,9 @@
         }
 
         :root {
-            --primary: #00f0ff; /* نيون أزرق */
+            --primary: #00f0ff;
             --primary-glow: rgba(0, 240, 255, 0.3);
-            --secondary: #ff007f; /* نيون فوشيا */
+            --secondary: #ff007f;
             --secondary-glow: rgba(255, 0, 127, 0.3);
             --accent: #9d4edd;
             --bg-dark: #060913;
@@ -32,10 +32,8 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            overflow-x: hidden;
         }
 
-        /* الهيدر العلوي */
         header {
             display: flex;
             justify-content: space-between;
@@ -56,33 +54,38 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-decoration: none;
-            letter-spacing: 1px;
             text-shadow: 0 0 15px var(--primary-glow);
         }
 
-        /* الأزرار الاحترافية مع تأثير التوهج */
+        .coin-status {
+            background: rgba(234, 179, 8, 0.1);
+            border: 1px solid #eab308;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: #eab308;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .btn {
             background: linear-gradient(135deg, var(--primary) 0%, #00b8d4 100%);
             color: #020617;
-            padding: 14px 32px;
+            padding: 12px 28px;
             font-weight: 800;
             border-radius: 12px;
             border: none;
             cursor: pointer;
             font-size: 1rem;
             box-shadow: 0 0 15px var(--primary-glow);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
+            transition: all 0.3s ease;
         }
 
         .btn:hover {
-            transform: translateY(-3px) scale(1.02);
+            transform: translateY(-3px);
             box-shadow: 0 0 25px var(--primary);
         }
-
-        .btn:active { transform: scale(0.98); }
 
         .btn-secondary {
             background: rgba(255, 255, 255, 0.03);
@@ -95,205 +98,173 @@
             background: rgba(255, 0, 127, 0.1);
             border-color: var(--secondary);
             box-shadow: 0 0 15px var(--secondary-glow);
-            color: white;
         }
 
-        /* الكارت الزجاجي الرئيسي بتصميم جديد */
         main {
             flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
         }
 
         .glass-card {
-            max-width: 750px;
+            max-width: 900px;
             width: 100%;
             background: var(--card-bg);
             border-radius: 24px;
-            padding: 45px;
+            padding: 40px;
             border: 1px solid rgba(0, 240, 255, 0.15);
             backdrop-filter: blur(25px);
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8), 
-                        inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8);
         }
 
-        /* قسم الزائر */
-        .hero-section h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #fff 30%, var(--primary) 70%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 900;
+        /* قوائم التبويب والتحكم بالصفحات */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 15px;
         }
 
-        .hero-section p {
+        .tab-btn {
+            background: none;
+            border: none;
             color: var(--text-muted);
-            font-size: 1.2rem;
-            line-height: 1.8;
-            margin-bottom: 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 8px;
         }
+
+        .tab-btn.active {
+            color: var(--primary);
+            background: rgba(0, 240, 255, 0.1);
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .page { display: none; }
+        .page.active { display: block; }
 
         /* البروفايل */
         .user-header {
             display: flex;
             align-items: center;
-            gap: 25px;
-            margin-bottom: 35px;
+            gap: 20px;
+            margin-bottom: 25px;
             background: rgba(255, 255, 255, 0.02);
-            padding: 20px;
+            padding: 15px;
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .user-avatar {
-            width: 90px;
-            height: 90px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            border: 3px solid var(--primary);
-            box-shadow: 0 0 20px var(--primary-glow);
+            border: 2px solid var(--primary);
             object-fit: cover;
         }
 
-        .user-welcome {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 5px;
-        }
-
-        .user-email { color: var(--text-muted); font-size: 0.95rem; }
-
-        /* 🕹️ منطقة اللعبة المطورة */
-        .game-container {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 0, 127, 0.15);
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            margin: 30px 0;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
-        }
-
-        .game-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .stat-box {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 1rem;
-        }
-
-        .stat-box span {
-            display: block;
-            font-size: 1.6rem;
-            font-weight: 800;
-            margin-top: 5px;
-        }
-
+        /* اللعبة 1: النقرات الخارقة */
         .game-click-btn {
-            width: 160px;
-            height: 160px;
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
             border: none;
-            background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
             color: white;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 900;
             cursor: pointer;
-            box-shadow: 0 0 30px rgba(255, 0, 127, 0.4);
-            transition: transform 0.1s ease, box-shadow 0.3s ease;
             margin: 20px auto;
             display: block;
+            transition: transform 0.1s;
         }
 
-        .game-click-btn:active {
-            transform: scale(0.92);
-            box-shadow: 0 0 45px var(--secondary);
+        /* اللعبة 2: الديناصور والقفز */
+        #runner-canvas {
+            background: #111827;
+            display: block;
+            margin: 15px auto;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 100%;
         }
 
-        .game-click-btn:disabled {
+        /* اللعبة 3: الذاكرة والتطابق */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        .memory-card {
+            height: 80px;
             background: #1e293b;
-            color: #475569;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-
-        /* 🏆 تصميم جدول المتصدرين الجديد واعتمد على Firestore تلقائياً */
-        .leaderboard-section {
-            margin-top: 35px;
-            text-align: right;
-        }
-
-        .leaderboard-title {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 15px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            color: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.3s, color 0.1s;
         }
 
+        .memory-card.flipped {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* المتجر */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .shop-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .shop-item.owned { border-color: var(--primary); }
+
+        .skin-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 10px auto 15px;
+        }
+
+        /* الجداول ولوحة الصدارة */
         .leaderboard-table {
             width: 100%;
             border-collapse: collapse;
-            background: rgba(0, 0, 0, 0.3);
+            margin-top: 15px;
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 12px;
             overflow: hidden;
         }
 
-        .leaderboard-table th, .leaderboard-table td {
-            padding: 14px 20px;
-            text-align: right;
-        }
+        .leaderboard-table th, .leaderboard-table td { padding: 12px 15px; text-align: right; }
+        .leaderboard-table th { background: rgba(0, 240, 255, 0.05); color: var(--primary); }
+        .leaderboard-table tr { border-bottom: 1px solid rgba(255, 255, 255, 0.02); }
 
-        .leaderboard-table th {
-            background: rgba(0, 240, 255, 0.08);
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 0.95rem;
-            border-bottom: 1px solid rgba(0, 240, 255, 0.15);
-        }
+        .rank-badge { background: #334155; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+        .rank-1 { background: #eab308; color: #000; }
 
-        .leaderboard-table tr {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            transition: background 0.2s;
-        }
-
-        .leaderboard-table tr:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .rank-badge {
-            background: #334155;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-
-        .rank-1 { background: #eab308; color: #000; } /* ذهبي */
-        .rank-2 { background: #94a3b8; color: #000; } /* فضي */
-        .rank-3 { background: #b45309; color: #fff; } /* برونزي */
-
-        footer {
-            text-align: center;
-            padding: 25px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            border-top: 1px solid rgba(255, 255, 255, 0.02);
-        }
-
-        footer a { color: var(--primary); text-decoration: none; }
+        footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem; }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -303,59 +274,118 @@
 <body>
 
     <header>
-        <a href="#" class="logo">⚡ GOHN</a>
-        <div id="nav-auth-area"></div>
+        <a href="#" class="logo">⚡ GOHN HUB</a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div id="coin-display" class="coin-status" style="display: none;">🪙 <span id="user-coins">0</span> كوينز</div>
+            <div id="nav-auth-area"></div>
+        </div>
     </header>
 
     <main>
         <div class="glass-card">
             
             <!-- واجهة الزائر -->
-            <div id="guest-view" class="hero-section" style="text-align: center;">
-                <h1>بوابة GOHN الرقمية</h1>
-                <p>تحدى أصدقائك في أسرع الألعاب السحابية، وسجّل اسمك الآن في قائمة المتصدرين العالمية!</p>
-                <button class="btn" onclick="loginWithGoogle()">تسجيل الدخول عبر Google 🚀</button>
+            <div id="guest-view" style="text-align: center; padding: 40px 0;">
+                <h1 style="font-size: 3rem; margin-bottom: 20px; font-weight: 900; background: linear-gradient(135deg, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">بوابة GOHN للألعاب الخارقة</h1>
+                <p style="color: var(--text-muted); margin-bottom: 30px;">منصة متكاملة: العب، اجمع الكوينز، اشترِ السكينز، ونافس على لوحة الصدارة العالمية!</p>
+                <button class="btn" onclick="loginWithGoogle()">تسجيل الدخول وبدء اللعب 🚀</button>
             </div>
 
-            <!-- لوحة التحكم الشخصية واللعبة -->
-            <div id="user-view" class="dashboard">
+            <!-- واجهة المستخدم ولوحة الألعاب -->
+            <div id="user-view" style="display: none;">
                 <div class="user-header">
                     <img id="user-img" class="user-avatar" src="" alt="Avatar">
                     <div>
-                        <div id="user-name" class="user-welcome">اسم المستخدم</div>
-                        <div id="user-email" class="user-email">البريد الإلكتروني</div>
+                        <div id="user-name" style="font-size: 1.4rem; font-weight: bold;">..</div>
+                        <div id="user-email" class="user-email">..</div>
                     </div>
                 </div>
 
-                <!-- اللعبة -->
-                <div class="game-container">
-                    <h2 style="color: var(--secondary); margin-bottom: 20px; font-weight: 900;">🎯 تحدي النقرات الخارقة 🎯</h2>
-                    
-                    <div class="game-stats">
-                        <div class="stat-box">النقاط الحالية <span id="current-score" style="color: var(--primary);">0</span></div>
-                        <div class="stat-box">الوقت المتبقي <span id="game-timer" style="color: var(--secondary);">30</span></div>
-                        <div class="stat-box">رقمك القياسي <span id="best-score" style="color: #eab308;">..</span></div>
-                    </div>
-
-                    <button id="click-btn" class="game-click-btn" onclick="handleClick()" disabled>إضغط! 🔥</button>
-                    <button id="start-game-btn" class="btn" style="margin-top: 20px; width: 100%; justify-content: center;" onclick="startGame()">ابدأ المعركة ⚔️</button>
+                <!-- أزرار التبديل بين الصفحات -->
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchPage('games-page', this)">🕹️ الألعاب</button>
+                    <button class="tab-btn" onclick="switchPage('shop-page', this)">🛒 المتجر</button>
+                    <button class="tab-btn" onclick="switchPage('leaderboard-page', this)">🏆 لوحة الصدارة</button>
                 </div>
 
-                <!-- 🏆 جدول المتصدرين الحقيقي المتصل بقاعدة البيانات -->
-                <div class="leaderboard-section">
-                    <div class="leaderboard-title">🏆 قائمة أفضل 5 لاعبين على السيرفر</div>
+                <!-- صفحة الألعاب -->
+                <div id="games-page" class="page active">
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <button class="btn" onclick="showGame('clicker')">🎯 النقرات</button>
+                        <button class="btn" onclick="showGame('runner')">🦖 الديناصور القافز</button>
+                        <button class="btn" onclick="showGame('memory')">🧠 اختبار الذاكرة</button>
+                    </div>
+
+                    <!-- اللعبة 1: النقرات -->
+                    <div id="game-clicker" class="game-box" style="background: rgba(0,0,0,0.4); padding: 25px; border-radius: 16px; text-align: center;">
+                        <h3>🎯 تحدي النقرات الخارقة</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">كل نقرة = 1 نقطة. كل نقطة بتتحول لكوينز عند الفوز!</p>
+                        <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 15px;">
+                            <div>النقاط: <span id="c-score" style="color: var(--primary); font-weight: bold;">0</span></div>
+                            <div>الوقت: <span id="c-timer" style="color: var(--secondary); font-weight: bold;">30</span> ثانية</div>
+                        </div>
+                        <button id="click-action-btn" class="game-click-btn" onclick="handleClickerClick()" disabled>إضغط! 🔥</button>
+                        <button class="btn" style="width: 100%; margin-top: 15px;" onclick="startClickerGame()">ابدأ اللعبة 🚀</button>
+                    </div>
+
+                    <!-- اللعبة 2: الديناصور -->
+                    <div id="game-runner" class="game-box" style="display: none; background: rgba(0,0,0,0.4); padding: 25px; border-radius: 16px; text-align: center;">
+                        <h3>🦖 مغامرة المكعب القافز</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px;">اضغط على **زر المسافة (Spacebar)** أو انقر على الشاشة للقفز وتفادي العقبات!</p>
+                        <div>السكور الحالي: <span id="r-score" style="color: var(--primary); font-weight: bold;">0</span></div>
+                        <canvas id="runner-canvas" width="600" height="200"></canvas>
+                        <button class="btn" style="width: 100%;" onclick="startRunnerGame()">ابدأ الجري 🏃‍♂️</button>
+                    </div>
+
+                    <!-- اللعبة 3: الذاكرة -->
+                    <div id="game-memory" class="game-box" style="display: none; background: rgba(0,0,0,0.4); padding: 25px; border-radius: 16px; text-align: center;">
+                        <h3>🧠 لعبة تطابق كروت الذاكرة</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">طابق الكروت المتشابهة في أسرع وقت لتجميع النقاط وكسب الكوينز!</p>
+                        <div class="memory-grid" id="memory-grid-board"></div>
+                        <button class="btn" style="width: 100%; margin-top: 15px;" onclick="startMemoryGame()">ابدأ التحدي 🧠</button>
+                    </div>
+                </div>
+
+                <!-- صفحة المتجر -->
+                <div id="shop-page" class="page">
+                    <h2>🛒 متجر الأشكال والسكينز للاعبين</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">استخدم الكوينز اللي جمعتها من الألعاب عشان تميز زرار النقرات عندك وتخليه فخم!</p>
+                    <div class="shop-grid">
+                        <div class="shop-item" id="item-neon">
+                            <div class="skin-preview" style="background: linear-gradient(135deg, #ff007f, #9d4edd);"></div>
+                            <h4>النيون الملكي</h4>
+                            <p style="margin: 10px 0; color: #eab308;">السعر: مجاني (أساسي)</p>
+                            <button class="btn" style="width: 100%;" onclick="equipSkin('neon')">تجهيز 🛠️</button>
+                        </div>
+                        <div class="shop-item" id="item-cyber">
+                            <div class="skin-preview" style="background: radial-gradient(circle, #00f0ff, #004b54); border: 2px solid #00f0ff;"></div>
+                            <h4>السيبراني المضيء</h4>
+                            <p style="margin: 10px 0; color: #eab308;">السعر: 150 كوينز</p>
+                            <button class="btn btn-secondary" style="width: 100%;" onclick="buySkin('cyber', 150)" id="btn-buy-cyber">شراء 🪙</button>
+                        </div>
+                        <div class="shop-item" id="item-gold">
+                            <div class="skin-preview" style="background: linear-gradient(135deg, #ffe066, #f59e0b); box-shadow: 0 0 15px #f59e0b;"></div>
+                            <h4>الذهب الخالص الأسطوري</h4>
+                            <p style="margin: 10px 0; color: #eab308;">السعر: 500 كوينز</p>
+                            <button class="btn btn-secondary" style="width: 100%;" onclick="buySkin('gold', 500)" id="btn-buy-gold">شراء 🪙</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- صفحة لوحة الصدارة -->
+                <div id="leaderboard-page" class="page">
+                    <h2>🏆 لوحة الصدارة العامة للسيرفر</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 15px;">هنا بيظهر أقوى الأبطال اللي جمعوا أعلى سكور في منصة GOHN</p>
                     <table class="leaderboard-table">
                         <thead>
                             <tr>
                                 <th style="width: 15%">الترتيب</th>
                                 <th style="width: 55%">اللاعب</th>
-                                <th style="width: 30%">أعلى سكور</th>
+                                <th style="width: 30%">أعلى سكور (النقرات)</th>
                             </tr>
                         </thead>
-                        <tbody id="leaderboard-rows">
-                            <tr>
-                                <td colspan="3" style="text-align: center; color: var(--text-muted);">جاري تحميل قائمة الأبطال...</td>
-                            </tr>
+                        <tbody id="global-leaderboard-rows">
+                            <tr><td colspan="3" style="text-align: center;">جاري جلب قائمة الأساطير...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -368,11 +398,10 @@
     </main>
 
     <footer>
-        <p>© 2026 بوابة <a href="#">GOHN</a> الرقمية | جيل جديد من الألعاب السحابية</p>
+        <p>© 2026 منصة <a href="#">GOHN ARCADE</a> | إبداع لا ينتهي وتجربة سحابية فريدة</p>
     </footer>
 
     <script>
-        // إعدادات Firebase الخاصة بك
         const firebaseConfig = {
             apiKey: "AIzaSyA5LlGHl9djJsx_Rs3evjd8Xzpn0e25IHI",
             authDomain: "gohn-games.firebaseapp.com",
@@ -388,137 +417,276 @@
         const provider = new firebase.auth.GoogleAuthProvider();
         const db = firebase.firestore();
 
+        let userProfile = { coins: 0, ownedSkins: ['neon'], activeSkin: 'neon', clickHighScore: 0 };
         let currentUser = null;
-        let score = 0;
-        let timeLeft = 30;
-        let timerInterval = null;
-        let gameActive = false;
-        let userBestScore = 0;
 
-        function loginWithGoogle() {
-            auth.signInWithPopup(provider).catch((err) => alert(err.message));
-        }
+        // ستايلات وتصاميم السكينز
+        const skinsStyles = {
+            neon: "linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%)",
+            cyber: "radial-gradient(circle, #00f0ff, #004b54)",
+            gold: "linear-gradient(135deg, #ffe066, #f59e0b)"
+        };
 
-        function logout() {
-            resetGame();
-            auth.signOut();
-        }
+        function loginWithGoogle() { auth.signInWithPopup(provider).catch(err => alert(err.message)); }
+        function logout() { auth.signOut(); location.reload(); }
 
         auth.onAuthStateChanged((user) => {
             if (user) {
                 currentUser = user;
                 document.getElementById('guest-view').style.display = 'none';
                 document.getElementById('user-view').style.display = 'block';
+                document.getElementById('coin-display').style.display = 'flex';
                 
                 document.getElementById('user-img').src = user.photoURL || '';
                 document.getElementById('user-name').innerText = user.displayName;
                 document.getElementById('user-email').innerText = user.email;
-                document.getElementById('nav-auth-area').innerHTML = `<button class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem;" onclick="logout()">خروج 🚪</button>`;
+                document.getElementById('nav-auth-area').innerHTML = `<button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;" onclick="logout()">خروج 🚪</button>`;
                 
-                loadUserBestScore(user.uid);
-                fetchGlobalLeaderboard(); // تشغيل دالة جلب قائمة المتصدرين
+                loadUserData(user);
+                fetchLeaderboard();
             } else {
-                currentUser = null;
                 document.getElementById('guest-view').style.display = 'block';
                 document.getElementById('user-view').style.display = 'none';
-                document.getElementById('nav-auth-area').innerHTML = '';
             }
         });
 
-        function loadUserBestScore(uid) {
-            db.collection("leaderboard").doc(uid).get().then((doc) => {
-                userBestScore = doc.exists ? (doc.data().highScore || 0) : 0;
-                document.getElementById('best-score').innerText = userBestScore;
-            }).catch(() => document.getElementById('best-score').innerText = "0");
+        // جلب وحفظ البيانات السحابية للاعب
+        function loadUserData(user) {
+            db.collection("users_profile").doc(user.uid).get().then((doc) => {
+                if (doc.exists) {
+                    userProfile = doc.data();
+                    if (!userProfile.ownedSkins) userProfile.ownedSkins = ['neon'];
+                } else {
+                    userProfile = { coins: 100, ownedSkins: ['neon'], activeSkin: 'neon', clickHighScore: 0 };
+                    saveUserData();
+                }
+                updateUI();
+            });
         }
 
-        // 🔥 الدالة السحرية لعرض البيانات من الـ Firestore فوراً في الموقع وترتيبها من الأعلى للأقل
-        function fetchGlobalLeaderboard() {
-            db.collection("leaderboard")
-              .orderBy("highScore", "desc") // ترتيب تنازلي حسب السكور الأعلى
-              .limit(5)                     // جلب أفضل 5 لاعبين فقط
-              .onSnapshot((snapshot) => {   // استماع مباشر للتغييرات (Real-time)
-                  const tbody = document.getElementById('leaderboard-rows');
-                  tbody.innerHTML = ""; // تنظيف الجدول القديم
-
-                  if (snapshot.empty) {
-                      tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">لا توجد سكورات مسجلة بعد، كن الأول! 🏆</td></tr>`;
-                      return;
-                  }
-
-                  let rank = 1;
-                  snapshot.forEach((doc) => {
-                      const data = doc.data();
-                      let badgeClass = `rank-badge rank-${rank}`;
-                      if (rank > 3) badgeClass = `rank-badge`;
-
-                      const rowHTML = `
-                          <tr>
-                              <td><span class="${badgeClass}">${rank}</span></td>
-                              <td style="font-weight: 600;">${data.playerName || 'لاعب مجهول'}</td>
-                              <td style="color: var(--primary); font-weight: bold; font-size: 1.1rem;">${data.highScore || 0}</td>
-                          </tr>
-                      `;
-                      tbody.innerHTML += rowHTML;
-                      rank++;
-                  });
-              }, (error) => {
-                  console.error("خطأ في جلب لوحة المتصدرين:", error);
-              });
+        function saveUserData() {
+            if (currentUser) {
+                db.collection("users_profile").doc(currentUser.uid).set(userProfile, { merge: true });
+            }
         }
 
-        function startGame() {
-            if (gameActive) return;
-            score = 0; timeLeft = 30; gameActive = true;
-            document.getElementById('current-score').innerText = score;
-            document.getElementById('game-timer').innerText = timeLeft;
-            document.getElementById('click-btn').disabled = false;
-            document.getElementById('start-game-btn').disabled = true;
+        function updateUI() {
+            document.getElementById('user-coins').innerText = userProfile.coins;
+            // تحديث شكل زر النقرات حسب السكين النشط
+            const clickBtn = document.getElementById('click-action-btn');
+            clickBtn.style.background = skinsStyles[userProfile.activeSkin] || skinsStyles.neon;
+            if (userProfile.activeSkin === 'gold') clickBtn.style.boxShadow = "0 0 30px #f59e0b";
+            else if (userProfile.activeSkin === 'cyber') clickBtn.style.boxShadow = "0 0 30px #00f0ff";
+            else clickBtn.style.boxShadow = "0 0 30px rgba(255, 0, 127, 0.4)";
 
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                document.getElementById('game-timer').innerText = timeLeft;
-                if (timeLeft <= 0) endGame();
+            // تحديث حالة أزرار المتجر
+            userProfile.ownedSkins.forEach(skin => {
+                const btn = document.getElementById(`btn-buy-${skin}`);
+                if (btn) {
+                    btn.innerText = "تجهيز 🛠️";
+                    btn.className = "btn";
+                    btn.setAttribute('onclick', `equipSkin('${skin}')`);
+                }
+            });
+        }
+
+        // إعدادات التصفح والصفحات الداخلية
+        function switchPage(pageId, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function showGame(gameType) {
+            document.getElementById('game-clicker').style.display = gameType === 'clicker' ? 'block' : 'none';
+            document.getElementById('game-runner').style.display = gameType === 'runner' ? 'block' : 'none';
+            document.getElementById('game-memory').style.display = gameType === 'memory' ? 'block' : 'none';
+        }
+
+        // نظام المتجر والشراء
+        function buySkin(skinName, price) {
+            if (userProfile.ownedSkins.includes(skinName)) return;
+            if (userProfile.coins >= price) {
+                userProfile.coins -= price;
+                userProfile.ownedSkins.push(skinName);
+                userProfile.activeSkin = skinName;
+                saveUserData();
+                updateUI();
+                alert(`🎉 مبروك! اشتريت سكين [${skinName}] بنجاح وتم تفعيله.`);
+            } else {
+                alert("❌ كوينز غير كافية! العب ألعاب أكتر لتجميع كوينز.");
+            }
+        }
+
+        function equipSkin(skinName) {
+            if (userProfile.ownedSkins.includes(skinName)) {
+                userProfile.activeSkin = skinName;
+                saveUserData();
+                updateUI();
+            }
+        }
+
+        // اللعبة 1: ميكانيكية النقرات الخارقة
+        let clickerScore = 0, clickerTime = 30, clickerTimer = null, clickerActive = false;
+        function startClickerGame() {
+            if (clickerActive) return;
+            clickerScore = 0; clickerTime = 30; clickerActive = true;
+            document.getElementById('c-score').innerText = clickerScore;
+            document.getElementById('c-timer').innerText = clickerTime;
+            document.getElementById('click-action-btn').disabled = false;
+            
+            clickerTimer = setInterval(() => {
+                clickerTime--;
+                document.getElementById('c-timer').innerText = clickerTime;
+                if (clickerTime <= 0) {
+                    clearInterval(clickerTimer);
+                    clickerActive = false;
+                    document.getElementById('click-action-btn').disabled = true;
+                    // تحويل السكور المباشر لكوينز وإضافته
+                    userProfile.coins += clickerScore;
+                    alert(`🏁 انتهت اللعبة! جمعت ${clickerScore} نقطة وتم تحويلهم لـ ${clickerScore} كوينز في حسابك!`);
+                    
+                    if (clickerScore > (userProfile.clickHighScore || 0)) {
+                        userProfile.clickHighScore = clickerScore;
+                        db.collection("leaderboard").doc(currentUser.uid).set({
+                            playerName: currentUser.displayName,
+                            highScore: clickerScore
+                        });
+                    }
+                    saveUserData();
+                    updateUI();
+                }
             }, 1000);
         }
+        function handleClickerClick() {
+            if (clickerActive) { clickerScore++; document.getElementById('c-score').innerText = clickerScore; }
+        }
 
-        function handleClick() {
-            if (gameActive) {
-                score++;
-                document.getElementById('current-score').innerText = score;
+        // اللعبة 2: ميكانيكية لعبة الديناصور الجاري والقافز
+        let canvas = document.getElementById('runner-canvas');
+        let ctx = canvas.getContext('2d');
+        let runnerInterval = null, runnerScore = 0, isJumping = false, playerY = 160, jumpVelocity = 0;
+        let obstacles = [];
+
+        function startRunnerGame() {
+            if (runnerInterval) clearInterval(runnerInterval);
+            runnerScore = 0; playerY = 160; jumpVelocity = 0; obstacles = []; isJumping = false;
+            
+            // مستمع القفز
+            window.onkeydown = (e) => { if (e.code === "Space") triggerJump(); };
+            canvas.onclick = () => { triggerJump(); };
+
+            runnerInterval = setInterval(() => {
+                runnerScore++;
+                document.getElementById('r-score').innerText = runnerScore;
+
+                // فيزياء القفز والجاذبية للمكعب
+                if (isJumping) {
+                    playerY += jumpVelocity;
+                    jumpVelocity += 0.6; // جاذبية
+                    if (playerY >= 160) { playerY = 160; isJumping = false; }
+                }
+
+                // توليد عوائق بشكل عشوائي ومستمر
+                if (Math.random() < 0.02 && (obstacles.length === 0 || obstacles[obstacles.length-1].x < 450)) {
+                    obstacles.push({ x: 600, width: 20, height: 30 + Math.random()*15 });
+                }
+
+                // رسم الفريمات وتنظيف الكانفاس
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // رسم اللاعب (المربع السيبراني المضيء)
+                ctx.fillStyle = "#00f0ff";
+                ctx.fillRect(40, playerY, 25, 25);
+
+                // رسم العوائق الملونة بالوردي النيون ومحاكاة الاصطدام
+                ctx.fillStyle = "#ff007f";
+                for (let i = obstacles.length - 1; i >= 0; i--) {
+                    let obs = obstacles[i];
+                    obs.x -= 5; // سرعة تحرك العائق
+                    ctx.fillRect(obs.x, 200 - obs.height, obs.width, obs.height);
+
+                    // خوارزمية كشف التصادم الصارم (Hitbox)
+                    if (obs.x < 65 && obs.x + obs.width > 40 && playerY + 25 > 200 - obs.height) {
+                        clearInterval(runnerInterval);
+                        ctx.fillStyle = "red";
+                        ctx.font = "24px sans-serif";
+                        ctx.fillText("جيم أوفر! 💥", 240, 100);
+                        
+                        let coinsWon = Math.floor(runnerScore / 10);
+                        userProfile.coins += coinsWon;
+                        saveUserData();
+                        updateUI();
+                        alert(`💥 اصطدمت بالعائق! السكور: ${runnerScore}. كسبت ${coinsWon} كوينز!`);
+                        return;
+                    }
+                    if (obs.x < -20) obstacles.splice(i, 1);
+                }
+            }, 1000/60);
+        }
+        function triggerJump() { if (!isJumping) { isJumping = true; jumpVelocity = -10; } }
+
+        // اللعبة 3: ميكانيكية لعبة كروت الذاكرة
+        let memoryItems = ['🎮', '🕹️', '⚡', '🚀', '🧠', '💎', '🎮', '🕹️', '⚡', '🚀', '🧠', '💎'], flippedCards = [], matchedCount = 0;
+        function startMemoryGame() {
+            const board = document.getElementById('memory-grid-board');
+            board.innerHTML = ""; flippedCards = []; matchedCount = 0;
+            // خلط عشوائي للكروت
+            memoryItems.sort(() => Math.random() - 0.5);
+
+            memoryItems.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.value = item;
+                card.dataset.index = index;
+                card.innerText = item;
+                card.onclick = () => handleMemoryFlip(card);
+                board.appendChild(card);
+            });
+        }
+        function handleMemoryFlip(card) {
+            if (card.classList.contains('flipped') || flippedCards.length >= 2) return;
+            card.classList.add('flipped');
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                if (flippedCards[0].dataset.value === flippedCards[1].dataset.value) {
+                    matchedCount += 2;
+                    flippedCards = [];
+                    if (matchedCount === memoryItems.length) {
+                        setTimeout(() => {
+                            userProfile.coins += 50;
+                            saveUserData();
+                            updateUI();
+                            alert("🧠 عبقري! طابقت كل الكروت بنجاح وكسبت 50 كوينز كاملة هدية!");
+                        }, 300);
+                    }
+                } else {
+                    setTimeout(() => {
+                        flippedCards[0].classList.remove('flipped');
+                        flippedCards[1].classList.remove('flipped');
+                        flippedCards = [];
+                    }, 800);
+                }
             }
         }
 
-        function endGame() {
-            clearInterval(timerInterval);
-            gameActive = false;
-            document.getElementById('click-btn').disabled = true;
-            document.getElementById('start-game-btn').disabled = false;
-
-            alert(`🎮 انتهت اللعبة! نقاطك الحالية: ${score}`);
-
-            if (score > userBestScore && currentUser) {
-                userBestScore = score;
-                document.getElementById('best-score').innerText = userBestScore;
-
-                db.collection("leaderboard").doc(currentUser.uid).set({
-                    playerName: currentUser.displayName,
-                    playerEmail: currentUser.email,
-                    highScore: userBestScore,
-                    achievedAt: new Date().toISOString()
-                }).then(() => {
-                    alert("⚡ رقم قياسي جديد! تم التحديث في لوحة المتصدرين العامة.");
+        // جلب قائمة لوحة الصدارة وعرضها
+        function fetchLeaderboard() {
+            db.collection("leaderboard").orderBy("highScore", "desc").limit(5).onSnapshot((snap) => {
+                const tbody = document.getElementById('global-leaderboard-rows');
+                tbody.innerHTML = "";
+                let rank = 1;
+                snap.forEach(doc => {
+                    tbody.innerHTML += `<tr>
+                        <td><span class="rank-badge ${rank===1?'rank-1':''}">${rank}</span></td>
+                        <td>${doc.data().playerName}</td>
+                        <td style="color:var(--primary); font-weight:bold;">${doc.data().highScore}</td>
+                    </tr>`;
+                    rank++;
                 });
-            }
-        }
-
-        function resetGame() {
-            clearInterval(timerInterval);
-            score = 0; timeLeft = 30; gameActive = false;
-            document.getElementById('current-score').innerText = "0";
-            document.getElementById('game-timer').innerText = "30";
-            document.getElementById('click-btn').disabled = true;
-            document.getElementById('start-game-btn').disabled = false;
+            });
         }
     </script>
 </body>
