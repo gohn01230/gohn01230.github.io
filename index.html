@@ -13,15 +13,10 @@
             --text-dark: #2d3748;
             --text-muted: #718096;
             
-            --btn-games-bg: #76db41;
-            --btn-games-shadow: #5cae30;
-            --btn-chat-bg: #6366f1;
-            --btn-chat-shadow: #4f46e5;
-            --btn-trade-bg: #f59e0b;
-            --btn-trade-shadow: #d97706;
-            --btn-danger-bg: #ef4444;
-            --btn-danger-shadow: #dc2626;
-            
+            --btn-games-bg: #76db41; --btn-games-shadow: #5cae30;
+            --btn-chat-bg: #6366f1; --btn-chat-shadow: #4f46e5;
+            --btn-trade-bg: #f59e0b; --btn-trade-shadow: #d97706;
+            --btn-danger-bg: #ef4444; --btn-danger-shadow: #dc2626;
             --nav-bg: #2d3748;
         }
 
@@ -74,10 +69,7 @@
             position: relative;
         }
 
-        .panel-title {
-            font-size: 1.6rem; font-weight: 900; color: #3182ce; margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(255,255,255,0.8);
-        }
+        .panel-title { font-size: 1.6rem; font-weight: 900; color: #3182ce; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(255,255,255,0.8); }
 
         .btn-3d {
             width: 100%; padding: 16px 20px; border: none; border-radius: 18px;
@@ -87,7 +79,6 @@
             margin-bottom: 15px;
         }
         .btn-3d:active { transform: translateY(4px); box-shadow: none; }
-
         .btn-games { background: var(--btn-games-bg); box-shadow: 0 5px 0 var(--btn-games-shadow); }
         .btn-chat { background: var(--btn-chat-bg); box-shadow: 0 5px 0 var(--btn-chat-shadow); }
         .btn-trade { background: var(--btn-trade-bg); box-shadow: 0 5px 0 var(--btn-trade-shadow); }
@@ -116,21 +107,26 @@
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); }
         .nav-icon { font-size: 1.3rem; margin-bottom: 3px; }
 
-        #challenge-modal {
-            position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px); border: 2px solid var(--btn-trade-bg);
-            border-radius: 24px; padding: 20px; text-align: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2); z-index: 200; display: none;
-            animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+        /* --- النوافذ المنبثقة --- */
+        #challenge-modal, #game-select-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+            width: 90%; max-width: 380px; background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px); border-radius: 24px; padding: 25px 20px; text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3); z-index: 300; display: none;
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.25) forwards;
         }
-        @keyframes slideDown { from { top: -150px; opacity: 0; } to { top: 30px; opacity: 1; } }
+        /* خلفية معتمة للنوافذ المنبثقة */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+            z-index: 299; display: none;
+        }
 
         .toast-notification {
             position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
             width: 85%; max-width: 380px; background: white; border-radius: 20px;
             padding: 15px 20px; display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 250;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 350;
             border-left: 6px solid var(--btn-chat-bg);
             transform: translate(-50%, -150px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2);
         }
@@ -138,50 +134,58 @@
         .toast-notification.success { border-left-color: var(--btn-games-bg); }
         .toast-notification.danger { border-left-color: var(--btn-danger-bg); }
 
-        /* --- تصميم بطاقات الألعاب الأونلاين (مثل الصورة) --- */
+        /* --- تصميم بطاقات الألعاب الأفقي (مثل الصورة) --- */
         .online-games-grid {
-            display: grid;
-            grid-template-columns: 1fr;
+            display: flex;
+            overflow-x: auto;
             gap: 15px;
-            margin-top: 15px;
+            padding: 10px 5px 20px 5px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
         }
+        /* إخفاء شريط التمرير للمظهر الأنظف */
+        .online-games-grid::-webkit-scrollbar { height: 6px; }
+        .online-games-grid::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
         .game-cover-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.4));
+            min-width: 260px; /* هذا ما يجعلها أفقية */
+            flex-shrink: 0;
+            scroll-snap-align: center;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.6));
             border: 2px solid rgba(255,255,255,0.8);
             border-radius: 20px;
             padding: 15px;
             display: flex;
+            flex-direction: column; /* ترتيب عمودي داخل البطاقة نفسها */
             align-items: center;
-            gap: 15px;
+            text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.05);
         }
-        .game-cover-card:active { transform: translateY(3px); box-shadow: none; }
+        .game-cover-card:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.05); }
         
-        /* هذا العنصر يمثل صورة اللعبة. يمكنك استبداله بـ <img> لاحقاً */
         .game-thumb {
-            width: 70px; height: 70px;
-            border-radius: 16px;
+            width: 80px; height: 80px;
+            border-radius: 20px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 2.2rem;
-            flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
         }
         .thumb-xo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
         .thumb-tap { background: linear-gradient(135deg, #f59e0b, #d97706); }
         .thumb-rps { background: linear-gradient(135deg, #ef4444, #dc2626); }
 
-        .game-info { text-align: right; flex: 1; }
         .game-info h4 { font-size: 1.1rem; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; }
-        .game-info p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; }
+        .game-info p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; }
         .game-prize { 
             display: inline-block; background: #fff7ed; color: #ea580c; 
-            padding: 3px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 800;
+            padding: 4px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 800;
             border: 1px solid #ffedd5;
         }
 
-        /* --- ستايل لعبة إكس أو --- */
+        /* --- ستايل الألعاب --- */
         .xo-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 280px; margin: 0 auto 20px auto; }
         .xo-cell {
             background: rgba(255, 255, 255, 0.7); border: 2px solid rgba(255,255,255,0.8);
@@ -193,7 +197,6 @@
         .xo-x { color: #6366f1; }
         .xo-o { color: #ef4444; }
 
-        /* --- ستايل لعبة حرب السرعة --- */
         .tap-arena { text-align: center; margin-top: 20px; }
         .tap-bar-container { width: 100%; height: 30px; background: #e2e8f0; border-radius: 15px; overflow: hidden; margin: 20px 0; display: flex; border: 2px solid white; }
         .tap-progress { height: 100%; transition: width 0.1s ease; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 0.8rem; }
@@ -226,12 +229,26 @@
         <div style="flex: 1;"><p id="toast-message" style="font-size: 0.9rem; font-weight: 700; color: var(--text-dark);"></p></div>
     </div>
 
+    <!-- خلفية معتمة للنوافذ -->
+    <div id="modal-overlay" class="modal-overlay" onclick="closeAllModals()"></div>
+
+    <!-- نافذة اختيار اللعبة عند التحدي -->
+    <div id="game-select-modal">
+        <div style="font-size: 2.5rem; margin-bottom: 10px;">⚔️</div>
+        <h3 style="margin-bottom: 5px; font-weight:800;">اختر لعبة التحدي</h3>
+        <p id="challenge-target-name" style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">ضد: ...</p>
+        <button class="btn-3d btn-chat" style="margin-bottom:10px;" onclick="confirmChallenge('xo')">❌ إكس أو (جائزة 20 🥕)</button>
+        <button class="btn-3d btn-trade" onclick="confirmChallenge('tap')">⚡ حرب السرعة (جائزة 15 🥕)</button>
+        <button class="btn-3d" style="margin-top:15px; background:#94a3b8; box-shadow: 0 5px 0 #64748b;" onclick="closeAllModals()">إلغاء</button>
+    </div>
+
+    <!-- نافذة استقبال التحدي -->
     <div id="challenge-modal">
-        <div style="font-size: 2.2rem; margin-bottom: 8px;">⚔️</div>
+        <div style="font-size: 2.5rem; margin-bottom: 10px;">🔥</div>
         <h3 style="margin-bottom: 6px; font-weight:800;">تحدي مواجهة حية!</h3>
-        <p id="challenge-text" style="color: var(--text-muted); margin-bottom: 18px; font-size: 0.9rem;">...</p>
+        <p id="challenge-text" style="color: var(--text-muted); margin-bottom: 18px; font-size: 0.95rem; font-weight: 700;">...</p>
         <div style="display: flex; gap: 10px;">
-            <button class="btn-3d btn-games btn-sm-3d" style="flex:1" onclick="acceptChallenge()">قبول</button>
+            <button class="btn-3d btn-games btn-sm-3d" style="flex:1" onclick="acceptChallenge()">قبول التحدي</button>
             <button class="btn-3d btn-danger-3d btn-sm-3d" style="flex:1" onclick="rejectChallenge()">رفض</button>
         </div>
     </div>
@@ -242,7 +259,6 @@
             <span id="user-displayname" class="user-name">..</span>
         </div>
         <div class="brand">GOHN PRO</div>
-        <!-- تم تغيير الأيقونة إلى جزرة 🥕 -->
         <div id="coin-badge" class="coin-badge" style="display:none;">🥕 <span id="user-coins">0</span></div>
     </div>
 
@@ -256,7 +272,6 @@
         <div id="view-main" style="display:none;">
             <div class="main-panel">
                 
-                <!-- صفحة الألعاب الفردية -->
                 <div id="page-games" class="page active">
                     <h3 style="color:#2b6cb0; margin-bottom:5px; font-weight:800;">🌌 معركة الفضاء</h3>
                     <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">دمر الكويكبات واجمع الجزر!</p>
@@ -264,39 +279,35 @@
                     <button class="btn-3d btn-games" onclick="startSpaceGame()">ابدأ المعركة 🕹️</button>
                 </div>
 
-                <!-- صفحة الألعاب الأونلاين (المحدثة بشكل كامل) -->
                 <div id="page-online" class="page">
-                    <h3 style="color:#2b6cb0; margin-bottom:5px; font-weight:800;">🟢 الأبطال المتصلين</h3>
-                    <div id="active-players-list" style="max-height: 150px; overflow-y: auto; padding: 5px; margin-bottom: 20px;">
+                    <h3 style="color:#2b6cb0; margin-bottom:5px; font-weight:800; text-align:right;">🟢 الأبطال المتصلين</h3>
+                    <div id="active-players-list" style="max-height: 150px; overflow-y: auto; padding: 5px; margin-bottom: 25px;">
                         <p style="color:var(--text-muted); font-size:0.85rem;">جاري البحث...</p>
                     </div>
 
                     <h3 style="color:#2b6cb0; margin-bottom:10px; font-weight:800; text-align: right;">🎮 اختر لعبة للتحدي</h3>
+                    <!-- الترتيب الأفقي مفعل هنا عبر CSS -->
                     <div class="online-games-grid">
                         
-                        <!-- اللعبة 1: إكس أو -->
-                        <div class="game-cover-card" onclick="promptXOChallenge()">
-                            <!-- يمكنك استبدال هذا الـ div بـ <img src="رابط_صورة_اكس_او.jpg" class="game-thumb" style="object-fit:cover;"> -->
+                        <div class="game-cover-card" onclick="showInfo('xo')">
                             <div class="game-thumb thumb-xo">❌⭕</div>
                             <div class="game-info">
-                                <h4>إكس أو كلاسيك (X-O)</h4>
+                                <h4>إكس أو كلاسيك</h4>
                                 <p>تحدى أصدقائك في اللعبة الأيقونية</p>
                                 <span class="game-prize">جائزة الفوز: 20 🥕</span>
                             </div>
                         </div>
 
-                        <!-- اللعبة 2: حرب السرعة -->
-                        <div class="game-cover-card" onclick="promptTapChallenge()">
+                        <div class="game-cover-card" onclick="showInfo('tap')">
                             <div class="game-thumb thumb-tap">⚡👆</div>
                             <div class="game-info">
-                                <h4>حرب السرعة (Tap War)</h4>
+                                <h4>حرب السرعة</h4>
                                 <p>من يضغط على الزر أسرع يفوز فوراً!</p>
                                 <span class="game-prize">جائزة الفوز: 15 🥕</span>
                             </div>
                         </div>
 
-                        <!-- اللعبة 3: حجر ورقة مقص -->
-                        <div class="game-cover-card" onclick="promptRPSChallenge()">
+                        <div class="game-cover-card" onclick="showInfo('rps')">
                             <div class="game-thumb thumb-rps">✊✋</div>
                             <div class="game-info">
                                 <h4>حجر ورقة مقص</h4>
@@ -308,7 +319,6 @@
                     </div>
                 </div>
 
-                <!-- ساحة لعبة إكس أو -->
                 <div id="page-xo" class="page">
                     <h3 style="color:var(--btn-chat-bg); margin-bottom:5px; font-weight:900;">❌ إكس أو أونلاين ⭕</h3>
                     <p id="xo-status-text" style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">جاري التجهيز...</p>
@@ -316,7 +326,6 @@
                     <button class="btn-3d btn-danger-3d" onclick="exitRoom()">انسحاب</button>
                 </div>
 
-                <!-- ساحة لعبة حرب السرعة -->
                 <div id="page-tap" class="page">
                     <h3 style="color:var(--btn-trade-bg); margin-bottom:5px; font-weight:900;">⚡ حرب السرعة ⚡</h3>
                     <p id="tap-status-text" style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">جاري البحث عن خصم...</p>
@@ -330,30 +339,20 @@
                     <button class="btn-3d btn-danger-3d" style="margin-top:20px;" onclick="exitRoom()">انسحاب</button>
                 </div>
 
-                <!-- صفحة المكافآت (محدثة بعناصر مفيدة للألعاب) -->
                 <div id="page-rewards" class="page">
                     <h3 style="color:#2b6cb0; margin-bottom:15px; font-weight:800;">🛒 متجر ترقيات الألعاب</h3>
                     <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:15px;">استخدم جزرك 🥕 للحصول على مزايا حصرية داخل الألعاب!</p>
                     
                     <div class="reward-item">
-                        <div>
-                            <strong>👑 لقب "أسطورة" في البروفايل</strong><br>
-                            <small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 500 🥕</small>
-                        </div>
+                        <div><strong>👑 لقب "أسطورة" في البروفايل</strong><br><small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 500 🥕</small></div>
                         <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('legend_title', 500)">شراء</button>
                     </div>
                     <div class="reward-item">
-                        <div>
-                            <strong>🖼️ إطار صورة ذهبي مميز</strong><br>
-                            <small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 300 🥕</small>
-                        </div>
+                        <div><strong>🖼️ إطار صورة ذهبي مميز</strong><br><small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 300 🥕</small></div>
                         <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('gold_frame', 300)">شراء</button>
                     </div>
                     <div class="reward-item">
-                        <div>
-                            <strong>🍀 حظ أوفر (مضاعف جزر x2)</strong><br>
-                            <small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 200 🥕 (للمباراة القادمة)</small>
-                        </div>
+                        <div><strong>🍀 حظ أوفر (مضاعف جزر x2)</strong><br><small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 200 🥕 (للمباراة القادمة)</small></div>
                         <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('luck_boost', 200)">شراء</button>
                     </div>
                 </div>
@@ -382,6 +381,9 @@
         const auth = firebase.auth(), db = firebase.firestore();
         let currentUser = null, userProfile = { coins: 0 }, activeRoomId = null, currentGameType = "";
         let roomListener = null, currentChallengeId = null;
+        
+        // متغيرات جديدة للتحكم في نافذة اختيار اللعبة
+        let targetUserId = null, targetUserName = "";
 
         function showToast(message, type = "info", icon = "🔔") {
             const toast = document.getElementById("custom-toast");
@@ -441,7 +443,7 @@
                                 <div><div style="font-weight:800; font-size:0.9rem;">${pData.fullName}</div>
                                 <div style="font-size:0.75rem; color:var(--btn-games-bg);"><span class="status-dot"></span>متصل</div></div>
                             </div>
-                            <button class="btn-3d btn-games btn-sm-3d" onclick="sendChallenge('${doc.id}', '${pData.fullName}', 'xo')">تحدي ⚔️</button>
+                            <button class="btn-3d btn-games btn-sm-3d" onclick="openGameSelect('${doc.id}', '${pData.fullName}')">تحدي ⚔️</button>
                         </div>`;
                     }
                 });
@@ -449,13 +451,38 @@
             });
         }
 
-        function sendChallenge(targetId, targetName, gameType) {
-            db.collection("challenges").add({
-                fromId: currentUser.uid, fromName: currentUser.displayName || "لاعب",
-                toId: targetId, gameType: gameType, status: "pending", timestamp: Date.now()
-            }).then(() => showToast(`تم إرسال التحدي إلى ${targetName}!`, "success", "🚀"));
+        // --- دوال التحكم في نافذة اختيار اللعبة ---
+        function openGameSelect(userId, userName) {
+            targetUserId = userId;
+            targetUserName = userName;
+            document.getElementById("challenge-target-name").innerText = `ضد اللاعب: ${userName}`;
+            document.getElementById("modal-overlay").style.display = "block";
+            document.getElementById("game-select-modal").style.display = "block";
         }
 
+        function closeAllModals() {
+            document.getElementById("modal-overlay").style.display = "none";
+            document.getElementById("game-select-modal").style.display = "none";
+            document.getElementById("challenge-modal").style.display = "none";
+            targetUserId = null; targetUserName = "";
+        }
+
+        function confirmChallenge(gameType) {
+            closeAllModals();
+            let gameName = gameType === 'xo' ? "إكس أو" : "حرب السرعة";
+            db.collection("challenges").add({
+                fromId: currentUser.uid, fromName: currentUser.displayName || "لاعب",
+                toId: targetUserId, gameType: gameType, status: "pending", timestamp: Date.now()
+            }).then(() => showToast(`تم إرسال تحدي ${gameName} إلى ${targetUserName}!`, "success", "🚀"));
+        }
+
+        function showInfo(game) {
+            let msg = game === 'xo' ? "اختر لاعباً من القائمة في الأعلى واضغط 'تحدي' لبدء إكس أو!" : 
+                      (game === 'tap' ? "اختر لاعباً من القائمة في الأعلى واضغط 'تحدي' لبدء حرب السرعة!" : "هذه اللعبة قيد التطوير حالياً، ترقبوها قريباً! 🛠️");
+            showToast(msg, "info", "ℹ️");
+        }
+
+        // --- استقبال التحديات ---
         function listenToChallenges() {
             db.collection("challenges").where("toId", "==", currentUser.uid).onSnapshot(snapshot => {
                 snapshot.docChanges().forEach(change => {
@@ -463,8 +490,9 @@
                         let data = change.doc.data();
                         if(data.status === "pending" && (Date.now() - data.timestamp < 60000)) {
                             currentChallengeId = change.doc.id;
-                            let gameName = data.gameType === "xo" ? "إكس أو" : (data.gameType === "tap" ? "حرب السرعة" : "حجر ورقة مقص");
-                            document.getElementById("challenge-text").innerText = `اللاعب [ ${data.fromName} ] يتحداك في ${gameName}!`;
+                            let gameName = data.gameType === "xo" ? "إكس أو (X-O)" : "حرب السرعة";
+                            document.getElementById("challenge-text").innerText = `اللاعب [ ${data.fromName} ] يتحداك في لعبة ${gameName}!`;
+                            document.getElementById("modal-overlay").style.display = "block";
                             document.getElementById("challenge-modal").style.display = "block";
                         }
                     }
@@ -478,6 +506,7 @@
                         change.doc.ref.delete();
                         activeRoomId = data.roomId;
                         currentGameType = data.gameType;
+                        closeAllModals();
                         if(currentGameType === "xo") enterXORoom(data.toName);
                         else if(currentGameType === "tap") enterTapRoom(data.toName);
                     } else if(data && data.status === "rejected") {
@@ -489,7 +518,6 @@
         }
 
         function acceptChallenge() {
-            document.getElementById("challenge-modal").style.display = "none";
             if(!currentChallengeId) return;
             let chalRef = db.collection("challenges").doc(currentChallengeId);
             chalRef.get().then(doc => {
@@ -508,6 +536,7 @@
                     
                     roomRef.set(initialData).then(() => {
                         chalRef.update({ status: "accepted", roomId: activeRoomId, toName: currentUser.displayName });
+                        closeAllModals();
                         if(currentGameType === "xo") enterXORoom(cData.fromName);
                         else if(currentGameType === "tap") enterTapRoom(cData.fromName);
                     });
@@ -516,14 +545,9 @@
         }
 
         function rejectChallenge() {
-            document.getElementById("challenge-modal").style.display = "none";
             if(currentChallengeId) db.collection("challenges").doc(currentChallengeId).update({ status: "rejected" });
+            closeAllModals();
         }
-
-        // --- دوال مساعدة لبدء الألعاب من القائمة ---
-        function promptXOChallenge() { showToast("اختر لاعباً من قائمة المتصلين في الأعلى لبدء التحدي!", "info", "ℹ️"); }
-        function promptTapChallenge() { showToast("اختر لاعباً من قائمة المتصلين في الأعلى لبدء التحدي!", "info", "ℹ️"); }
-        function promptRPSChallenge() { showToast("لعبة حجر ورقة مقص قيد التطوير، جرب إكس أو أو حرب السرعة!", "info", "🛠️"); }
 
         // --- منطق لعبة إكس أو ---
         function enterXORoom(oppName) {
