@@ -87,14 +87,8 @@
         }
         @keyframes slideDown { from { top: -100px; opacity: 0; } to { top: 80px; opacity: 1; } }
 
-        /* Game Hub & RPS */
-        .game-hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .game-card {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 20px; padding: 20px 15px; text-align: center; cursor: pointer; transition: 0.3s;
-        }
-        .game-card:hover { border-color: var(--accent); background: rgba(6, 182, 212, 0.05); }
-        .game-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+        /* Game Elements */
+        #space-canvas { background: #020617; display: block; margin: 15px auto; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); max-width: 100%; cursor: crosshair; }
         .player-item {
             display: flex; justify-content: space-between; align-items: center;
             background: rgba(255,255,255,0.03); padding: 12px 15px; border-radius: 16px; margin-bottom: 10px;
@@ -116,8 +110,6 @@
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
             border-radius: 16px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
         }
-        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -141,7 +133,6 @@
             <img id="user-avatar" class="user-avatar" src="">
             <div style="display:flex; flex-direction:column;">
                 <span id="user-displayname" style="font-size:0.85rem; font-weight:700;">..</span>
-                <span style="font-size:0.7rem; color:var(--success);">متصل الآن</span>
             </div>
         </div>
         <div class="brand">GOHN PRO</div>
@@ -149,80 +140,78 @@
     </div>
 
     <div class="container">
-        <div class="card" id="view-auth" style="text-align: center; padding: 40px 20px;">
-            <div style="font-size: 4rem; margin-bottom: 20px;">🎮</div>
-            <h2 style="margin-bottom:10px; font-size: 1.5rem;">منصة الألعاب التنافسية</h2>
-            <p style="color:var(--text-muted); margin-bottom:30px; font-size:0.95rem; line-height: 1.6;">سجل دخولك لتبدأ اللعب، حفظ تقدمك، ومنافسة الآخرين!</p>
-            <button class="btn" onclick="login()">سجل دخولك بجوجل وابدأ 🚀</button>
+        <!-- زائر غير مسجل -->
+        <div class="card" id="view-auth">
+            <h2 style="margin-bottom:10px;">🏆 منصة الألعاب التنافسية والمكافآت</h2>
+            <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem;">العب أونلاين ضد لاعبين حقيقيين، اجمع الكوينز واستبدلها بجوائز حقيقية مشحونة لحسابك!</p>
+            <button class="btn" onclick="login()">سجل دخولك بجوجل وابدأ التحدي 🚀</button>
         </div>
 
+        <!-- اللاعب مسجل -->
         <div id="view-main" style="display:none;">
+            
+            <!-- 1. صفحة ألعاب السنجل بلير المحدثة -->
             <div id="page-games" class="page active">
-                <div class="card" style="text-align: center;">
-                    <h3 style="color:var(--accent); margin-bottom:5px;">🚀 حرب الفضاء</h3>
-                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:10px;">أعلى نتيجة مسجلة: <span id="high-score-display" style="color:var(--gold); font-weight:bold;">0</span></p>
-                    <canvas id="space-canvas" width="350" height="250" style="background: #0f172a; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); max-width: 100%; cursor: crosshair; margin-bottom: 15px;"></canvas>
-                    <button class="btn btn-accent" onclick="startSpaceGame()">ابدأ المعركة 🌌</button>
+                <div class="card">
+                    <h3 style="color:var(--primary); margin-bottom:5px;">🚀 معركة الفضاء السحيق المطورة</h3>
+                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">دمر الكويكبات بالليزر التلقائي واجمع نقاط الكوينز الحقيقية لحسابك!</p>
+                    <canvas id="space-canvas" width="450" height="300"></canvas>
+                    <button class="btn" onclick="startSpaceGame()">ابدأ معركة الفضاء 🌌</button>
                 </div>
             </div>
 
+            <!-- 2. صفحة الأونلاين واللاعبين النشطين -->
             <div id="page-online" class="page">
                 <div class="card">
-                    <h3 style="margin-bottom:15px; display:flex; align-items:center; gap:8px;"><span class="status-dot"></span> اللاعبين النشطين</h3>
+                    <h3 style="color:var(--primary); margin-bottom:10px;">🟢 اللاعبين المتصلين الآن</h3>
                     <div id="active-players-list" style="max-height: 250px; overflow-y: auto;">
-                        <p style="color:var(--text-muted); font-size:0.9rem; text-align:center; padding: 20px;">جاري البحث...</p>
+                        <p style="color:var(--text-muted); font-size:0.9rem;">جاري البحث عن أبطال أونلاين...</p>
                     </div>
-                </div>
-
-                <div class="card">
-                    <h3 style="margin-bottom:15px;">🎮 ألعاب أونلاين سريعة</h3>
-                    <div class="game-hub-grid">
-                        <div class="game-card" onclick="findOrCreateRPSRoom()">
-                            <span class="game-icon">✊</span>
-                            <div class="game-title">حجر ورقة مقص</div>
-                            <div class="game-desc">مطابقة فورية - جائزة 30 كوينز</div>
-                        </div>
-                        <div class="game-card" style="opacity: 0.6; cursor: not-allowed;">
-                            <span class="game-icon">🔢</span>
-                            <div class="game-title">تخمين الرقم</div>
-                            <div class="game-desc">قريباً</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="rps-arena" class="card" style="display:none; text-align: center; border-color: var(--primary);">
-                    <h3 style="color:var(--primary);">✊ حجر ورقة مقص أونلاين ✋</h3>
-                    <p id="rps-status" style="color:var(--text-muted); margin: 15px 0;">جاري البحث عن خصم...</p>
-                    <div id="rps-controls" style="display:none;">
-                        <p style="margin-bottom: 15px; font-weight: bold;">اختر حركتك:</p>
-                        <div class="rps-choices">
-                            <button class="rps-btn" onclick="playRPS('rock')">✊</button>
-                            <button class="rps-btn" onclick="playRPS('paper')">✋</button>
-                            <button class="rps-btn" onclick="playRPS('scissors')">✌️</button>
-                        </div>
-                    </div>
-                    <div id="rps-result-display" class="rps-result"></div>
-                    <button class="btn btn-danger btn-sm" style="margin-top:20px;" onclick="exitRPSRoom()">خروج وانسحاب</button>
                 </div>
             </div>
 
+            <!-- ساحة لعبة الأونلاين الحية (حجر ورقة مقص) -->
+            <div id="page-rps" class="page">
+                <div class="card" style="text-align:center;">
+                    <h2 style="color:var(--accent); margin-bottom:10px;">⚔️ ساحة حجر ورقة مقص أونلاين</h2>
+                    <p id="rps-vs-text" style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">مواجهة قوية حية</p>
+                    
+                    <div class="rps-choices">
+                        <button class="rps-btn" id="rps-rock" onclick="sendRPSMove('rock')">✊</button>
+                        <button class="rps-btn" id="rps-paper" onclick="sendRPSMove('paper')">✋</button>
+                        <button class="rps-btn" id="rps-scissors" onclick="sendRPSMove('scissors')">✌️</button>
+                    </div>
+                    
+                    <div id="rps-result-box" class="rps-result">اختر حركتك بحكمة وثقة... 🔥</div>
+                    <button class="btn btn-danger btn-sm" style="margin-top:20px; width:100%;" onclick="exitRPSRoom()">انسحاب وعودة للرئيسية</button>
+                </div>
+            </div>
+
+            <!-- 3. متجر الجوائز والمساعدات المطور -->
             <div id="page-rewards" class="page">
                 <div class="card">
-                    <h2 style="margin-bottom:5px;">🎁 متجر الجوائز</h2>
-                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">استبدل كوينزك بجوائز حقيقية.</p>
+                    <h2 style="margin-bottom:15px;">🎁 متجر استبدال الجوائز الحقيقية</h2>
                     <div class="reward-item">
-                        <div><strong style="display:block; margin-bottom:4px;">60 شدة ببجي</strong><small style="color:var(--gold);">1000 كوينز</small></div>
-                        <button class="btn btn-sm" onclick="claimReward('60 UC PUBG', 1000)">استبدال</button>
+                        <div><strong>60 شدة ببجي ميديا باير</strong><br><small style="color:var(--gold);">التكلفة: 1000 كوينز</small></div>
+                        <button class="btn btn-sm" onclick="claimReward('60 UC PUBG', 1000)">استبدال 🪙</button>
                     </div>
                     <div class="reward-item">
-                        <div><strong style="display:block; margin-bottom:4px;">فودافون كاش (50 ج)</strong><small style="color:var(--gold);">2500 كوينز</small></div>
-                        <button class="btn btn-sm" onclick="claimReward('Vodafone Cash 50 EGP', 2500)">استبدال</button>
+                        <div><strong>بطاقة فودافون كاش (50 جنيه)</strong><br><small style="color:var(--gold);">التكلفة: 2500 كوينز</small></div>
+                        <button class="btn btn-sm" onclick="claimReward('Vodafone Cash 50 EGP', 2500)">استبدال 🪙</button>
+                    </div>
+
+                    <h2 style="margin-top:25px; margin-bottom:15px; color:var(--accent);">⚡ مساعدات الألعاب (Power-ups)</h2>
+                    <div class="reward-item">
+                        <div><strong>درع الفضاء المضاعف 🛡️</strong><br><small style="color:var(--gold);">التكلفة: 150 كوينز</small></div>
+                        <button class="btn btn-sm btn-accent" onclick="buyPowerUp('Space Shield', 150)">شراء 🛒</button>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
+    <!-- البار السفلي للتنقل -->
     <div class="bottom-nav" id="bottom-nav" style="display:none;">
         <div class="nav-item active" id="nav-games" onclick="switchTab('games')"><div class="nav-icon">🕹️</div><div>الألعاب</div></div>
         <div class="nav-item" id="nav-online" onclick="switchTab('online')"><div class="nav-icon">⚔️</div><div>أونلاين</div></div>
@@ -241,15 +230,11 @@
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(), db = firebase.firestore();
+        let currentUser = null, userProfile = { coins: 0 }, activeRoomId = null;
+        let roomListener = null, currentChallengeId = null;
 
-        let currentUser = null, userProfile = { coins: 0, highScore: 0 };
-        let activeRoomId = null, roomListener = null;
-        let pendingChallengeId = null;
-
-        function login() { 
-            auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(err => alert("خطأ في الدخول: " + err.message)); 
-        }
-
+        function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+        
         auth.onAuthStateChanged(user => {
             if(user) {
                 currentUser = user;
@@ -259,359 +244,292 @@
                 document.getElementById('coin-badge').style.display = 'flex';
                 document.getElementById('bottom-nav').style.display = 'flex';
                 
-                let defaultPhoto = user.photoURL || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.displayName || "Gohn") + "&background=8b5cf6&color=fff";
-                let defaultName = user.displayName ? user.displayName.split(' ')[0] : "لاعب";
+                let defaultPhoto = user.photoURL || "https://via.placeholder.com/36";
+                let defaultName = user.displayName || "لاعب مجهول";
                 
                 document.getElementById('user-avatar').src = defaultPhoto;
-                document.getElementById('user-displayname').innerText = defaultName;
+                document.getElementById('user-displayname').innerText = defaultName.split(' ')[0];
                 
-                const userRef = db.collection("users_profile").doc(user.uid);
-                
-                userRef.get().then(doc => {
-                    if (!doc.exists) {
-                        userRef.set({ 
-                            coins: 200, 
-                            highScore: 0,
-                            fullName: defaultName, 
-                            photoURL: defaultPhoto, 
-                            status: "online"
-                        });
-                    } else {
-                        userRef.update({ 
-                            status: "online", 
-                            fullName: defaultName, 
-                            photoURL: defaultPhoto 
-                        });
+                // حفظ حالة الاتصال الحية بشكل منسق وآمن لمنع التكرار
+                db.collection("users_profile").doc(user.uid).set({
+                    fullName: defaultName,
+                    photoURL: defaultPhoto,
+                    status: "online",
+                    lastActive: Date.now()
+                }, { merge: true });
+
+                db.collection("users_profile").doc(user.uid).onSnapshot(doc => {
+                    if(doc.exists) { 
+                        userProfile = doc.data(); 
+                        document.getElementById('user-coins').innerText = userProfile.coins || 0; 
                     }
                 });
 
-                userRef.onSnapshot(doc => {
-                    if(doc.exists) { 
-                        userProfile = doc.data(); 
-                        document.getElementById('user-coins').innerText = userProfile.coins || 0;
-                        document.getElementById('high-score-display').innerText = userProfile.highScore || 0;
-                    } 
-                });
-
                 listenToActivePlayers();
-                listenToIncomingChallenges();
-            } else {
-                document.getElementById('view-auth').style.display = 'block';
-                document.getElementById('view-main').style.display = 'none';
-                document.getElementById('bottom-nav').style.display = 'none';
+                listenToChallenges();
             }
         });
 
-        window.addEventListener('beforeunload', () => {
-            if(currentUser) db.collection("users_profile").doc(currentUser.uid).update({ status: "offline" });
-            if(activeRoomId) exitRPSRoom(); // إنهاء الغرفة إذا أغلق المستخدم المتصفح
-        });
-
-        // --- نظام التحديات ---
-        function sendChallenge(targetUserId, targetName) {
-            db.collection("challenges").add({
-                fromId: currentUser.uid,
-                fromName: currentUser.displayName || "لاعب",
-                toId: targetUserId,
-                gameType: "rps",
-                status: "pending",
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => alert(`✅ تم إرسال التحدي إلى ${targetName}`));
+        // 1. الاستماع للاعبين المتصلين الحقيقيين بصورهم وأسمائهم
+        function listenToActivePlayers() {
+            db.collection("users_profile").where("status", "==", "online").onSnapshot(snapshot => {
+                let html = "";
+                let hasPlayers = false;
+                snapshot.forEach(doc => {
+                    if(doc.id !== currentUser.uid && (Date.now() - doc.data().lastActive < 300000)) {
+                        hasPlayers = true;
+                        let pData = doc.data();
+                        html += `
+                            <div class="player-item">
+                                <div class="player-info">
+                                    <img src="${pData.photoURL}" class="player-avatar">
+                                    <div>
+                                        <div style="font-weight:700; font-size:0.95rem;">${pData.fullName}</div>
+                                        <div style="font-size:0.75rem; color:var(--success); display:flex; align-items:center; gap:4px;"><span class="status-dot"></span>متصل حالياً</div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-accent" onclick="sendChallenge('${doc.id}', '${pData.fullName}')">تحدي ⚔️</button>
+                            </div>
+                        `;
+                    }
+                });
+                if(!hasPlayers) { html = '<p style="color:var(--text-muted); font-size:0.9rem; text-align:center; padding:15px;">لا يوجد لاعبين آخرين متصلين حالياً. شارك اللينك مع أصدقائك وتحدّاهم! 🌐</p>'; }
+                document.getElementById("active-players-list").innerHTML = html;
+            });
+            
+            // تحديث وقت النشاط كل دقيقتين لضمان البقاء أونلاين
+            setInterval(() => {
+                if(currentUser) db.collection("users_profile").doc(currentUser.uid).update({ lastActive: Date.now() });
+            }, 120000);
         }
 
-        function listenToIncomingChallenges() {
+        // 2. إرسال طلب التحدي بشكل سليم ومزامن
+        function sendChallenge(targetId, targetName) {
+            db.collection("challenges").add({
+                fromId: currentUser.uid,
+                fromName: currentUser.displayName,
+                toId: targetId,
+                status: "pending",
+                timestamp: Date.now()
+            }).then(() => {
+                alert(`تم إرسال طلب مواجهة حية إلى ${targetName}! انتظر قبوله لتدخلوا الساحة فوراً... 🔥`);
+            });
+        }
+
+        // 3. الاستماع واستقبال طلبات التحدي الحية الموجهة للمستخدم
+        function listenToChallenges() {
             db.collection("challenges").where("toId", "==", currentUser.uid).onSnapshot(snapshot => {
                 snapshot.docChanges().forEach(change => {
-                    if (change.type === "added") {
-                        const data = change.doc.data();
-                        if (data.status === "pending") {
-                            pendingChallengeId = change.doc.id;
-                            document.getElementById('challenge-text').innerText = `اللاعب [ ${data.fromName} ] يتحداك في حجر ورقة مقص!`;
-                            document.getElementById('challenge-modal').style.display = 'block';
+                    if (change.type === "added" || change.type === "modified") {
+                        let data = change.doc.data();
+                        if(data.status === "pending" && (Date.now() - data.timestamp < 60000)) {
+                            currentChallengeId = change.doc.id;
+                            document.getElementById("challenge-text").innerText = `اللاعب ${data.fromName} يطلب مواجهتك الآن في ساحة حجر ورقة مقص الحية!`;
+                            document.getElementById("challenge-modal").style.display = "block";
                         }
+                    }
+                });
+            });
+
+            db.collection("challenges").where("fromId", "==", currentUser.uid).onSnapshot(snapshot => {
+                snapshot.docChanges().forEach(change => {
+                    let data = change.doc.data();
+                    if(data && data.status === "accepted") {
+                        change.doc.ref.delete();
+                        activeRoomId = data.roomId;
+                        enterRPSRoom(data.toName || "الخصم");
+                    } else if(data && data.status === "rejected") {
+                        change.doc.ref.delete();
+                        alert("للأسف، رفض الخصم طلب التحدي الحالي.");
                     }
                 });
             });
         }
 
         function acceptChallenge() {
-            if(!pendingChallengeId) return;
-            document.getElementById('challenge-modal').style.display = 'none';
+            document.getElementById("challenge-modal").style.display = "none";
+            if(!currentChallengeId) return;
             
-            db.collection("challenges").doc(pendingChallengeId).get().then(doc => {
-                const challengeData = doc.data();
-                db.collection("challenges").doc(pendingChallengeId).update({ status: "accepted" });
-                
-                db.collection("rooms").add({
-                    gameType: "rps",
-                    player1: challengeData.fromId, p1Name: challengeData.fromName,
-                    player2: currentUser.uid, p2Name: currentUser.displayName,
-                    p1Choice: null, p2Choice: null, winner: null, status: "playing"
-                }).then(roomRef => {
+            let chalRef = db.collection("challenges").doc(currentChallengeId);
+            chalRef.get().then(doc => {
+                if(doc.exists) {
+                    let cData = doc.data();
+                    // إنشاء غرفة لعب موحدة ومشتركة
+                    let roomRef = db.collection("rooms").doc();
                     activeRoomId = roomRef.id;
-                    switchTab('online');
-                    document.getElementById('rps-arena').style.display = 'block';
-                    document.getElementById('rps-status').innerText = "بدأت المعركة! اختر حركتك.";
-                    document.getElementById('rps-controls').style.display = 'block';
-                    listenToRPSRoom();
-                });
+                    
+                    roomRef.set({
+                        player1: cData.fromId, p1Name: cData.fromName, p1Move: "",
+                        player2: currentUser.uid, p2Name: currentUser.displayName, p2Move: "",
+                        status: "playing", winner: ""
+                    }).then(() => {
+                        chalRef.update({ status: "accepted", roomId: activeRoomId, toName: currentUser.displayName });
+                        enterRPSRoom(cData.fromName);
+                    });
+                }
             });
         }
 
         function rejectChallenge() {
-            if(pendingChallengeId) {
-                db.collection("challenges").doc(pendingChallengeId).update({ status: "rejected" });
-                document.getElementById('challenge-modal').style.display = 'none';
-                pendingChallengeId = null;
-            }
+            document.getElementById("challenge-modal").style.display = "none";
+            if(currentChallengeId) db.collection("challenges").doc(currentChallengeId).update({ status: "rejected" });
         }
 
-        function listenToActivePlayers() {
-            db.collection("users_profile").where("status", "==", "online").onSnapshot(snapshot => {
-                let html = "";
-                let count = 0;
-                snapshot.forEach(doc => {
-                    if(doc.id !== currentUser.uid) {
-                        count++;
-                        let pData = doc.data();
-                        let pName = pData.fullName || "لاعب غامض";
-                        let pPhoto = pData.photoURL || "https://ui-avatars.com/api/?name=" + pName + "&background=random";
-                        html += `
-                            <div class="player-item">
-                                <div class="player-info">
-                                    <img src="${pPhoto}" class="user-avatar" style="width:32px; height:32px;">
-                                    <span style="font-weight:700;">${pName}</span>
-                                </div>
-                                <button class="btn btn-sm btn-accent" onclick="sendChallenge('${doc.id}', '${pName}')">تحدي ⚔️</button>
-                            </div>
-                        `;
-                    }
-                });
-                if(count === 0) html = '<p style="color:var(--text-muted); font-size:0.9rem; text-align:center;">لا يوجد لاعبين نشطين حالياً...</p>';
-                document.getElementById("active-players-list").innerHTML = html;
-            });
-        }
-
-        // --- نظام الأونلاين المعدل لتجنب الأخطاء ---
-        function findOrCreateRPSRoom() {
-            document.getElementById('rps-arena').style.display = 'block';
-            document.getElementById('rps-status').innerHTML = '<span class="loading-spinner"></span> جاري البحث عن خصم...';
-            document.getElementById('rps-controls').style.display = 'none';
-            document.getElementById('rps-result-display').innerText = "";
-
-            // جلب الغرف المنتظرة
-            db.collection("rooms").where("gameType", "==", "rps").where("status", "==", "waiting").get().then(snapshot => {
-                let joined = false;
-                
-                // البحث عن غرفة لم ينشئها المستخدم نفسه لتجنب دخول اللاعب لغرفته
-                for (let doc of snapshot.docs) {
-                    if (doc.data().player1 !== currentUser.uid) {
-                        activeRoomId = doc.id;
-                        doc.ref.update({ 
-                            player2: currentUser.uid, 
-                            p2Name: currentUser.displayName, 
-                            status: "playing" 
-                        });
-                        setupRPSListener(activeRoomId);
-                        joined = true;
-                        break;
-                    }
-                }
-
-                // إذا لم يجد غرفة مناسبة، ينشئ غرفته الخاصة
-                if (!joined) {
-                    db.collection("rooms").add({
-                        gameType: "rps", status: "waiting",
-                        player1: currentUser.uid, p1Name: currentUser.displayName,
-                        player2: null, p2Name: null,
-                        p1Choice: null, p2Choice: null, winner: null
-                    }).then(ref => {
-                        activeRoomId = ref.id;
-                        setupRPSListener(activeRoomId);
-                    });
-                }
-            });
-        }
-
-        function setupRPSListener(roomId) {
+        /* --- ساحة المواجهة أونلاين: حجر ورقة مقص الحية --- */
+        function enterRPSRoom(oppName) {
+            switchTab("rps");
+            document.getElementById("rps-vs-text").innerText = `أنت ضد البطل: ${oppName}`;
+            document.getElementById("rps-result-box").innerText = "اختر حركتك بسرعة لتهزم الخصم... 🔥";
+            enableRPSButtons(true);
+            
             if(roomListener) roomListener();
-            roomListener = db.collection("rooms").doc(roomId).onSnapshot(doc => {
-                // إذا حُذفت الغرفة أو انسحب الخصم
-                if(!doc.exists) { 
-                    if(activeRoomId === roomId) {
-                        document.getElementById('rps-status').innerText = "تم إنهاء الغرفة أو انسحاب الخصم.";
-                        document.getElementById('rps-controls').style.display = 'none';
-                        setTimeout(() => exitRPSRoom(true), 2000); // تنظيف الغرفة محلياً بعد ثانيتين
-                    }
-                    return; 
-                }
-                
+            roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => {
                 let data = doc.data();
-                
-                if (data.status === "waiting") {
-                    document.getElementById('rps-status').innerText = "في انتظار انضمام لاعب آخر...";
-                } else if (data.status === "playing") {
-                    document.getElementById('rps-status').innerText = "الخصم موجود! اختر حركتك الآن.";
-                    document.getElementById('rps-controls').style.display = 'block';
-                }
+                if(!data) return;
 
-                if (data.winner) {
-                    document.getElementById('rps-controls').style.display = 'none';
-                    let resultText = "";
-                    if(data.winner === "draw") {
-                        resultText = "🤝 تعادل!";
-                    } else if(data.winner === currentUser.uid) {
-                        resultText = "🏆 مبروك! فزت بـ 30 كوينز!";
-                        db.collection("users_profile").doc(currentUser.uid).update({ 
-                            coins: firebase.firestore.FieldValue.increment(30) 
+                let amIPlayer1 = (currentUser.uid === data.player1);
+                let myMove = amIPlayer1 ? data.p1Move : data.p2Move;
+                let oppMove = amIPlayer1 ? data.p2Move : data.p1Move;
+
+                if(myMove !== "") { document.getElementById("rps-result-box").innerText = "تم تسجيل حركتك بنجاح، بانتظار حركة الخصم... ⏳"; }
+
+                // تصفية النتيجة وحسم الفائز الفعلي في الغرفة المشتركة
+                if(data.p1Move !== "" && data.p2Move !== "") {
+                    let result = determineRPSWinner(data.p1Move, data.p2Move);
+                    let winnerText = "";
+                    enableRPSButtons(false);
+                    
+                    if(result === "draw") { winnerText = `تعادل حماسي! كلاهما اختار ${translateMove(data.p1Move)}`; }
+                    else if((result === "p1" && amIPlayer1) || (result === "p2" && !amIPlayer1)) {
+                        winnerText = "🏆 تهانينا! لقد سحقت الخصم في المواجهة الحية وفزت بـ 30 كوينز!";
+                        // حسم آمن لإضافة الكوينز المباشرة عن طريق الفايربيز داتا
+                        db.collection("users_profile").doc(currentUser.uid).update({
+                            coins: firebase.firestore.FieldValue.increment(30)
                         });
-                    } else {
-                        resultText = "😢 خسرت هذه الجولة!";
-                    }
-                    document.getElementById('rps-result-display').innerText = resultText;
+                    } else { winnerText = "😢 للأسف فاز الخصم هذه المرة! حظاً أوفر في الجولة القادمة."; }
+                    
+                    document.getElementById("rps-result-box").innerText = winnerText;
+                    roomListener(); // إنهاء الرصد والمراقبة التلقائية
                     
                     setTimeout(() => {
-                        // ترك أمر الحذف للاعب الأول فقط لتجنب تعارض الحذف المزدوج
-                        if(data.player1 === currentUser.uid) {
-                            db.collection("rooms").doc(roomId).delete();
-                        }
-                        exitRPSRoom(true);
-                    }, 4000);
+                        if(amIPlayer1) db.collection("rooms").doc(activeRoomId).delete();
+                        switchTab("online");
+                    }, 4500);
                 }
             });
         }
 
-        function playRPS(choice) {
-            if(!activeRoomId) return;
-            document.getElementById('rps-controls').style.display = 'none';
-            document.getElementById('rps-status').innerText = "في انتظار حركة الخصم...";
-
+        function sendRPSMove(move) {
             db.collection("rooms").doc(activeRoomId).get().then(doc => {
+                if(!doc.exists) return;
                 let data = doc.data();
-                let updateData = {};
-                
-                if(currentUser.uid === data.player1) updateData.p1Choice = choice;
-                else updateData.p2Choice = choice;
-
-                if((currentUser.uid === data.player1 && data.p2Choice) || (currentUser.uid !== data.player1 && data.p1Choice)) {
-                    let c1 = (currentUser.uid === data.player1) ? choice : data.p1Choice;
-                    let c2 = (currentUser.uid === data.player1) ? data.p2Choice : choice;
-                    
-                    let winnerId = "draw";
-                    if(c1 !== c2) {
-                        if((c1 === 'rock' && c2 === 'scissors') || (c1 === 'paper' && c2 === 'rock') || (c1 === 'scissors' && c2 === 'paper')) {
-                            winnerId = data.player1;
-                        } else {
-                            winnerId = data.player2;
-                        }
-                    }
-                    updateData.winner = winnerId;
-                    updateData.status = "finished";
-                }
-                db.collection("rooms").doc(activeRoomId).update(updateData);
+                if(currentUser.uid === data.player1) { db.collection("rooms").doc(activeRoomId).update({ p1Move: move }); }
+                else { db.collection("rooms").doc(activeRoomId).update({ p2Move: move }); }
             });
         }
 
-        function exitRPSRoom(skipDbDelete = false) {
-            // إزالة الغرفة من قاعدة البيانات في حالة الانسحاب المتعمد
-            if(activeRoomId && !skipDbDelete) {
-                db.collection("rooms").doc(activeRoomId).get().then(doc => {
-                    if(doc.exists) {
-                        let data = doc.data();
-                        if((data.status === "waiting" && data.player1 === currentUser.uid) || data.status === "playing") {
-                            doc.ref.delete(); 
-                        }
-                    }
-                });
-            }
-            
-            if(roomListener) { roomListener(); roomListener = null; }
-            document.getElementById('rps-arena').style.display = 'none';
-            document.getElementById('rps-result-display').innerText = "";
-            activeRoomId = null;
+        function determineRPSWinner(p1, p2) {
+            if(p1 === p2) return "draw";
+            if((p1 === "rock" && p2 === "scissors") || (p1 === "paper" && p2 === "rock") || (p1 === "scissors" && p2 === "paper")) return "p1";
+            return "p2";
         }
+        function translateMove(m) { return m === "rock" ? "✊" : m === "paper" ? "✋" : "✌️"; }
+        function enableRPSButtons(status) {
+            document.getElementById("rps-rock").disabled = !status;
+            document.getElementById("rps-paper").disabled = !status;
+            document.getElementById("rps-scissors").disabled = !status;
+        }
+        function exitRPSRoom() { if(roomListener) roomListener(); switchTab("online"); }
 
-        // --- لعبة حرب الفضاء المعدلة لمنع تكرار الإسكور ---
+        /* --- اللعبة الفردية: لعبة حرب الفضاء المحدثة --- */
         let canvas = document.getElementById('space-canvas'), ctx = canvas.getContext('2d');
-        let spaceInterval = null, playerX = 160, bullets = [], enemies = [], spaceScore = 0, stars = [];
-        let isGameOver = false; // متغير مهم لمنع التكرار
-
-        for(let i=0; i<40; i++) stars.push({x: Math.random()*350, y: Math.random()*250, size: Math.random()*2, speed: Math.random()*2+1});
+        let spaceInterval = null, playerX = 210, bullets = [], enemies = [], spaceScore = 0, stars = [];
+        
+        for(let i=0; i<40; i++) stars.push({x: Math.random()*450, y: Math.random()*300, size: Math.random()*2, speed: Math.random()*1.5+0.5});
 
         canvas.addEventListener('mousemove', (e) => {
-            let rect = canvas.getBoundingClientRect();
-            playerX = e.clientX - rect.left - 15;
+            let rect = canvas.getBoundingClientRect(); playerX = e.clientX - rect.left - 15;
         });
         canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
             let rect = canvas.getBoundingClientRect();
-            playerX = e.touches[0].clientX - rect.left - 15;
-        }, {passive: false});
+            if(e.touches[0]) playerX = e.touches[0].clientX - rect.left - 15;
+        }, { passive: true });
 
         function startSpaceGame() {
             if(spaceInterval) clearInterval(spaceInterval);
-            bullets = []; enemies = []; spaceScore = 0; isGameOver = false;
-            
+            bullets = []; enemies = []; spaceScore = 0;
             spaceInterval = setInterval(() => {
-                if(isGameOver) return; // إيقاف العمليات إذا انتهت اللعبة
-                
-                ctx.fillStyle = "#0f172a"; ctx.fillRect(0,0,350,250);
+                ctx.fillStyle = "#020617"; ctx.fillRect(0,0,450,300);
                 ctx.fillStyle = "white";
                 stars.forEach(s => { 
-                    s.y += s.speed; if(s.y > 250) { s.y = 0; s.x = Math.random()*350; }
+                    s.y += s.speed; if(s.y > 300) s.y = 0;
                     ctx.fillRect(s.x, s.y, s.size, s.size);
                 });
                 
-                ctx.fillStyle = "#06b6d4";
-                ctx.beginPath(); ctx.moveTo(playerX + 15, 200); ctx.lineTo(playerX + 30, 230); ctx.lineTo(playerX, 230); ctx.fill();
+                // رسم المركبة النفاثة
+                ctx.fillStyle = "#8b5cf6";
+                ctx.beginPath(); ctx.moveTo(playerX + 15, 250); ctx.lineTo(playerX + 30, 280); ctx.lineTo(playerX, 280); ctx.fill();
                 
-                if(Math.random() < 0.1) bullets.push({x: playerX + 13, y: 200});
-                ctx.fillStyle = "#fbbf24";
+                if(Math.random() < 0.08) bullets.push({x: playerX + 13, y: 250});
+                ctx.fillStyle = "#06b6d4";
                 bullets.forEach((b, bi) => {
-                    b.y -= 7; ctx.fillRect(b.x, b.y, 4, 10);
+                    b.y -= 6; ctx.fillRect(b.x, b.y, 4, 10);
                     if(b.y < 0) bullets.splice(bi, 1);
                 });
 
-                if(Math.random() < 0.04) enemies.push({x: Math.random()*320, y: -20, size: 20});
+                if(Math.random() < 0.04) enemies.push({x: Math.random()*430, y: -10, size: 18});
                 ctx.fillStyle = "#ef4444";
-                
                 enemies.forEach((en, ei) => {
-                    if(isGameOver) return; // منع التكرار داخل اللوب
-                    en.y += 3;
+                    en.y += 2.5;
                     ctx.beginPath(); ctx.arc(en.x, en.y, en.size/2, 0, Math.PI*2); ctx.fill();
 
                     bullets.forEach((b, bi) => {
-                        if(b.x > en.x - en.size/2 && b.x < en.x + en.size/2 && b.y > en.y - en.size/2 && b.y < en.y + en.size/2) {
+                        if(b.x > en.x - 10 && b.x < en.x + 10 && b.y > en.y - 10 && b.y < en.y + 10) {
                             enemies.splice(ei, 1); bullets.splice(bi, 1); spaceScore += 10;
                         }
                     });
 
-                    // شرط الخسارة
-                    if(en.y > 250 || (Math.abs(en.x - (playerX+15)) < 15 && Math.abs(en.y - 215) < 15)) {
-                        isGameOver = true;
+                    if(en.y > 300 || (Math.abs(en.x - (playerX+15)) < 15 && en.y > 250)) {
                         clearInterval(spaceInterval);
-                        spaceInterval = null;
-                        
-                        let rewardCoins = Math.floor(spaceScore / 20);
-                        
-                        if(currentUser) {
-                            let updateData = {};
-                            if(rewardCoins > 0) updateData.coins = firebase.firestore.FieldValue.increment(rewardCoins);
-                            if(spaceScore > (userProfile.highScore || 0)) updateData.highScore = spaceScore;
-                            
-                            if(Object.keys(updateData).length > 0) {
-                                db.collection("users_profile").doc(currentUser.uid).update(updateData);
-                            }
-                        }
-                        
-                        // استخدام setTimeout البسيطة لتجنب تجمد الرسوميات قبل ظهور الرسالة
-                        setTimeout(() => {
-                            alert(`💥 انتهت اللعبة! نقاطك: ${spaceScore} | كوينز المضافة: ${rewardCoins}`);
-                        }, 100);
+                        let finalCoins = Math.floor(spaceScore / 20);
+                        if(finalCoins > 0) {
+                            // إضافة آمنة ودقيقة للكوينز الحقيقية بالـ increment
+                            db.collection("users_profile").doc(currentUser.uid).update({
+                                coins: firebase.firestore.FieldValue.increment(finalCoins)
+                            });
+                            alert(`💥 انتهت اللعبة! قمت بتدمير الصخور بنجاح وحققت ${finalCoins} كوينز في حسابك الفعلي.`);
+                        } else { alert("💥 انتهت اللعبة! حاول مجدداً لتحقق نقاط كوينز أعلى."); }
                     }
                 });
-                ctx.fillStyle = "white"; ctx.font = "bold 14px Tajawal"; ctx.fillText("النقاط: " + spaceScore, 10, 20);
-            }, 1000/40);
+                ctx.fillStyle = "#fff"; ctx.font = "bold 14px Tajawal"; ctx.fillText("النقاط الفورية: " + spaceScore, 15, 25);
+            }, 1000/35);
+        }
+
+        /* --- إعدادات المتجر واستبدال المكافآت والمساعدات --- */
+        function claimReward(rewardName, cost) {
+            if(userProfile.coins >= cost) {
+                let userAddress = prompt("أدخل رقم محفظتك الإلكترونية أو معرف حسابك لشحن الهدية:");
+                if(!userAddress) return;
+                
+                db.collection("users_profile").doc(currentUser.uid).update({
+                    coins: firebase.firestore.FieldValue.increment(-cost)
+                });
+                
+                db.collection("withdrawal_requests").add({
+                    userId: currentUser.uid, playerName: currentUser.displayName, reward: rewardName,
+                    details: userAddress, status: "جاري المراجعة", timestamp: Date.now()
+                });
+                alert("🎉 مبروك! تم تسجيل طلبك بنجاح، وسيتم إرسال الشحنة خلال 24 ساعة.");
+            } else { alert("❌ عذراً، رصيدك الحالي من الكوينز غير كافٍ لشراء هذه الجائزة."); }
+        }
+
+        function buyPowerUp(powerUpName, cost) {
+            if(userProfile.coins >= cost) {
+                db.collection("users_profile").doc(currentUser.uid).update({
+                    coins: firebase.firestore.FieldValue.increment(-cost)
+                });
+                alert(`🎉 تم شراء الميزة الحصرية [ ${powerUpName} ] بنجاح لمساعدتك في تخطي العقبات!`);
+            } else { alert("❌ رصيدك الحالي لا يكفي لإتمام عملية الشراء المباشرة."); }
         }
 
         function switchTab(tab) {
@@ -619,27 +537,6 @@
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById(`page-${tab}`).classList.add('active');
             if(document.getElementById(`nav-${tab}`)) document.getElementById(`nav-${tab}`).classList.add('active');
-            if(tab !== 'games' && spaceInterval) { clearInterval(spaceInterval); spaceInterval = null; }
-        }
-
-        function claimReward(rewardName, cost) {
-            if((userProfile.coins || 0) >= cost) {
-                let playerInput = prompt(`أدخل التفاصيل المطلوبة لاستبدال: ${rewardName}`);
-                if(!playerInput || playerInput.trim() === "") return;
-                
-                db.collection("users_profile").doc(currentUser.uid).update({ 
-                    coins: firebase.firestore.FieldValue.increment(-cost) 
-                }).then(() => {
-                    db.collection("withdrawal_requests").add({
-                        userId: currentUser.uid, playerName: currentUser.displayName, 
-                        reward: rewardName, details: playerInput, status: "قيد المراجعة", 
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    alert("🎉 تم تسجيل طلبك بنجاح!");
-                });
-            } else { 
-                alert("❌ رصيدك لا يكفي."); 
-            }
         }
     </script>
 </body>
