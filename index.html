@@ -55,7 +55,7 @@
         .user-name { font-size: 0.8rem; font-weight: 700; color: var(--text-dark); }
         
         .coin-badge {
-            background: #fef3c7; color: #d97706; border: 1px solid #fde68a;
+            background: #fff7ed; color: #ea580c; border: 1px solid #ffedd5;
             padding: 5px 12px; border-radius: 12px; font-weight: 800;
             display: flex; align-items: center; gap: 4px; font-size: 0.85rem;
             box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1);
@@ -138,17 +138,50 @@
         .toast-notification.success { border-left-color: var(--btn-games-bg); }
         .toast-notification.danger { border-left-color: var(--btn-danger-bg); }
 
-        #space-canvas { background: #0f172a; display: block; margin: 15px auto; border-radius: 20px; max-width: 100%; border: 2px solid rgba(255,255,255,0.5); }
-        .player-item {
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255,255,255,0.6); padding: 12px; border-radius: 18px; margin-bottom: 10px;
-            border: 1px solid rgba(255,255,255,0.5);
+        /* --- تصميم بطاقات الألعاب الأونلاين (مثل الصورة) --- */
+        .online-games-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 15px;
         }
-        .player-info { display: flex; align-items: center; gap: 10px; }
-        .player-avatar-list { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
-        .status-dot { width: 8px; height: 8px; background: var(--btn-games-bg); border-radius: 50%; display: inline-block; margin-left: 5px; }
+        .game-cover-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.4));
+            border: 2px solid rgba(255,255,255,0.8);
+            border-radius: 20px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+        }
+        .game-cover-card:active { transform: translateY(3px); box-shadow: none; }
         
-        /* ستايل لعبة إكس أو الجديد المتناسق مع التصميم */
+        /* هذا العنصر يمثل صورة اللعبة. يمكنك استبداله بـ <img> لاحقاً */
+        .game-thumb {
+            width: 70px; height: 70px;
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.2rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .thumb-xo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+        .thumb-tap { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .thumb-rps { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+        .game-info { text-align: right; flex: 1; }
+        .game-info h4 { font-size: 1.1rem; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; }
+        .game-info p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; }
+        .game-prize { 
+            display: inline-block; background: #fff7ed; color: #ea580c; 
+            padding: 3px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 800;
+            border: 1px solid #ffedd5;
+        }
+
+        /* --- ستايل لعبة إكس أو --- */
         .xo-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 280px; margin: 0 auto 20px auto; }
         .xo-cell {
             background: rgba(255, 255, 255, 0.7); border: 2px solid rgba(255,255,255,0.8);
@@ -157,8 +190,23 @@
             box-shadow: 0 4px 0 rgba(0,0,0,0.05);
         }
         .xo-cell:active { transform: translateY(3px); box-shadow: none; }
-        .xo-x { color: #6366f1; text-shadow: 0 2px 4px rgba(99, 102, 241, 0.3); }
-        .xo-o { color: #ef4444; text-shadow: 0 2px 4px rgba(239, 68, 68, 0.3); }
+        .xo-x { color: #6366f1; }
+        .xo-o { color: #ef4444; }
+
+        /* --- ستايل لعبة حرب السرعة --- */
+        .tap-arena { text-align: center; margin-top: 20px; }
+        .tap-bar-container { width: 100%; height: 30px; background: #e2e8f0; border-radius: 15px; overflow: hidden; margin: 20px 0; display: flex; border: 2px solid white; }
+        .tap-progress { height: 100%; transition: width 0.1s ease; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 0.8rem; }
+        .tap-btn { font-size: 1.5rem; padding: 20px; border-radius: 50%; width: 120px; height: 120px; margin: 0 auto; }
+
+        .player-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.6); padding: 12px; border-radius: 18px; margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        .player-info { display: flex; align-items: center; gap: 10px; }
+        .player-avatar-list { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
+        .status-dot { width: 8px; height: 8px; background: var(--btn-games-bg); border-radius: 50%; display: inline-block; margin-left: 5px; }
 
         .reward-item {
             background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.6);
@@ -175,9 +223,7 @@
 
     <div id="custom-toast" class="toast-notification">
         <span id="toast-icon" style="font-size: 1.5rem;">🔔</span>
-        <div style="flex: 1;">
-            <p id="toast-message" style="font-size: 0.9rem; font-weight: 700; color: var(--text-dark);"></p>
-        </div>
+        <div style="flex: 1;"><p id="toast-message" style="font-size: 0.9rem; font-weight: 700; color: var(--text-dark);"></p></div>
     </div>
 
     <div id="challenge-modal">
@@ -196,59 +242,119 @@
             <span id="user-displayname" class="user-name">..</span>
         </div>
         <div class="brand">GOHN PRO</div>
-        <div id="coin-badge" class="coin-badge" style="display:none;">🪙 <span id="user-coins">0</span></div>
+        <!-- تم تغيير الأيقونة إلى جزرة 🥕 -->
+        <div id="coin-badge" class="coin-badge" style="display:none;">🥕 <span id="user-coins">0</span></div>
     </div>
 
     <div class="container">
         <div class="main-panel" id="view-auth">
-            <h2 class="panel-title">🪴 مرحباً بك في المنصة المحدثة</h2>
-            <p style="color:var(--text-muted); margin-bottom:25px; font-size:0.95rem; line-height:1.6;">سجل دخولك الآن عبر جوجل، نافس أصدقائك بذكاء أونلاين، واجمع النقاط لتحويلها لهدايا حقيقية!</p>
+            <h2 class="panel-title">🪴 مرحباً بك في المنصة</h2>
+            <p style="color:var(--text-muted); margin-bottom:25px; font-size:0.95rem; line-height:1.6;">سجل دخولك، نافس أصدقائك، واجمع الجزر 🥕 لترقية حسابك!</p>
             <button class="btn-3d btn-chat" onclick="login()">تسجيل الدخول السريع بجوجل 🚀</button>
         </div>
 
         <div id="view-main" style="display:none;">
             <div class="main-panel">
                 
+                <!-- صفحة الألعاب الفردية -->
                 <div id="page-games" class="page active">
-                    <h3 style="color:#2b6cb0; margin-bottom:5px; font-weight:800;">🌌 معركة الفضاء السحابية</h3>
-                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">دمر الكويكبات القادمة واظفر بالنقاط التلقائية لحسابك!</p>
-                    <canvas id="space-canvas" width="400" height="280"></canvas>
-                    <button class="btn-3d btn-games" onclick="startSpaceGame()">ابدأ معركة الفضاء الآن 🕹️</button>
+                    <h3 style="color:#2b6cb0; margin-bottom:5px; font-weight:800;">🌌 معركة الفضاء</h3>
+                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">دمر الكويكبات واجمع الجزر!</p>
+                    <canvas id="space-canvas" width="400" height="280" style="background: #0f172a; border-radius: 20px; max-width: 100%; border: 2px solid rgba(255,255,255,0.5); margin-bottom: 15px;"></canvas>
+                    <button class="btn-3d btn-games" onclick="startSpaceGame()">ابدأ المعركة 🕹️</button>
                 </div>
 
+                <!-- صفحة الألعاب الأونلاين (المحدثة بشكل كامل) -->
                 <div id="page-online" class="page">
-                    <h3 style="color:#2b6cb0; margin-bottom:15px; font-weight:800;">🟢 الأبطال المتصلين حالياً</h3>
-                    <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:10px;">اضغط "تحدي" لبدء لعبة إكس أو (X-O) فوراً!</p>
-                    <div id="active-players-list" style="max-height: 280px; overflow-y: auto; padding: 5px;">
-                        <p style="color:var(--text-muted); font-size:0.9rem;">جاري البحث عن أبطال نشطين...</p>
+                    <h3 style="color:#2b6cb0; margin-bottom:5px; font-weight:800;">🟢 الأبطال المتصلين</h3>
+                    <div id="active-players-list" style="max-height: 150px; overflow-y: auto; padding: 5px; margin-bottom: 20px;">
+                        <p style="color:var(--text-muted); font-size:0.85rem;">جاري البحث...</p>
+                    </div>
+
+                    <h3 style="color:#2b6cb0; margin-bottom:10px; font-weight:800; text-align: right;">🎮 اختر لعبة للتحدي</h3>
+                    <div class="online-games-grid">
+                        
+                        <!-- اللعبة 1: إكس أو -->
+                        <div class="game-cover-card" onclick="promptXOChallenge()">
+                            <!-- يمكنك استبدال هذا الـ div بـ <img src="رابط_صورة_اكس_او.jpg" class="game-thumb" style="object-fit:cover;"> -->
+                            <div class="game-thumb thumb-xo">❌⭕</div>
+                            <div class="game-info">
+                                <h4>إكس أو كلاسيك (X-O)</h4>
+                                <p>تحدى أصدقائك في اللعبة الأيقونية</p>
+                                <span class="game-prize">جائزة الفوز: 20 🥕</span>
+                            </div>
+                        </div>
+
+                        <!-- اللعبة 2: حرب السرعة -->
+                        <div class="game-cover-card" onclick="promptTapChallenge()">
+                            <div class="game-thumb thumb-tap">⚡👆</div>
+                            <div class="game-info">
+                                <h4>حرب السرعة (Tap War)</h4>
+                                <p>من يضغط على الزر أسرع يفوز فوراً!</p>
+                                <span class="game-prize">جائزة الفوز: 15 🥕</span>
+                            </div>
+                        </div>
+
+                        <!-- اللعبة 3: حجر ورقة مقص -->
+                        <div class="game-cover-card" onclick="promptRPSChallenge()">
+                            <div class="game-thumb thumb-rps">✊✋</div>
+                            <div class="game-info">
+                                <h4>حجر ورقة مقص</h4>
+                                <p>لعبة الحظ والاستراتيجية السريعة</p>
+                                <span class="game-prize">جائزة الفوز: 10 🥕</span>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
-                <!-- ساحة لعبة إكس أو (تمت إضافتها مجدداً) -->
+                <!-- ساحة لعبة إكس أو -->
                 <div id="page-xo" class="page">
                     <h3 style="color:var(--btn-chat-bg); margin-bottom:5px; font-weight:900;">❌ إكس أو أونلاين ⭕</h3>
-                    <p id="xo-status-text" style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">جاري تجهيز الرقعة...</p>
-                    <div class="xo-board" id="xo-board-div">
-                        <!-- الخلايا سيتم توليدها بالجافاسكريبت -->
-                    </div>
-                    <button class="btn-3d btn-danger-3d" onclick="exitXORoom()">انسحاب وعودة للرئيسية</button>
+                    <p id="xo-status-text" style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">جاري التجهيز...</p>
+                    <div class="xo-board" id="xo-board-div"></div>
+                    <button class="btn-3d btn-danger-3d" onclick="exitRoom()">انسحاب</button>
                 </div>
 
-                <div id="page-rewards" class="page">
-                    <h3 style="color:#2b6cb0; margin-bottom:15px; font-weight:800;">🎁 متجر شحن الجوائز</h3>
-                    <div class="reward-item">
-                        <div><strong>60 شدة ببجي موبايل</strong><br><small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 1000 كوينز</small></div>
-                        <button class="btn-3d btn-chat btn-sm-3d" onclick="claimReward('60 UC PUBG', 1000)">استبدال 🪙</button>
+                <!-- ساحة لعبة حرب السرعة -->
+                <div id="page-tap" class="page">
+                    <h3 style="color:var(--btn-trade-bg); margin-bottom:5px; font-weight:900;">⚡ حرب السرعة ⚡</h3>
+                    <p id="tap-status-text" style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">جاري البحث عن خصم...</p>
+                    <div class="tap-arena" id="tap-arena" style="display:none;">
+                        <div class="tap-bar-container">
+                            <div id="tap-my-bar" class="tap-progress" style="background: var(--btn-games-bg); width: 50%;">أنت 50%</div>
+                            <div id="tap-opp-bar" class="tap-progress" style="background: var(--btn-danger-bg); width: 50%;">الخصم 50%</div>
+                        </div>
+                        <button class="btn-3d btn-trade tap-btn" id="tap-btn-action" onclick="sendTapClick()" disabled>اضغط!</button>
                     </div>
-                    <div class="reward-item">
-                        <div><strong>بطاقة فودافون كاش (50 جنيه)</strong><br><small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 2500 كوينز</small></div>
-                        <button class="btn-3d btn-chat btn-sm-3d" onclick="claimReward('Vodafone Cash 50 EGP', 2500)">استبدال 🪙</button>
-                    </div>
+                    <button class="btn-3d btn-danger-3d" style="margin-top:20px;" onclick="exitRoom()">انسحاب</button>
+                </div>
 
-                    <h3 style="color:#2b6cb0; margin-top:20px; margin-bottom:15px; font-weight:800;">🛡️ المساعدات والترقيات</h3>
+                <!-- صفحة المكافآت (محدثة بعناصر مفيدة للألعاب) -->
+                <div id="page-rewards" class="page">
+                    <h3 style="color:#2b6cb0; margin-bottom:15px; font-weight:800;">🛒 متجر ترقيات الألعاب</h3>
+                    <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:15px;">استخدم جزرك 🥕 للحصول على مزايا حصرية داخل الألعاب!</p>
+                    
                     <div class="reward-item">
-                        <div><strong>درع الفضاء المضاعف الحامي</strong><br><small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 150 كوينز</small></div>
-                        <button class="btn-3d btn-trade btn-sm-3d" onclick="buyPowerUp('Space Shield', 150)">شراء 🛒</button>
+                        <div>
+                            <strong>👑 لقب "أسطورة" في البروفايل</strong><br>
+                            <small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 500 🥕</small>
+                        </div>
+                        <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('legend_title', 500)">شراء</button>
+                    </div>
+                    <div class="reward-item">
+                        <div>
+                            <strong>🖼️ إطار صورة ذهبي مميز</strong><br>
+                            <small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 300 🥕</small>
+                        </div>
+                        <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('gold_frame', 300)">شراء</button>
+                    </div>
+                    <div class="reward-item">
+                        <div>
+                            <strong>🍀 حظ أوفر (مضاعف جزر x2)</strong><br>
+                            <small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 200 🥕 (للمباراة القادمة)</small>
+                        </div>
+                        <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('luck_boost', 200)">شراء</button>
                     </div>
                 </div>
 
@@ -259,7 +365,7 @@
     <div class="bottom-nav" id="bottom-nav" style="display:none;">
         <div class="nav-item active" id="nav-games" onclick="switchTab('games')"><div class="nav-icon">🕹️</div><div>الألعاب</div></div>
         <div class="nav-item" id="nav-online" onclick="switchTab('online')"><div class="nav-icon">⚔️</div><div>أونلاين</div></div>
-        <div class="nav-item" id="nav-rewards" onclick="switchTab('rewards')"><div class="nav-icon">🎁</div><div>المكافآت</div></div>
+        <div class="nav-item" id="nav-rewards" onclick="switchTab('rewards')"><div class="nav-icon">🎁</div><div>المتجر</div></div>
     </div>
 
     <script>
@@ -274,18 +380,14 @@
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(), db = firebase.firestore();
-        let currentUser = null, userProfile = { coins: 0 }, activeRoomId = null;
+        let currentUser = null, userProfile = { coins: 0 }, activeRoomId = null, currentGameType = "";
         let roomListener = null, currentChallengeId = null;
 
         function showToast(message, type = "info", icon = "🔔") {
             const toast = document.getElementById("custom-toast");
-            const toastMsg = document.getElementById("toast-message");
-            const toastIcon = document.getElementById("toast-icon");
-            
+            document.getElementById("toast-message").innerText = message;
+            document.getElementById("toast-icon").innerText = icon;
             toast.className = "toast-notification " + type;
-            toastMsg.innerText = message;
-            toastIcon.innerText = icon;
-            
             toast.classList.add("active");
             setTimeout(() => { toast.classList.remove("active"); }, 4000);
         }
@@ -308,11 +410,8 @@
                 document.getElementById('user-displayname').innerText = defaultName.split(' ')[0];
                 
                 db.collection("users_profile").doc(user.uid).set({
-                    fullName: defaultName,
-                    photoURL: defaultPhoto,
-                    status: "online",
-                    lastActive: Date.now(),
-                    coins: firebase.firestore.FieldValue.increment(0) // للحفاظ على الرصيد الحالي
+                    fullName: defaultName, photoURL: defaultPhoto, status: "online",
+                    lastActive: Date.now(), coins: firebase.firestore.FieldValue.increment(0)
                 }, { merge: true });
 
                 db.collection("users_profile").doc(user.uid).onSnapshot(doc => {
@@ -321,7 +420,6 @@
                         document.getElementById('user-coins').innerText = userProfile.coins || 0; 
                     }
                 });
-
                 listenToActivePlayers();
                 listenToChallenges();
             }
@@ -334,41 +432,28 @@
         function listenToActivePlayers() {
             db.collection("users_profile").where("status", "==", "online").onSnapshot(snapshot => {
                 let html = "";
-                let hasPlayers = false;
                 snapshot.forEach(doc => {
                     if(doc.id !== currentUser.uid && (Date.now() - doc.data().lastActive < 300000)) {
-                        hasPlayers = true;
                         let pData = doc.data();
-                        html += `
-                            <div class="player-item">
-                                <div class="player-info">
-                                    <img src="${pData.photoURL}" class="player-avatar-list">
-                                    <div>
-                                        <div style="font-weight:800; font-size:0.9rem;">${pData.fullName}</div>
-                                        <div style="font-size:0.75rem; color:var(--btn-games-bg);"><span class="status-dot"></span>متصل للعب</div>
-                                    </div>
-                                </div>
-                                <button class="btn-3d btn-games btn-sm-3d" onclick="sendChallenge('${doc.id}', '${pData.fullName}')">تحدي ⚔️</button>
+                        html += `<div class="player-item">
+                            <div class="player-info">
+                                <img src="${pData.photoURL}" class="player-avatar-list">
+                                <div><div style="font-weight:800; font-size:0.9rem;">${pData.fullName}</div>
+                                <div style="font-size:0.75rem; color:var(--btn-games-bg);"><span class="status-dot"></span>متصل</div></div>
                             </div>
-                        `;
+                            <button class="btn-3d btn-games btn-sm-3d" onclick="sendChallenge('${doc.id}', '${pData.fullName}', 'xo')">تحدي ⚔️</button>
+                        </div>`;
                     }
                 });
-                if(!hasPlayers) { html = '<p style="color:var(--text-muted); font-size:0.85rem; padding:15px;">لا يوجد أبطال متصلين حالياً، قم بدعوة أصدقائك فوراً! 🌐</p>'; }
-                document.getElementById("active-players-list").innerHTML = html;
+                document.getElementById("active-players-list").innerHTML = html || '<p style="color:var(--text-muted); font-size:0.85rem; padding:15px;">لا يوجد متصلين حالياً</p>';
             });
         }
 
-        function sendChallenge(targetId, targetName) {
+        function sendChallenge(targetId, targetName, gameType) {
             db.collection("challenges").add({
-                fromId: currentUser.uid,
-                fromName: currentUser.displayName || "لاعب",
-                toId: targetId,
-                gameType: "xo",
-                status: "pending",
-                timestamp: Date.now()
-            }).then(() => {
-                showToast(`تم إرسال مواجهة إكس أو إلى ${targetName}! انتظر رده... 🔥`, "success", "🚀");
-            });
+                fromId: currentUser.uid, fromName: currentUser.displayName || "لاعب",
+                toId: targetId, gameType: gameType, status: "pending", timestamp: Date.now()
+            }).then(() => showToast(`تم إرسال التحدي إلى ${targetName}!`, "success", "🚀"));
         }
 
         function listenToChallenges() {
@@ -378,7 +463,8 @@
                         let data = change.doc.data();
                         if(data.status === "pending" && (Date.now() - data.timestamp < 60000)) {
                             currentChallengeId = change.doc.id;
-                            document.getElementById("challenge-text").innerText = `اللاعب [ ${data.fromName} ] يتحداك في إكس أو (X-O)!`;
+                            let gameName = data.gameType === "xo" ? "إكس أو" : (data.gameType === "tap" ? "حرب السرعة" : "حجر ورقة مقص");
+                            document.getElementById("challenge-text").innerText = `اللاعب [ ${data.fromName} ] يتحداك في ${gameName}!`;
                             document.getElementById("challenge-modal").style.display = "block";
                         }
                     }
@@ -391,10 +477,12 @@
                     if(data && data.status === "accepted") {
                         change.doc.ref.delete();
                         activeRoomId = data.roomId;
-                        enterXORoom(data.toName || "الخصم");
+                        currentGameType = data.gameType;
+                        if(currentGameType === "xo") enterXORoom(data.toName);
+                        else if(currentGameType === "tap") enterTapRoom(data.toName);
                     } else if(data && data.status === "rejected") {
                         change.doc.ref.delete();
-                        showToast("للأسف، رفض الخصم طلب التحدي.", "danger", "❌");
+                        showToast("رفض الخصم طلب التحدي.", "danger", "❌");
                     }
                 });
             });
@@ -403,25 +491,25 @@
         function acceptChallenge() {
             document.getElementById("challenge-modal").style.display = "none";
             if(!currentChallengeId) return;
-            
             let chalRef = db.collection("challenges").doc(currentChallengeId);
             chalRef.get().then(doc => {
                 if(doc.exists) {
                     let cData = doc.data();
                     let roomRef = db.collection("rooms").doc();
                     activeRoomId = roomRef.id;
+                    currentGameType = cData.gameType;
                     
-                    roomRef.set({
-                        gameType: "xo",
-                        player1: cData.fromId, p1Name: cData.fromName,
-                        player2: currentUser.uid, p2Name: currentUser.displayName,
-                        turn: cData.fromId, // الذي أرسل التحدي يبدأ أولاً
-                        board: ["","","","","","","","",""],
-                        winner: null,
-                        status: "playing"
-                    }).then(() => {
+                    let initialData = { gameType: currentGameType, player1: cData.fromId, p1Name: cData.fromName, player2: currentUser.uid, p2Name: currentUser.displayName, status: "playing" };
+                    if(currentGameType === "xo") {
+                        initialData.turn = cData.fromId; initialData.board = ["","","","","","","","",""]; initialData.winner = null;
+                    } else if(currentGameType === "tap") {
+                        initialData.p1Clicks = 50; initialData.p2Clicks = 50;
+                    }
+                    
+                    roomRef.set(initialData).then(() => {
                         chalRef.update({ status: "accepted", roomId: activeRoomId, toName: currentUser.displayName });
-                        enterXORoom(cData.fromName);
+                        if(currentGameType === "xo") enterXORoom(cData.fromName);
+                        else if(currentGameType === "tap") enterTapRoom(cData.fromName);
                     });
                 }
             });
@@ -432,22 +520,21 @@
             if(currentChallengeId) db.collection("challenges").doc(currentChallengeId).update({ status: "rejected" });
         }
 
+        // --- دوال مساعدة لبدء الألعاب من القائمة ---
+        function promptXOChallenge() { showToast("اختر لاعباً من قائمة المتصلين في الأعلى لبدء التحدي!", "info", "ℹ️"); }
+        function promptTapChallenge() { showToast("اختر لاعباً من قائمة المتصلين في الأعلى لبدء التحدي!", "info", "ℹ️"); }
+        function promptRPSChallenge() { showToast("لعبة حجر ورقة مقص قيد التطوير، جرب إكس أو أو حرب السرعة!", "info", "🛠️"); }
+
+        // --- منطق لعبة إكس أو ---
         function enterXORoom(oppName) {
             switchTab("xo");
-            document.getElementById("xo-status-text").innerText = `المباراة ضد: ${oppName}`;
-            
+            document.getElementById("xo-status-text").innerText = `ضد: ${oppName}`;
             if(roomListener) roomListener();
             roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => {
-                let data = doc.data();
-                if(!data || data.gameType !== "xo") return;
-
+                let data = doc.data(); if(!data || data.gameType !== "xo") return;
                 let myChar = (currentUser.uid === data.player1) ? "X" : "O";
                 let isMyTurn = (data.turn === currentUser.uid);
-                
-                let statusText = isMyTurn ? `دورك الآن يا بطل (${myChar})` : "انتظر دور الخصم...";
-                if(data.winner) {
-                    statusText = (data.winner === currentUser.uid) ? "🏆 مبروووك! أنت الفائز!" : (data.winner === "draw" ? "تعادل!" : "😢 خسرت الجيم!");
-                }
+                let statusText = data.winner ? (data.winner === currentUser.uid ? "🏆 فزت بـ 20 🥕!" : (data.winner === "draw" ? "تعادل!" : "😢 خسرت!")) : (isMyTurn ? `دورك (${myChar})` : "انتظر دور الخصم...");
                 document.getElementById('xo-status-text').innerText = statusText;
 
                 let boardHtml = "";
@@ -459,31 +546,22 @@
 
                 if(data.winner) {
                     roomListener();
-                    if(data.winner === currentUser.uid) {
-                        db.collection("users_profile").doc(currentUser.uid).update({ 
-                            coins: firebase.firestore.FieldValue.increment(20) 
-                        });
-                    }
-                    setTimeout(() => { switchTab('online'); }, 3000);
+                    if(data.winner === currentUser.uid) db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(20) });
+                    setTimeout(() => switchTab('online'), 3000);
                 }
             });
         }
 
         function playXOMove(index, isMyTurn, myChar) {
             if(!isMyTurn) return;
-            
             db.collection("rooms").doc(activeRoomId).get().then(doc => {
                 let data = doc.data();
                 if(data.board[index] === "" && !data.winner) {
                     data.board[index] = myChar;
                     let nextTurn = (currentUser.uid === data.player1) ? data.player2 : data.player1;
-                    
                     let winner = checkXOWinner(data.board);
                     let updateData = { board: data.board, turn: nextTurn };
-                    
-                    if(winner) {
-                        updateData.winner = winner === "X" ? data.player1 : (winner === "O" ? data.player2 : "draw");
-                    }
+                    if(winner) updateData.winner = winner === "X" ? data.player1 : (winner === "O" ? data.player2 : "draw");
                     db.collection("rooms").doc(activeRoomId).update(updateData);
                 }
             });
@@ -495,102 +573,110 @@
                 const [x,y,z] = lines[i];
                 if(b[x] && b[x] === b[y] && b[x] === b[z]) return b[x];
             }
-            if(!b.includes("")) return "draw";
-            return null;
+            return !b.includes("") ? "draw" : null;
         }
 
-        function exitXORoom() { 
+        // --- منطق لعبة حرب السرعة ---
+        function enterTapRoom(oppName) {
+            switchTab("tap");
+            document.getElementById("tap-status-text").innerText = `ضد: ${oppName}`;
+            document.getElementById("tap-arena").style.display = "block";
+            document.getElementById("tap-btn-action").disabled = false;
+            
+            if(roomListener) roomListener();
+            roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => {
+                let data = doc.data(); if(!data || data.gameType !== "tap") return;
+                
+                let total = data.p1Clicks + data.p2Clicks;
+                let p1p = Math.max(0, (data.p1Clicks / total) * 100);
+                let p2p = Math.max(0, (data.p2Clicks / total) * 100);
+                
+                let amIPlayer1 = (currentUser.uid === data.player1);
+                let myP = amIPlayer1 ? p1p : p2p;
+                let oppP = amIPlayer1 ? p2p : p1p;
+
+                document.getElementById("tap-my-bar").style.width = myP + "%";
+                document.getElementById("tap-my-bar").innerText = Math.round(myP) + "%";
+                document.getElementById("tap-opp-bar").style.width = oppP + "%";
+                document.getElementById("tap-opp-bar").innerText = Math.round(oppP) + "%";
+
+                if(data.p1Clicks >= 100 || data.p2Clicks >= 100) {
+                    roomListener();
+                    document.getElementById("tap-btn-action").disabled = true;
+                    let won = (amIPlayer1 && data.p1Clicks >= 100) || (!amIPlayer1 && data.p2Clicks >= 100);
+                    document.getElementById("tap-status-text").innerText = won ? "🏆 فزت بـ 15 🥕!" : "😢 خسرت!";
+                    if(won) db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(15) });
+                    setTimeout(() => { db.collection("rooms").doc(activeRoomId).delete(); switchTab('online'); }, 3000);
+                }
+            });
+        }
+
+        function sendTapClick() {
+            db.collection("rooms").doc(activeRoomId).get().then(doc => {
+                let data = doc.data();
+                if(currentUser.uid === data.player1) {
+                    db.collection("rooms").doc(activeRoomId).update({ p1Clicks: data.p1Clicks + 2, p2Clicks: Math.max(0, data.p2Clicks - 1) });
+                } else {
+                    db.collection("rooms").doc(activeRoomId).update({ p2Clicks: data.p2Clicks + 2, p1Clicks: Math.max(0, data.p1Clicks - 1) });
+                }
+            });
+        }
+
+        function exitRoom() { 
             if(roomListener) roomListener(); 
             switchTab("online"); 
         }
 
-        /* --- محرك لعبة حرب الفضاء --- */
+        // --- متجر الترقيات ---
+        function buyUpgrade(upgradeType, cost) {
+            if((userProfile.coins || 0) >= cost) {
+                let updateData = { coins: firebase.firestore.FieldValue.increment(-cost) };
+                let msg = "";
+                if(upgradeType === 'legend_title') { updateData.title = "أسطورة 🏆"; msg = "تم تفعيل لقب أسطورة!"; }
+                else if(upgradeType === 'gold_frame') { updateData.frame = "gold"; msg = "تم إضافة الإطار الذهبي!"; }
+                else if(upgradeType === 'luck_boost') { updateData.luckBoost = true; msg = "مضاعف الجزر مفعل للمباراة القادمة!"; }
+                
+                db.collection("users_profile").doc(currentUser.uid).update(updateData).then(() => {
+                    showToast(msg + " ✅", "success", "🎉");
+                });
+            } else {
+                showToast("رصيدك من الجزر 🥕 غير كافٍ!", "danger", "❌");
+            }
+        }
+
+        // --- لعبة الفضاء (موجزة) ---
         let canvas = document.getElementById('space-canvas'), ctx = canvas.getContext('2d');
         let spaceInterval = null, playerX = 185, bullets = [], enemies = [], spaceScore = 0, stars = [];
-        
         for(let i=0; i<30; i++) stars.push({x: Math.random()*400, y: Math.random()*280, size: Math.random()*2, speed: Math.random()*1+0.5});
-
-        canvas.addEventListener('mousemove', (e) => {
-            let rect = canvas.getBoundingClientRect(); playerX = e.clientX - rect.left - 15;
-        });
-        canvas.addEventListener('touchmove', (e) => {
-            let rect = canvas.getBoundingClientRect();
-            if(e.touches[0]) playerX = e.touches[0].clientX - rect.left - 15;
-        }, { passive: true });
+        canvas.addEventListener('mousemove', (e) => { let rect = canvas.getBoundingClientRect(); playerX = e.clientX - rect.left - 15; });
+        canvas.addEventListener('touchmove', (e) => { let rect = canvas.getBoundingClientRect(); if(e.touches[0]) playerX = e.touches[0].clientX - rect.left - 15; }, { passive: true });
 
         function startSpaceGame() {
             if(spaceInterval) clearInterval(spaceInterval);
             bullets = []; enemies = []; spaceScore = 0;
             spaceInterval = setInterval(() => {
                 ctx.fillStyle = "#0f172a"; ctx.fillRect(0,0,400,280);
-                ctx.fillStyle = "white";
-                stars.forEach(s => { 
-                    s.y += s.speed; if(s.y > 280) s.y = 0;
-                    ctx.fillRect(s.x, s.y, s.size, s.size);
-                });
-                
-                ctx.fillStyle = "#6366f1";
-                ctx.beginPath(); ctx.moveTo(playerX + 15, 230); ctx.lineTo(playerX + 30, 260); ctx.lineTo(playerX, 260); ctx.fill();
-                
+                ctx.fillStyle = "white"; stars.forEach(s => { s.y += s.speed; if(s.y > 280) s.y = 0; ctx.fillRect(s.x, s.y, s.size, s.size); });
+                ctx.fillStyle = "#6366f1"; ctx.beginPath(); ctx.moveTo(playerX + 15, 230); ctx.lineTo(playerX + 30, 260); ctx.lineTo(playerX, 260); ctx.fill();
                 if(Math.random() < 0.08) bullets.push({x: playerX + 13, y: 230});
-                ctx.fillStyle = "#76db41";
-                bullets.forEach((b, bi) => {
-                    b.y -= 6; ctx.fillRect(b.x, b.y, 4, 10);
-                    if(b.y < 0) bullets.splice(bi, 1);
-                });
-
+                ctx.fillStyle = "#76db41"; bullets.forEach((b, bi) => { b.y -= 6; ctx.fillRect(b.x, b.y, 4, 10); if(b.y < 0) bullets.splice(bi, 1); });
                 if(Math.random() < 0.04) enemies.push({x: Math.random()*380, y: -10, size: 16});
-                ctx.fillStyle = "#ef4444";
-                enemies.forEach((en, ei) => {
-                    en.y += 2.2;
-                    ctx.beginPath(); ctx.arc(en.x, en.y, en.size/2, 0, Math.PI*2); ctx.fill();
-
-                    bullets.forEach((b, bi) => {
-                        if(b.x > en.x - 10 && b.x < en.x + 10 && b.y > en.y - 10 && b.y < en.y + 10) {
-                            enemies.splice(ei, 1); bullets.splice(bi, 1); spaceScore += 10;
-                        }
-                    });
-
+                ctx.fillStyle = "#ef4444"; enemies.forEach((en, ei) => {
+                    en.y += 2.2; ctx.beginPath(); ctx.arc(en.x, en.y, en.size/2, 0, Math.PI*2); ctx.fill();
+                    bullets.forEach((b, bi) => { if(b.x > en.x - 10 && b.x < en.x + 10 && b.y > en.y - 10 && b.y < en.y + 10) { enemies.splice(ei, 1); bullets.splice(bi, 1); spaceScore += 10; } });
                     if(en.y > 280 || (Math.abs(en.x - (playerX+15)) < 15 && en.y > 230)) {
                         clearInterval(spaceInterval);
-                        let finalCoins = Math.floor(spaceScore / 20);
-                        if(finalCoins > 0 && currentUser) {
-                            db.collection("users_profile").doc(currentUser.uid).update({
-                                coins: firebase.firestore.FieldValue.increment(finalCoins)
-                            });
-                            showToast(`💥 انتهت المعركة! نجحت في جمع ${finalCoins} كوينز.`, "success", "🪙");
-                        } else { showToast("💥 تحطمت مركبتك! حاول مجدداً.", "danger", "🛸"); }
+                        let finalCarrots = Math.floor(spaceScore / 20);
+                        if(finalCarrots > 0 && currentUser) {
+                            let multiplier = (userProfile.luckBoost) ? 2 : 1;
+                            let reward = finalCarrots * multiplier;
+                            db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(reward), luckBoost: false });
+                            showToast(`💥 انتهت المعركة! ربحت ${reward} 🥕`, "success", "🥕");
+                        }
                     }
                 });
                 ctx.fillStyle = "#fff"; ctx.font = "bold 13px Tajawal"; ctx.fillText("النقاط: " + spaceScore, 15, 25);
             }, 1000/35);
-        }
-
-        /* --- متجر المكافآت الحقيقي --- */
-        function claimReward(rewardName, cost) {
-            if((userProfile.coins || 0) >= cost) {
-                let userAddress = prompt("أدخل رقم محفظتك أو كود حسابك المسجل لإرسال الهدية فوراً:");
-                if(!userAddress) return;
-                
-                db.collection("users_profile").doc(currentUser.uid).update({
-                    coins: firebase.firestore.FieldValue.increment(-cost)
-                }).then(() => {
-                    db.collection("withdrawal_requests").add({
-                        userId: currentUser.uid, playerName: currentUser.displayName, reward: rewardName,
-                        details: userAddress, status: "جاري المراجعة", timestamp: Date.now()
-                    });
-                    showToast("🎉 رائع جداً! تم حفظ طلب الاستبدال.", "success", "🎁");
-                });
-            } else { showToast("❌ الرصيد الإجمالي من الكوينز لديك غير كافٍ.", "danger", "🪙"); }
-        }
-
-        function buyPowerUp(powerUpName, cost) {
-            if((userProfile.coins || 0) >= cost) {
-                db.collection("users_profile").doc(currentUser.uid).update({
-                    coins: firebase.firestore.FieldValue.increment(-cost)
-                });
-                showToast(`🎉 مبروك! امتلكت الآن ترقية [ ${powerUpName} ] بنجاح.`, "success", "⚡");
-            } else { showToast("❌ رصيدك من الكوينز لا يكفي.", "danger", "🪙"); }
         }
 
         function switchTab(tab) {
@@ -598,8 +684,6 @@
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById(`page-${tab}`).classList.add('active');
             if(document.getElementById(`nav-${tab}`)) document.getElementById(`nav-${tab}`).classList.add('active');
-            
-            // إيقاف لعبة الفضاء إذا غادرنا الصفحة لتوفير الموارد
             if(tab !== 'games' && spaceInterval) { clearInterval(spaceInterval); spaceInterval = null; }
         }
     </script>
