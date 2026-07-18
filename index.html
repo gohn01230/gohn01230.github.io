@@ -13,7 +13,6 @@
             --text-dark: #2d3748;
             --text-muted: #718096;
             
-            /* ألوان الأزرار المجسمة 3D من الصورة */
             --btn-games-bg: #76db41;
             --btn-games-shadow: #5cae30;
             --btn-chat-bg: #6366f1;
@@ -39,7 +38,6 @@
             align-items: center;
         }
 
-        /* الهيدر العلوي المحاكي للصورة */
         .navbar {
             width: 92%; max-width: 500px;
             background: rgba(255, 255, 255, 0.6);
@@ -65,7 +63,6 @@
 
         .container { width: 92%; max-width: 500px; margin-top: 20px; flex: 1; }
 
-        /* اللوحة الزجاجية الرئيسية الحاضنة للمحتوى */
         .main-panel {
             background: var(--panel-bg);
             backdrop-filter: blur(20px);
@@ -82,7 +79,6 @@
             text-shadow: 0 2px 4px rgba(255,255,255,0.8);
         }
 
-        /* أزرار مجسمة ثلاثية الأبعاد 3D احترافية */
         .btn-3d {
             width: 100%; padding: 16px 20px; border: none; border-radius: 18px;
             font-family: 'Tajawal', sans-serif; font-weight: 800; font-size: 1.05rem;
@@ -102,12 +98,10 @@
         .btn-sm-3d.btn-chat { box-shadow: 0 3px 0 var(--btn-chat-shadow); }
         .btn-sm-3d.btn-danger-3d { box-shadow: 0 3px 0 var(--btn-danger-shadow); }
 
-        /* صفحات التنقل */
         .page { display: none; animation: popUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.15); }
         .page.active { display: block; }
         @keyframes popUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-        /* البار السفلي الدائرى المظلم من الصورة */
         .bottom-nav {
             position: fixed; bottom: 20px; width: 92%; max-width: 450px;
             background: var(--nav-bg); border-radius: 25px; display: flex;
@@ -122,7 +116,6 @@
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); }
         .nav-icon { font-size: 1.3rem; margin-bottom: 3px; }
 
-        /* نافذة مخصصة لاستقبال التحديات الناتجة (طلب جديد) */
         #challenge-modal {
             position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 400px; background: rgba(255, 255, 255, 0.95);
@@ -133,7 +126,6 @@
         }
         @keyframes slideDown { from { top: -150px; opacity: 0; } to { top: 30px; opacity: 1; } }
 
-        /* تصميم كرت نوتيفيكيشن احترافي منبثق مخصص للرسائل التنبيهية (تم الإرسال، الرفض، الخ) */
         .toast-notification {
             position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
             width: 85%; max-width: 380px; background: white; border-radius: 20px;
@@ -146,7 +138,6 @@
         .toast-notification.success { border-left-color: var(--btn-games-bg); }
         .toast-notification.danger { border-left-color: var(--btn-danger-bg); }
 
-        /* عناصر قائمة المتصلين والألعاب داخل الحاوية */
         #space-canvas { background: #0f172a; display: block; margin: 15px auto; border-radius: 20px; max-width: 100%; border: 2px solid rgba(255,255,255,0.5); }
         .player-item {
             display: flex; justify-content: space-between; align-items: center;
@@ -157,15 +148,17 @@
         .player-avatar-list { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
         .status-dot { width: 8px; height: 8px; background: var(--btn-games-bg); border-radius: 50%; display: inline-block; margin-left: 5px; }
         
-        .rps-choices { display: flex; justify-content: center; gap: 12px; margin: 25px 0; }
-        .rps-btn { 
-            font-size: 2.2rem; background: white; border: 1px solid rgba(0,0,0,0.08);
-            width: 75px; height: 75px; border-radius: 50%; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.08);
+        /* ستايل لعبة إكس أو الجديد المتناسق مع التصميم */
+        .xo-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 280px; margin: 0 auto 20px auto; }
+        .xo-cell {
+            background: rgba(255, 255, 255, 0.7); border: 2px solid rgba(255,255,255,0.8);
+            height: 80px; border-radius: 16px; display: flex; justify-content: center; align-items: center;
+            font-size: 2.5rem; font-weight: 900; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
         }
-        .rps-btn:active { transform: translateY(3px); box-shadow: none; }
-        .rps-btn:disabled { opacity: 0.4; }
+        .xo-cell:active { transform: translateY(3px); box-shadow: none; }
+        .xo-x { color: #6366f1; text-shadow: 0 2px 4px rgba(99, 102, 241, 0.3); }
+        .xo-o { color: #ef4444; text-shadow: 0 2px 4px rgba(239, 68, 68, 0.3); }
 
         .reward-item {
             background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.6);
@@ -180,7 +173,6 @@
 </head>
 <body>
 
-    <!-- التنبيه الاحترافي المخصص البديل للـ alert التقليدي -->
     <div id="custom-toast" class="toast-notification">
         <span id="toast-icon" style="font-size: 1.5rem;">🔔</span>
         <div style="flex: 1;">
@@ -188,7 +180,6 @@
         </div>
     </div>
 
-    <!-- نافذة استقبال طلبات التحدي القادمة لك -->
     <div id="challenge-modal">
         <div style="font-size: 2.2rem; margin-bottom: 8px;">⚔️</div>
         <h3 style="margin-bottom: 6px; font-weight:800;">تحدي مواجهة حية!</h3>
@@ -199,7 +190,6 @@
         </div>
     </div>
 
-    <!-- شريط الإحصائيات والهيدر العلوي -->
     <div class="navbar">
         <div id="user-summary" class="user-info" style="display:none;">
             <img id="user-avatar" class="user-avatar" src="">
@@ -210,18 +200,15 @@
     </div>
 
     <div class="container">
-        <!-- شاشة تسجيل الدخول المبدئية للزوار -->
         <div class="main-panel" id="view-auth">
             <h2 class="panel-title">🪴 مرحباً بك في المنصة المحدثة</h2>
             <p style="color:var(--text-muted); margin-bottom:25px; font-size:0.95rem; line-height:1.6;">سجل دخولك الآن عبر جوجل، نافس أصدقائك بذكاء أونلاين، واجمع النقاط لتحويلها لهدايا حقيقية!</p>
             <button class="btn-3d btn-chat" onclick="login()">تسجيل الدخول السريع بجوجل 🚀</button>
         </div>
 
-        <!-- الشاشات الرئيسية للاعبين المسجلين -->
         <div id="view-main" style="display:none;">
             <div class="main-panel">
                 
-                <!-- 1. صفحة الألعاب الفردية -->
                 <div id="page-games" class="page active">
                     <h3 style="color:#2b6cb0; margin-bottom:5px; font-weight:800;">🌌 معركة الفضاء السحابية</h3>
                     <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">دمر الكويكبات القادمة واظفر بالنقاط التلقائية لحسابك!</p>
@@ -229,30 +216,24 @@
                     <button class="btn-3d btn-games" onclick="startSpaceGame()">ابدأ معركة الفضاء الآن 🕹️</button>
                 </div>
 
-                <!-- 2. صفحة الأونلاين واللاعبين النشطين -->
                 <div id="page-online" class="page">
                     <h3 style="color:#2b6cb0; margin-bottom:15px; font-weight:800;">🟢 الأبطال المتصلين حالياً</h3>
+                    <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:10px;">اضغط "تحدي" لبدء لعبة إكس أو (X-O) فوراً!</p>
                     <div id="active-players-list" style="max-height: 280px; overflow-y: auto; padding: 5px;">
                         <p style="color:var(--text-muted); font-size:0.9rem;">جاري البحث عن أبطال نشطين...</p>
                     </div>
                 </div>
 
-                <!-- ساحة المواجهة الحية (حجر ورقة مقص) -->
-                <div id="page-rps" class="page">
-                    <h3 style="color:var(--btn-chat-bg); margin-bottom:5px; font-weight:900;">⚔️ ساحة التحدي الحي</h3>
-                    <p id="rps-vs-text" style="color:var(--text-muted); margin-bottom:15px; font-size:0.9rem; font-weight:700;">مواجهة قوية حية</p>
-                    
-                    <div class="rps-choices">
-                        <button class="rps-btn" id="rps-rock" onclick="sendRPSMove('rock')">✊</button>
-                        <button class="rps-btn" id="rps-paper" onclick="sendRPSMove('paper')">✋</button>
-                        <button class="rps-btn" id="rps-scissors" onclick="sendRPSMove('scissors')">✌️</button>
+                <!-- ساحة لعبة إكس أو (تمت إضافتها مجدداً) -->
+                <div id="page-xo" class="page">
+                    <h3 style="color:var(--btn-chat-bg); margin-bottom:5px; font-weight:900;">❌ إكس أو أونلاين ⭕</h3>
+                    <p id="xo-status-text" style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">جاري تجهيز الرقعة...</p>
+                    <div class="xo-board" id="xo-board-div">
+                        <!-- الخلايا سيتم توليدها بالجافاسكريبت -->
                     </div>
-                    
-                    <div id="rps-result-box" style="font-weight:800; color:var(--btn-trade-bg); min-height:40px; font-size:1.1rem;">اختر سلاحك بثقة... 🔥</div>
-                    <button class="btn-3d btn-danger-3d" style="margin-top:15px;" onclick="exitRPSRoom()">انسحاب وعودة للرئيسية</button>
+                    <button class="btn-3d btn-danger-3d" onclick="exitXORoom()">انسحاب وعودة للرئيسية</button>
                 </div>
 
-                <!-- 3. متجر الجوائز والمكافآت -->
                 <div id="page-rewards" class="page">
                     <h3 style="color:#2b6cb0; margin-bottom:15px; font-weight:800;">🎁 متجر شحن الجوائز</h3>
                     <div class="reward-item">
@@ -275,15 +256,13 @@
         </div>
     </div>
 
-    <!-- شريط التنقل السفلي المطور المستوحى من الصورة -->
     <div class="bottom-nav" id="bottom-nav" style="display:none;">
         <div class="nav-item active" id="nav-games" onclick="switchTab('games')"><div class="nav-icon">🕹️</div><div>الألعاب</div></div>
-        <div class="nav-item" id="nav-online" onclick="switchTab('online')"><div class="nav-icon">⚔ activate</div><div>أونلاين</div></div>
+        <div class="nav-item" id="nav-online" onclick="switchTab('online')"><div class="nav-icon">⚔️</div><div>أونلاين</div></div>
         <div class="nav-item" id="nav-rewards" onclick="switchTab('rewards')"><div class="nav-icon">🎁</div><div>المكافآت</div></div>
     </div>
 
     <script>
-        // إعدادات الـ Firebase الحالية للحساب الخاص بك
         const firebaseConfig = {
             apiKey: "AIzaSyA5LlGHl9djJsx_Rs3evjd8Xzpn0e25IHI",
             authDomain: "gohn-games.firebaseapp.com",
@@ -298,7 +277,6 @@
         let currentUser = null, userProfile = { coins: 0 }, activeRoomId = null;
         let roomListener = null, currentChallengeId = null;
 
-        // دالة عرض رسائل التنبيه العصرية بديلة الـ alert
         function showToast(message, type = "info", icon = "🔔") {
             const toast = document.getElementById("custom-toast");
             const toastMsg = document.getElementById("toast-message");
@@ -333,7 +311,8 @@
                     fullName: defaultName,
                     photoURL: defaultPhoto,
                     status: "online",
-                    lastActive: Date.now()
+                    lastActive: Date.now(),
+                    coins: firebase.firestore.FieldValue.increment(0) // للحفاظ على الرصيد الحالي
                 }, { merge: true });
 
                 db.collection("users_profile").doc(user.uid).onSnapshot(doc => {
@@ -346,6 +325,10 @@
                 listenToActivePlayers();
                 listenToChallenges();
             }
+        });
+
+        window.addEventListener('beforeunload', () => {
+            if(currentUser) db.collection("users_profile").doc(currentUser.uid).update({ status: "offline" });
         });
 
         function listenToActivePlayers() {
@@ -375,28 +358,27 @@
             });
         }
 
-        // إرسال التحدي واستخدام التنبيه المطور لإعلام المستخدم بالإرسال الناجح
         function sendChallenge(targetId, targetName) {
             db.collection("challenges").add({
                 fromId: currentUser.uid,
-                fromName: currentUser.displayName,
+                fromName: currentUser.displayName || "لاعب",
                 toId: targetId,
+                gameType: "xo",
                 status: "pending",
                 timestamp: Date.now()
             }).then(() => {
-                showToast(`تم إرسال مواجهة حية إلى ${targetName}! انتظر رده لدخول ساحة القتال... 🔥`, "success", "🚀");
+                showToast(`تم إرسال مواجهة إكس أو إلى ${targetName}! انتظر رده... 🔥`, "success", "🚀");
             });
         }
 
-        // استقبال التحديات وعرض كرت الرفض الاحترافي عند رفض الخصم
         function listenToChallenges() {
             db.collection("challenges").where("toId", "==", currentUser.uid).onSnapshot(snapshot => {
                 snapshot.docChanges().forEach(change => {
-                    if (change.type === "added" || change.type === "modified") {
+                    if (change.type === "added") {
                         let data = change.doc.data();
                         if(data.status === "pending" && (Date.now() - data.timestamp < 60000)) {
                             currentChallengeId = change.doc.id;
-                            document.getElementById("challenge-text").innerText = `اللاعب الأونلاين [ ${data.fromName} ] يتحداك الآن في مواجهة فورية!`;
+                            document.getElementById("challenge-text").innerText = `اللاعب [ ${data.fromName} ] يتحداك في إكس أو (X-O)!`;
                             document.getElementById("challenge-modal").style.display = "block";
                         }
                     }
@@ -409,10 +391,10 @@
                     if(data && data.status === "accepted") {
                         change.doc.ref.delete();
                         activeRoomId = data.roomId;
-                        enterRPSRoom(data.toName || "الخصم");
+                        enterXORoom(data.toName || "الخصم");
                     } else if(data && data.status === "rejected") {
                         change.doc.ref.delete();
-                        showToast("للأسف، رفض الخصم طلب التحدي الحالي وغادر المواجهة.", "danger", "❌");
+                        showToast("للأسف، رفض الخصم طلب التحدي.", "danger", "❌");
                     }
                 });
             });
@@ -430,12 +412,16 @@
                     activeRoomId = roomRef.id;
                     
                     roomRef.set({
-                        player1: cData.fromId, p1Name: cData.fromName, p1Move: "",
-                        player2: currentUser.uid, p2Name: currentUser.displayName, p2Move: "",
-                        status: "playing", winner: ""
+                        gameType: "xo",
+                        player1: cData.fromId, p1Name: cData.fromName,
+                        player2: currentUser.uid, p2Name: currentUser.displayName,
+                        turn: cData.fromId, // الذي أرسل التحدي يبدأ أولاً
+                        board: ["","","","","","","","",""],
+                        winner: null,
+                        status: "playing"
                     }).then(() => {
                         chalRef.update({ status: "accepted", roomId: activeRoomId, toName: currentUser.displayName });
-                        enterRPSRoom(cData.fromName);
+                        enterXORoom(cData.fromName);
                     });
                 }
             });
@@ -446,66 +432,77 @@
             if(currentChallengeId) db.collection("challenges").doc(currentChallengeId).update({ status: "rejected" });
         }
 
-        function enterRPSRoom(oppName) {
-            switchTab("rps");
-            document.getElementById("rps-vs-text").innerText = `المباراة ضد: ${oppName}`;
-            document.getElementById("rps-result-box").innerText = "اختر حركتك بسرعة قبل انتهاء الوقت... ⏳";
-            enableRPSButtons(true);
+        function enterXORoom(oppName) {
+            switchTab("xo");
+            document.getElementById("xo-status-text").innerText = `المباراة ضد: ${oppName}`;
             
             if(roomListener) roomListener();
             roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => {
                 let data = doc.data();
-                if(!data) return;
+                if(!data || data.gameType !== "xo") return;
 
-                let amIPlayer1 = (currentUser.uid === data.player1);
-                let myMove = amIPlayer1 ? data.p1Move : data.p2Move;
+                let myChar = (currentUser.uid === data.player1) ? "X" : "O";
+                let isMyTurn = (data.turn === currentUser.uid);
+                
+                let statusText = isMyTurn ? `دورك الآن يا بطل (${myChar})` : "انتظر دور الخصم...";
+                if(data.winner) {
+                    statusText = (data.winner === currentUser.uid) ? "🏆 مبروووك! أنت الفائز!" : (data.winner === "draw" ? "تعادل!" : "😢 خسرت الجيم!");
+                }
+                document.getElementById('xo-status-text').innerText = statusText;
 
-                if(myMove !== "") { document.getElementById("rps-result-box").innerText = "تم إرسال حركتك للغرفة المشتركة، بانتظار الخصم... ⏳"; }
+                let boardHtml = "";
+                data.board.forEach((cell, index) => {
+                    let cellClass = cell === "X" ? "xo-x" : (cell === "O" ? "xo-o" : "");
+                    boardHtml += `<div class="xo-cell ${cellClass}" onclick="playXOMove(${index}, ${isMyTurn}, '${myChar}')">${cell}</div>`;
+                });
+                document.getElementById('xo-board-div').innerHTML = boardHtml;
 
-                if(data.p1Move !== "" && data.p2Move !== "") {
-                    let result = determineRPSWinner(data.p1Move, data.p2Move);
-                    let winnerText = "";
-                    enableRPSButtons(false);
-                    
-                    if(result === "draw") { winnerText = `تعادل رائع! كلاهما اختار نفس الحركة.`; }
-                    else if((result === "p1" && amIPlayer1) || (result === "p2" && !amIPlayer1)) {
-                        winnerText = "🏆 فوز ساحق! ربحت 30 كوينز حقيقية لحسابك!";
-                        db.collection("users_profile").doc(currentUser.uid).update({
-                            coins: firebase.firestore.FieldValue.increment(30)
-                        });
-                    } else { winnerText = "😢 انتصر الخصم عليك في هذه الجولة! حظاً أوفر المرة القادمة."; }
-                    
-                    document.getElementById("rps-result-box").innerText = winnerText;
+                if(data.winner) {
                     roomListener();
-                    
-                    setTimeout(() => {
-                        if(amIPlayer1) db.collection("rooms").doc(activeRoomId).delete();
-                        switchTab("online");
-                    }, 4000);
+                    if(data.winner === currentUser.uid) {
+                        db.collection("users_profile").doc(currentUser.uid).update({ 
+                            coins: firebase.firestore.FieldValue.increment(20) 
+                        });
+                    }
+                    setTimeout(() => { switchTab('online'); }, 3000);
                 }
             });
         }
 
-        function sendRPSMove(move) {
+        function playXOMove(index, isMyTurn, myChar) {
+            if(!isMyTurn) return;
+            
             db.collection("rooms").doc(activeRoomId).get().then(doc => {
-                if(!doc.exists) return;
                 let data = doc.data();
-                if(currentUser.uid === data.player1) { db.collection("rooms").doc(activeRoomId).update({ p1Move: move }); }
-                else { db.collection("rooms").doc(activeRoomId).update({ p2Move: move }); }
+                if(data.board[index] === "" && !data.winner) {
+                    data.board[index] = myChar;
+                    let nextTurn = (currentUser.uid === data.player1) ? data.player2 : data.player1;
+                    
+                    let winner = checkXOWinner(data.board);
+                    let updateData = { board: data.board, turn: nextTurn };
+                    
+                    if(winner) {
+                        updateData.winner = winner === "X" ? data.player1 : (winner === "O" ? data.player2 : "draw");
+                    }
+                    db.collection("rooms").doc(activeRoomId).update(updateData);
+                }
             });
         }
 
-        function determineRPSWinner(p1, p2) {
-            if(p1 === p2) return "draw";
-            if((p1 === "rock" && p2 === "scissors") || (p1 === "paper" && p2 === "rock") || (p1 === "scissors" && p2 === "paper")) return "p1";
-            return "p2";
+        function checkXOWinner(b) {
+            const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for(let i=0; i<lines.length; i++) {
+                const [x,y,z] = lines[i];
+                if(b[x] && b[x] === b[y] && b[x] === b[z]) return b[x];
+            }
+            if(!b.includes("")) return "draw";
+            return null;
         }
-        function enableRPSButtons(status) {
-            document.getElementById("rps-rock").disabled = !status;
-            document.getElementById("rps-paper").disabled = !status;
-            document.getElementById("rps-scissors").disabled = !status;
+
+        function exitXORoom() { 
+            if(roomListener) roomListener(); 
+            switchTab("online"); 
         }
-        function exitRPSRoom() { if(roomListener) roomListener(); switchTab("online"); }
 
         /* --- محرك لعبة حرب الفضاء --- */
         let canvas = document.getElementById('space-canvas'), ctx = canvas.getContext('2d');
@@ -557,12 +554,12 @@
                     if(en.y > 280 || (Math.abs(en.x - (playerX+15)) < 15 && en.y > 230)) {
                         clearInterval(spaceInterval);
                         let finalCoins = Math.floor(spaceScore / 20);
-                        if(finalCoins > 0) {
+                        if(finalCoins > 0 && currentUser) {
                             db.collection("users_profile").doc(currentUser.uid).update({
                                 coins: firebase.firestore.FieldValue.increment(finalCoins)
                             });
-                            showToast(`💥 انتهت المعركة! نجحت في جمع وتحصيل ${finalCoins} كوينز.`, "success", "🪙");
-                        } else { showToast("💥 تحطمت مركبتك! حاول مجدداً للحصول على كوينز أعلى.", "danger", "🛸"); }
+                            showToast(`💥 انتهت المعركة! نجحت في جمع ${finalCoins} كوينز.`, "success", "🪙");
+                        } else { showToast("💥 تحطمت مركبتك! حاول مجدداً.", "danger", "🛸"); }
                     }
                 });
                 ctx.fillStyle = "#fff"; ctx.font = "bold 13px Tajawal"; ctx.fillText("النقاط: " + spaceScore, 15, 25);
@@ -571,29 +568,29 @@
 
         /* --- متجر المكافآت الحقيقي --- */
         function claimReward(rewardName, cost) {
-            if(userProfile.coins >= cost) {
+            if((userProfile.coins || 0) >= cost) {
                 let userAddress = prompt("أدخل رقم محفظتك أو كود حسابك المسجل لإرسال الهدية فوراً:");
                 if(!userAddress) return;
                 
                 db.collection("users_profile").doc(currentUser.uid).update({
                     coins: firebase.firestore.FieldValue.increment(-cost)
+                }).then(() => {
+                    db.collection("withdrawal_requests").add({
+                        userId: currentUser.uid, playerName: currentUser.displayName, reward: rewardName,
+                        details: userAddress, status: "جاري المراجعة", timestamp: Date.now()
+                    });
+                    showToast("🎉 رائع جداً! تم حفظ طلب الاستبدال.", "success", "🎁");
                 });
-                
-                db.collection("withdrawal_requests").add({
-                    userId: currentUser.uid, playerName: currentUser.displayName, reward: rewardName,
-                    details: userAddress, status: "جاري المراجعة", timestamp: Date.now()
-                });
-                showToast("🎉 رائع جداً! تم حفظ طلب الاستبدال والمراجعة الشاملة للمكافأة.", "success", "🎁");
             } else { showToast("❌ الرصيد الإجمالي من الكوينز لديك غير كافٍ.", "danger", "🪙"); }
         }
 
         function buyPowerUp(powerUpName, cost) {
-            if(userProfile.coins >= cost) {
+            if((userProfile.coins || 0) >= cost) {
                 db.collection("users_profile").doc(currentUser.uid).update({
                     coins: firebase.firestore.FieldValue.increment(-cost)
                 });
-                showToast(`🎉 مبروك! امتلكت الآن ترقية [ ${powerUpName} ] الفورية بنجاح.`, "success", "⚡");
-            } else { showToast("❌ رصيدك من الكوينز لا يكفي لإتمام هذه العملية.", "danger", "🪙"); }
+                showToast(`🎉 مبروك! امتلكت الآن ترقية [ ${powerUpName} ] بنجاح.`, "success", "⚡");
+            } else { showToast("❌ رصيدك من الكوينز لا يكفي.", "danger", "🪙"); }
         }
 
         function switchTab(tab) {
@@ -601,6 +598,9 @@
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById(`page-${tab}`).classList.add('active');
             if(document.getElementById(`nav-${tab}`)) document.getElementById(`nav-${tab}`).classList.add('active');
+            
+            // إيقاف لعبة الفضاء إذا غادرنا الصفحة لتوفير الموارد
+            if(tab !== 'games' && spaceInterval) { clearInterval(spaceInterval); spaceInterval = null; }
         }
     </script>
 </body>
