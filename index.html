@@ -72,11 +72,18 @@
         .duel-bar-container { width: 100%; height: 25px; background: #475569; border-radius: 15px; overflow: hidden; margin: 15px 0; display: flex; }
         .duel-progress { height: 100%; transition: width 0.1s ease; }
 
-        /* متجر المكافآت الحقيقية */
+        /* متجر المكافآت الحقيقية والمساعدات */
         .reward-item {
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 16px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+            border-radius: 16px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; text-align: right;
         }
+        
+        /* قائمة اللاعبين النشطين */
+        .active-player-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.05); padding: 10px 15px; border-radius: 12px; margin-bottom: 8px;
+        }
+        .status-dot { width: 10px; height: 10px; background: #22c55e; border-radius: 50%; display: inline-block; margin-left: 5px; }
     </style>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -114,13 +121,21 @@
                 </div>
             </div>
 
-            <!-- 2. صفحة الأونلاين (المواجهة الحية لشخصين) -->
+            <!-- 2. صفحة الأونلاين (المواجهة الحية لشخصين واللاعبين النشطين) -->
             <div id="page-online" class="page">
+                <!-- قسم اللاعبين النشطين الجديد -->
+                <div class="card">
+                    <h3 style="color:var(--primary); margin-bottom:10px;">🟢 اللاعبين النشطين الآن</h3>
+                    <div id="active-players-list" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px;">
+                        <p style="color:var(--text-muted); font-size:0.9rem;">جاري البحث عن لاعبين نشطين...</p>
+                    </div>
+                </div>
+
                 <div class="card">
                     <h2>⚔️ ساحة التحدي أونلاين (1vs1)</h2>
                     <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:15px;">ادخل الطابور وسيتم ربطك فوراً بلاعب آخر أونلاين. الأسرع في الضغط يربح 50 كوينز من الخصم!</p>
                     
-                    <button id="btn-matchmake" class="btn btn-accent" onclick="startMatchmaking()">بحث عن خصم أونلاين 🔍</button>
+                    <button id="btn-matchmake" class="btn btn-accent" onclick="startMatchmaking()">بحث عن خصم عشوائي 🔍</button>
                     
                     <div id="multiplayer-arena" class="multiplayer-box" style="display:none;">
                         <div style="display:flex; justify-content:space-between; font-weight:bold;">
@@ -136,7 +151,7 @@
                 </div>
             </div>
 
-            <!-- 3. صفحة المكافآت ذات القيمة الحقيقية -->
+            <!-- 3. صفحة المكافآت ذات القيمة الحقيقية والمساعدات -->
             <div id="page-rewards" class="page">
                 <div class="card">
                     <h2>🎁 متجر استبدال الجوائز الحقيقية</h2>
@@ -153,6 +168,18 @@
                     <div class="reward-item">
                         <div><strong>بطاقة هدايا جوجل بلاي (5 دولار)</strong><br><small style="color:#eab308;">التكلفة: 5000 كوينز</small></div>
                         <button class="btn" style="width:auto; padding:6px 15px;" onclick="claimReward('Google Play 5$', 5000)">استبدال 🪙</button>
+                    </div>
+
+                    <h2 style="margin-top:25px; margin-bottom:10px; color:var(--primary);">⚡ مساعدات الألعاب الأونلاين (Power-ups)</h2>
+                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">اشتري ميزات حصرية تساعدك تكتسح وتفوز في التحديات الأونلاين ضد أصحابك!</p>
+                    
+                    <div class="reward-item">
+                        <div><strong>تجميد الوقت (Time Freeze ❄️)</strong><br><small style="color:#eab308;">التكلفة: 150 كوينز</small></div>
+                        <button class="btn btn-accent" style="width:auto; padding:6px 15px;" onclick="buyPowerUp('Time Freeze', 150)">شراء 🛒</button>
+                    </div>
+                    <div class="reward-item">
+                        <div><strong>محاولة إضافية (Extra Life ❤️)</strong><br><small style="color:#eab308;">التكلفة: 200 كوينز</small></div>
+                        <button class="btn btn-accent" style="width:auto; padding:6px 15px;" onclick="buyPowerUp('Extra Life', 200)">شراء 🛒</button>
                     </div>
                 </div>
             </div>
@@ -196,11 +223,100 @@
                 
                 db.collection("users_profile").doc(user.uid).onSnapshot(doc => {
                     if(doc.exists) { userProfile = doc.data(); } 
-                    else { userProfile = { coins: 200 }; db.collection("users_profile").doc(user.uid).set(userProfile); }
+                    else { userProfile = { coins: 200, fullName: user.displayName, status: "online" }; db.collection("users_profile").doc(user.uid).set(userProfile); }
                     document.getElementById('user-coins').innerText = userProfile.coins;
                 });
+
+                // تحديث الحالة لـ online وتفعيل نظام اللاعبين النشطين والطلبات
+                db.collection("users_profile").doc(user.uid).update({ status: "online" });
+                listenToActivePlayers();
+                listenToIncomingChallenges();
             }
         });
+
+        // رصد وتحديث قائمة اللاعبين النشطين في الوقت الفعلي
+        function listenToActivePlayers() {
+            db.collection("users_profile").where("status", "==", "online").onSnapshot(snapshot => {
+                let html = "";
+                let count = 0;
+                snapshot.forEach(doc => {
+                    if(doc.id !== currentUser.uid) {
+                        count++;
+                        html += `
+                            <div class="active-player-item">
+                                <div><span class="status-dot"></span> <b>${doc.data().fullName || "لاعب غامض"}</b></div>
+                                <button class="btn" style="width:auto; padding:5px 12px; font-size:0.85rem;" onclick="sendChallenge('${doc.id}', '${doc.data().fullName}')">تحدي ⚔️</button>
+                            </div>
+                        `;
+                    }
+                });
+                if(count === 0) { html = '<p style="color:var(--text-muted); font-size:0.9rem;">لا يوجد لاعبين آخرين نشطين حالياً. شارك الموقع مع أصحابك! 🌐</p>'; }
+                document.getElementById("active-players-list").innerHTML = html;
+            });
+        }
+
+        // إرسال طلب تحدي مباشر للاعب معين
+        function sendChallenge(targetUserId, targetName) {
+            db.collection("challenges").add({
+                fromId: currentUser.uid,
+                fromName: currentUser.displayName,
+                toId: targetUserId,
+                status: "pending",
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            alert(`تم إرسال طلب التحدي الحماسي إلى ${targetName}! انتظر قبوله والمواجهة فوراً... 🔥`);
+        }
+
+        // الاستماع لطلبات التحدي الواردة للمستخدم الحالي
+        function listenToIncomingChallenges() {
+            db.collection("challenges").where("toId", "==", currentUser.uid).where("status", "==", "pending")
+            .onSnapshot(snapshot => {
+                snapshot.forEach(doc => {
+                    const challenge = doc.data();
+                    let accept = confirm(`⚔️ اللاعب [ ${challenge.fromName} ] يتحداك الآن في مواجهة أونلاين حية! هل تقبل التحدي؟`);
+                    if(accept) {
+                        doc.ref.update({ status: "accepted" });
+                        // إنشاء غرفة لعب مخصصة لهم فوراً
+                        db.collection("rooms").add({
+                            player1: challenge.fromId, p1Name: challenge.fromName, p1Clicks: 50,
+                            player2: currentUser.uid, p2Name: currentUser.displayName, p2Clicks: 50, status: "playing"
+                        }).then(roomRef => {
+                            activeRoomId = roomRef.id;
+                            switchTab('online');
+                            listenToRoom();
+                        });
+                    } else {
+                        doc.ref.update({ status: "rejected" });
+                    }
+                });
+            });
+
+            // الاستماع لحالة طلب التحدي الذي أرسلته أنت للتأكد هل تم قبوله
+            db.collection("challenges").where("fromId", "==", currentUser.uid).where("status", "==", "accepted")
+            .onSnapshot(snapshot => {
+                snapshot.forEach(doc => {
+                    doc.ref.delete(); // مسح الطلب بعد التفعيل
+                    alert("🎉 تم قبول التحدي! جاري تحويلك لساحة المواجهة الآن...");
+                    switchTab('online');
+                    // البحث التلقائي عن الغرفة المشتركة التي تم إنشاؤها
+                    db.collection("rooms").where("player1", "==", currentUser.uid).where("status", "==", "playing").limit(1).get().then(s => {
+                        if(!s.empty) { activeRoomId = s.docs[0].id; listenToRoom(); }
+                    });
+                });
+            });
+        }
+
+        // نظام شراء مساعدات الألعاب وخصم الكوينز الفعلي
+        function buyPowerUp(powerUpName, cost) {
+            if(userProfile.coins >= cost) {
+                db.collection("users_profile").doc(currentUser.uid).update({
+                    coins: userProfile.coins - cost
+                });
+                alert(`🎉 مبروك! اشتريت ميزة [ ${powerUpName} ] بنجاح، وتم خصم ${cost} كوينز من حسابك لاستخدامها في معاركك القادمة!`);
+            } else {
+                alert("❌ رصيدك الحالي من الكوينز لا يكفي لشراء هذه الميزة. العب وسحق الخصوم لتجمع المزيد! 🪙");
+            }
+        }
 
         function switchTab(tab) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -215,10 +331,8 @@
                 let playerInput = prompt("أدخل رقم هاتف أو معرف الحساب (ID) لإرسال الجائزة عليه:");
                 if(!playerInput) return;
                 
-                // خصم الكوينز فوراً
                 db.collection("users_profile").doc(currentUser.uid).update({ coins: userProfile.coins - cost });
                 
-                // تسجيل طلب السحب لتراه أنت في لوحة التحكم
                 db.collection("withdrawal_requests").add({
                     userId: currentUser.uid,
                     playerName: currentUser.displayName,
@@ -249,21 +363,17 @@
                 spaceInterval = setInterval(() => {
                 ctx.clearRect(0,0,450,300);
                 
-                // رسم سفينتك الخارقة
                 ctx.fillStyle = "#38bdf8";
                 ctx.fillRect(playerX, 260, 30, 20);
 
-                // إطلاق ليزر تلقائي ممتع
                 if(Math.random() < 0.08) bullets.push({x: playerX + 13, y: 250});
                 
-                // رسم الليزر وتحديث مكانه
                 ctx.fillStyle = "#f43f5e";
                 bullets.forEach((b, bi) => {
                     b.y -= 5; ctx.fillRect(b.x, b.y, 4, 10);
                     if(b.y < 0) bullets.splice(bi, 1);
                 });
 
-                // توليد الكويكبات المعادية
                 if(Math.random() < 0.04) enemies.push({x: Math.random()*420, y: 0, size: 20});
                 
                 ctx.fillStyle = "#e2e8f0";
@@ -271,7 +381,6 @@
                     en.y += 3;
                     ctx.beginPath(); ctx.arc(en.x, en.y, en.size/2, 0, Math.PI*2); ctx.fill();
 
-                    // كشف اصطدام الليزر بالصخور
                     bullets.forEach((b, bi) => {
                         if(b.x > en.x - 10 && b.x < en.x + 10 && b.y > en.y - 10 && b.y < en.y + 10) {
                             enemies.splice(ei, 1); bullets.splice(bi, 1);
@@ -279,7 +388,6 @@
                         }
                     });
 
-                    // جيم أوفر عند تخطي الحدود
                     if(en.y > 300) {
                         clearInterval(spaceInterval);
                         let rewardCoins = Math.floor(spaceScore / 10);
@@ -298,14 +406,12 @@
             
             db.collection("rooms").where("status", "==", "waiting").limit(1).get().then(snap => {
                 if(!snap.empty) {
-                    // العثور على غرفة مفتوحة والإنضمام لها كلاعب ثانٍ
                     let room = snap.docs[0];
                     activeRoomId = room.id;
                     db.collection("rooms").doc(activeRoomId).update({
                         player2: currentUser.uid, p2Name: currentUser.displayName, status: "playing"
                     }).then(() => listenToRoom());
                 } else {
-                    // إنشاء غرفة جديدة تماماً وانتظار الخصم
                     db.collection("rooms").add({
                         player1: currentUser.uid, p1Name: currentUser.displayName, p1Clicks: 50,
                         player2: "", p2Name: "", p2Clicks: 50, status: "waiting"
@@ -328,7 +434,6 @@
                     document.getElementById('multiplayer-arena').style.display = 'block';
                     document.getElementById('btn-duel-tap').disabled = false;
                     
-                    // تحديث شريط القوة والمواجهة الحية بناءً على ضغطات الطرفين
                     let total = data.p1Clicks + data.p2Clicks;
                     let p1Percent = (data.p1Clicks / total) * 100;
                     let p2Percent = (data.p2Clicks / total) * 100;
@@ -341,13 +446,12 @@
                         document.getElementById('duel-opp-bar').style.width = p1Percent + "%";
                     }
 
-                    // شروط حسم الفوز الفوري أونلاين
                     if(data.p1Clicks >= 90 || data.p2Clicks >= 90) {
-                        roomListener(); // إيقاف الاستماع
+                        roomListener();
                         document.getElementById('btn-duel-tap').disabled = true;
                         document.getElementById('multiplayer-arena').style.display = 'none';
                         document.getElementById('btn-matchmake').style.display = 'block';
-                        document.getElementById('btn-matchmake').innerText = "بحث عن خصم أونلاين 🔍";
+                        document.getElementById('btn-matchmake').innerText = "بحث عن خصم عشوائي 🔍";
 
                         let amIPlayer1 = (currentUser.uid === data.player1);
                         let p1Won = data.p1Clicks >= 90;
