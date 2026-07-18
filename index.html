@@ -453,9 +453,10 @@
         }
     </style>
 
-    <!-- استدعاء مكتبات Firebase -->
+    <!-- استدعاء مكتبات Firebase (تمت إضافة مكتبة الـ Firestore بنجاح) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -539,11 +540,11 @@
 
     <!-- التذييل -->
     <footer>
-        <p>© 2026 موقع <a href="#">gohn ال��قمي</a> | تم البناء بـ ❤️ و 🚀</p>
+        <p>© 2026 موقع <a href="#">gohn الرقمي</a> | تم البناء بـ ❤️ و 🚀</p>
     </footer>
 
     <script>
-        // تهيئة Firebase
+        // 1. إعدادات Firebase الخاصة بمشروعك (جاهزة ومتصلة بـ gohn-games)
         const firebaseConfig = {
             apiKey: "AIzaSyA5LlGHl9djJsx_Rs3evjd8Xzpn0e25IHI",
             authDomain: "gohn-games.firebaseapp.com",
@@ -554,11 +555,15 @@
             measurementId: "G-8PBX8E8D15"
         };
 
+        // 2. تهيئة الخدمات (تسجيل الدخول وقاعدة البيانات)
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const provider = new firebase.auth.GoogleAuthProvider();
+        
+        // تفعيل قاعدة البيانات (Firestore) عشان تستخدمها في موقعك
+        const db = firebase.firestore();
 
-        // تسجيل الدخول
+        // 3. دالة تسجيل الدخول عبر جوجل
         function loginWithGoogle() {
             auth.signInWithPopup(provider).catch((error) => {
                 console.error("خطأ في تسجيل الدخول:", error.message);
@@ -566,14 +571,14 @@
             });
         }
 
-        // تسجيل الخروج
+        // 4. دالة تسجيل الخروج
         function logout() {
             auth.signOut().catch((error) => {
                 console.error("خطأ في تسجيل الخروج:", error.message);
             });
         }
 
-        // مراقبة حالة المستخدم
+        // 5. مراقبة حالة المستخدم (هل مسجل دخول أم لا)
         auth.onAuthStateChanged((user) => {
             const guestView = document.getElementById('guest-view');
             const userView = document.getElementById('user-view');
@@ -588,12 +593,31 @@
                 document.getElementById('user-email').innerText = user.email || "بلا بريد";
 
                 navAuthArea.innerHTML = `<button class="btn btn-secondary" style="padding: 8px 18px; font-size: 0.9rem;" onclick="logout()">خروج 🚪</button>`;
+                
+                // 💡 حفظ بيانات المستخدم تلقائياً في قاعدة البيانات بمجرد دخوله للموقع
+                saveUserToDatabase(user);
+
             } else {
                 guestView.style.display = 'block';
                 userView.style.display = 'none';
                 navAuthArea.innerHTML = '';
             }
         });
+
+        // 🛠️ دالة حفظ البيانات في Firestore (قاعدة البيانات)
+        function saveUserToDatabase(user) {
+            db.collection("users").doc(user.uid).set({
+                name: user.displayName,
+                email: user.email,
+                lastLogin: new Date().toISOString()
+            }, { merge: true }) // merge بتحدث البيانات وماتمسحش البيانات القديمة
+            .then(() => {
+                console.log("🚀 تم تحديث بياناتك في قاعدة البيانات بنجاح!");
+            })
+            .catch((error) => {
+                console.error("❌ فشل في حفظ البيانات بقاعدة البيانات:", error);
+            });
+        }
     </script>
 </body>
 </html>
