@@ -65,7 +65,7 @@
         .page.active { display: block; }
 
         /* ستايل الألعاب الجديد */
-        #space-canvas { background: #020617; display: block; margin: 15px auto; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); max-width: 100%; }
+        #space-canvas { background: #020617; display: block; margin: 15px auto; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); max-width: 100%; cursor: crosshair; }
         
         /* ساحة الأونلاين */
         .multiplayer-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 16px; margin-top: 15px; }
@@ -83,7 +83,20 @@
             display: flex; justify-content: space-between; align-items: center;
             background: rgba(255,255,255,0.05); padding: 10px 15px; border-radius: 12px; margin-bottom: 8px;
         }
-        .status-dot { width: 10px; height: 10px; background: #22c55e; border-radius: 50%; display: inline-block; margin-left: 5px; }
+        .status-dot { width: 10px; height: 10px; background: #22c55e; border-radius: 50%; display: inline-block; margin-left: 5px; box-shadow: 0 0 8px #22c55e;}
+        .player-avatar { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--primary); }
+        .player-info { display: flex; align-items: center; gap: 10px; }
+
+        /* ستايل لعبة إكس أو (Tic-Tac-Toe) */
+        .xo-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 250px; margin: 20px auto; }
+        .xo-cell { 
+            background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); 
+            height: 80px; border-radius: 12px; display: flex; justify-content: center; align-items: center;
+            font-size: 2.5rem; font-weight: bold; cursor: pointer; transition: 0.2s;
+        }
+        .xo-cell:active { transform: scale(0.95); }
+        .xo-x { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+        .xo-o { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
     </style>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -103,19 +116,19 @@
     <div class="container">
         <!-- زائر غير مسجل -->
         <div class="card" id="view-auth">
-            <h2 style="margin-bottom:10px;">🏆 منصة الألعاب التنافسية والمكافآت</h2>
-            <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem;">العب أونلاين ضد لاعبين حقيقيين، اجمع الكوينز واستبدلها بجوائز حقيقية مشحونة لحسابك!</p>
+            <h2 style="margin-bottom:10px;">🏆 منصة الألعاب التنافسية</h2>
+            <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.95rem;">العب أونلاين ضد لاعبين حقيقيين، اجمع الكوينز واستبدلها بجوائز حقيقية!</p>
             <button class="btn" onclick="login()">سجل دخولك بجوجل وابدأ التحدي 🚀</button>
         </div>
 
         <!-- اللاعب مسجل -->
         <div id="view-main" style="display:none;">
             
-            <!-- 1. صفحة ألعاب السنجل بلير والباركور -->
+            <!-- 1. صفحة الألعاب الفردية المحدثة -->
             <div id="page-games" class="page active">
                 <div class="card">
-                    <h3 style="color:var(--primary); margin-bottom:5px;">🚀 حرب سفن الفضاء الليزرية</h3>
-                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">حرك السفينة بالماوس أو اللمس، دمر الكويكبات واجمع الكوينز المباشرة!</p>
+                    <h3 style="color:var(--primary); margin-bottom:5px;">🚀 حرب الفضاء (نسخة مطورة)</h3>
+                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">انطلق في الفضاء السحيق! دمر الكويكبات واجمع الكوينز المباشرة!</p>
                     <canvas id="space-canvas" width="450" height="300"></canvas>
                     <button class="btn" onclick="startSpaceGame()">ابدأ معركة الفضاء 🌌</button>
                 </div>
@@ -123,63 +136,61 @@
 
             <!-- 2. صفحة الأونلاين (المواجهة الحية لشخصين واللاعبين النشطين) -->
             <div id="page-online" class="page">
-                <!-- قسم اللاعبين النشطين الجديد -->
+                <!-- قسم اللاعبين النشطين -->
                 <div class="card">
                     <h3 style="color:var(--primary); margin-bottom:10px;">🟢 اللاعبين النشطين الآن</h3>
+                    <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:10px;">ابعت تحدي لأي لاعب عشان تلعبوا <b>إكس أو (Tic-Tac-Toe)</b> أونلاين!</p>
                     <div id="active-players-list" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px;">
                         <p style="color:var(--text-muted); font-size:0.9rem;">جاري البحث عن لاعبين نشطين...</p>
                     </div>
                 </div>
 
+                <!-- ساحة البحث العشوائي (لعبة الضغط) -->
                 <div class="card">
-                    <h2>⚔️ ساحة التحدي أونلاين (1vs1)</h2>
-                    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:15px;">ادخل الطابور وسيتم ربطك فوراً بلاعب آخر أونلاين. الأسرع في الضغط يربح 50 كوينز من الخصم!</p>
+                    <h2>⚔️ بحث عشوائي (لعبة السرعة)</h2>
+                    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:15px;">ادخل الطابور وسيتم ربطك فوراً بلاعب عشوائي. الأسرع يربح 50 كوينز!</p>
                     
                     <button id="btn-matchmake" class="btn btn-accent" onclick="startMatchmaking()">بحث عن خصم عشوائي 🔍</button>
                     
                     <div id="multiplayer-arena" class="multiplayer-box" style="display:none;">
                         <div style="display:flex; justify-content:space-between; font-weight:bold;">
-                            <div style="color:var(--primary);">أنت (اضغط المتصفح)</div>
-                            <div style="color:var(--accent);">الخصم المنافس</div>
+                            <div style="color:var(--primary);">أنت</div>
+                            <div style="color:var(--accent);">الخصم</div>
                         </div>
                         <div class="duel-bar-container">
                             <div id="duel-my-bar" class="duel-progress" style="background:var(--primary); width:50%;"></div>
                             <div id="duel-opp-bar" class="duel-progress" style="background:var(--accent); width:50%;"></div>
                         </div>
-                        <button id="btn-duel-tap" class="btn" style="padding:20px; font-size:1.3rem;" onclick="sendDuelTap()" disabled>إضغط بسرعة!!! 🔥🔥🔥</button>
+                        <button id="btn-duel-tap" class="btn" style="padding:20px; font-size:1.3rem;" onclick="sendDuelTap()" disabled>إضغط بسرعة!!! 🔥</button>
                     </div>
                 </div>
             </div>
 
-            <!-- 3. صفحة المكافآت ذات القيمة الحقيقية والمساعدات -->
+            <!-- ساحة لعبة إكس أو (تفتح عند قبول التحدي المباشر) -->
+            <div id="page-xo" class="page">
+                <div class="card" id="xo-arena">
+                    <h2 style="color:var(--primary);">❌ إكس أو أونلاين ⭕</h2>
+                    <h4 id="xo-status-text" style="margin: 10px 0; color: #eab308;">جاري تجهيز الروم...</h4>
+                    <div class="xo-board" id="xo-board-div">
+                        <!-- الخلايا سيتم توليدها بالـ JavaScript -->
+                    </div>
+                    <button class="btn btn-accent" style="margin-top:20px;" onclick="switchTab('online'); db.collection('rooms').doc(activeRoomId).delete();">انسحاب / خروج</button>
+                </div>
+            </div>
+
+            <!-- 3. صفحة المكافآت -->
             <div id="page-rewards" class="page">
                 <div class="card">
-                    <h2>🎁 متجر استبدال الجوائز الحقيقية</h2>
-                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">الكوينز بتاعتك ليها قيمة! اختر جائزتك وسيتم إرسال كود الشحن فوراً بعد مراجعة الإدارة.</p>
+                    <h2>🎁 متجر استبدال الجوائز</h2>
+                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">استبدل الكوينز بجوائز حقيقية.</p>
                     
                     <div class="reward-item">
-                        <div><strong>60 شدة ببجي ميديا باير (PUBG Mobile)</strong><br><small style="color:#eab308;">التكلفة: 1000 كوينز</small></div>
+                        <div><strong>60 شدة ببجي (PUBG)</strong><br><small style="color:#eab308;">التكلفة: 1000 كوينز</small></div>
                         <button class="btn" style="width:auto; padding:6px 15px;" onclick="claimReward('60 UC PUBG', 1000)">استبدال 🪙</button>
                     </div>
                     <div class="reward-item">
-                        <div><strong>بطاقة فودافون كاش / رصيد (50 جنيه)</strong><br><small style="color:#eab308;">التكلفة: 2500 كوينز</small></div>
+                        <div><strong>بطاقة فودافون كاش (50 جنيه)</strong><br><small style="color:#eab308;">التكلفة: 2500 كوينز</small></div>
                         <button class="btn" style="width:auto; padding:6px 15px;" onclick="claimReward('Vodafone Cash 50 EGP', 2500)">استبدال 🪙</button>
-                    </div>
-                    <div class="reward-item">
-                        <div><strong>بطاقة هدايا جوجل بلاي (5 دولار)</strong><br><small style="color:#eab308;">التكلفة: 5000 كوينز</small></div>
-                        <button class="btn" style="width:auto; padding:6px 15px;" onclick="claimReward('Google Play 5$', 5000)">استبدال 🪙</button>
-                    </div>
-
-                    <h2 style="margin-top:25px; margin-bottom:10px; color:var(--primary);">⚡ مساعدات الألعاب الأونلاين (Power-ups)</h2>
-                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">اشتري ميزات حصرية تساعدك تكتسح وتفوز في التحديات الأونلاين ضد أصحابك!</p>
-                    
-                    <div class="reward-item">
-                        <div><strong>تجميد الوقت (Time Freeze ❄️)</strong><br><small style="color:#eab308;">التكلفة: 150 كوينز</small></div>
-                        <button class="btn btn-accent" style="width:auto; padding:6px 15px;" onclick="buyPowerUp('Time Freeze', 150)">شراء 🛒</button>
-                    </div>
-                    <div class="reward-item">
-                        <div><strong>محاولة إضافية (Extra Life ❤️)</strong><br><small style="color:#eab308;">التكلفة: 200 كوينز</small></div>
-                        <button class="btn btn-accent" style="width:auto; padding:6px 15px;" onclick="buyPowerUp('Extra Life', 200)">شراء 🛒</button>
                     </div>
                 </div>
             </div>
@@ -187,10 +198,10 @@
         </div>
     </div>
 
-    <!-- البار السفلي الاحترافي للتنقل -->
+    <!-- البار السفلي -->
     <div class="bottom-nav" id="bottom-nav" style="display:none;">
         <div class="nav-item active" id="nav-games" onclick="switchTab('games')"><div class="nav-icon">🕹️</div><div>الألعاب</div></div>
-        <div class="nav-item" id="nav-online" onclick="switchTab('online')"><div class="nav-icon">⚔️</div><div>أونلاين 1v1</div></div>
+        <div class="nav-item" id="nav-online" onclick="switchTab('online')"><div class="nav-icon">⚔️</div><div>أونلاين</div></div>
         <div class="nav-item" id="nav-rewards" onclick="switchTab('rewards')"><div class="nav-icon">🎁</div><div>المكافآت</div></div>
     </div>
 
@@ -218,23 +229,32 @@
                 document.getElementById('user-summary').style.display = 'flex';
                 document.getElementById('coin-badge').style.display = 'flex';
                 document.getElementById('bottom-nav').style.display = 'flex';
-                document.getElementById('user-avatar').src = user.photoURL;
-                document.getElementById('user-displayname').innerText = user.displayName.split(' ')[0];
                 
-                db.collection("users_profile").doc(user.uid).onSnapshot(doc => {
-                    if(doc.exists) { userProfile = doc.data(); } 
-                    else { userProfile = { coins: 200, fullName: user.displayName, status: "online" }; db.collection("users_profile").doc(user.uid).set(userProfile); }
-                    document.getElementById('user-coins').innerText = userProfile.coins;
+                // تحديث بيانات اللاعب الحقيقية لظهورها للآخرين
+                let defaultPhoto = user.photoURL || "https://via.placeholder.com/35";
+                let defaultName = user.displayName ? user.displayName.split(' ')[0] : "لاعب مجهول";
+                
+                document.getElementById('user-avatar').src = defaultPhoto;
+                document.getElementById('user-displayname').innerText = defaultName;
+                
+                db.collection("users_profile").doc(user.uid).get().then(doc => {
+                    if(!doc.exists) {
+                        db.collection("users_profile").doc(user.uid).set({ coins: 200, fullName: defaultName, photoURL: defaultPhoto, status: "online" });
+                    } else {
+                        db.collection("users_profile").doc(user.uid).update({ fullName: defaultName, photoURL: defaultPhoto, status: "online" });
+                    }
                 });
 
-                // تحديث الحالة لـ online وتفعيل نظام اللاعبين النشطين والطلبات
-                db.collection("users_profile").doc(user.uid).update({ status: "online" });
+                db.collection("users_profile").doc(user.uid).onSnapshot(doc => {
+                    if(doc.exists) { userProfile = doc.data(); document.getElementById('user-coins').innerText = userProfile.coins; } 
+                });
+
                 listenToActivePlayers();
                 listenToIncomingChallenges();
             }
         });
 
-        // رصد وتحديث قائمة اللاعبين النشطين في الوقت الفعلي
+        // 1. عرض اللاعبين النشطين بصورهم الحقيقية
         function listenToActivePlayers() {
             db.collection("users_profile").where("status", "==", "online").onSnapshot(snapshot => {
                 let html = "";
@@ -242,116 +262,162 @@
                 snapshot.forEach(doc => {
                     if(doc.id !== currentUser.uid) {
                         count++;
+                        let pData = doc.data();
+                        let pName = pData.fullName || "لاعب غامض";
+                        let pPhoto = pData.photoURL || "https://via.placeholder.com/35";
                         html += `
                             <div class="active-player-item">
-                                <div><span class="status-dot"></span> <b>${doc.data().fullName || "لاعب غامض"}</b></div>
-                                <button class="btn" style="width:auto; padding:5px 12px; font-size:0.85rem;" onclick="sendChallenge('${doc.id}', '${doc.data().fullName}')">تحدي ⚔️</button>
+                                <div class="player-info">
+                                    <img src="${pPhoto}" class="player-avatar">
+                                    <span><span class="status-dot"></span> <b>${pName}</b></span>
+                                </div>
+                                <button class="btn btn-accent" style="width:auto; padding:5px 12px; font-size:0.85rem;" onclick="sendChallenge('${doc.id}', '${pName}')">تحدي ⚔️</button>
                             </div>
                         `;
                     }
                 });
-                if(count === 0) { html = '<p style="color:var(--text-muted); font-size:0.9rem;">لا يوجد لاعبين آخرين نشطين حالياً. شارك الموقع مع أصحابك! 🌐</p>'; }
+                if(count === 0) { html = '<p style="color:var(--text-muted); font-size:0.9rem;">لا يوجد لاعبين آخرين نشطين حالياً...</p>'; }
                 document.getElementById("active-players-list").innerHTML = html;
             });
         }
 
-        // إرسال طلب تحدي مباشر للاعب معين
+        // 2. إرسال طلب تحدي (لعبة إكس أو)
         function sendChallenge(targetUserId, targetName) {
             db.collection("challenges").add({
                 fromId: currentUser.uid,
-                fromName: currentUser.displayName,
+                fromName: currentUser.displayName || "لاعب",
                 toId: targetUserId,
                 status: "pending",
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                timestamp: Date.now()
             });
-            alert(`تم إرسال طلب التحدي الحماسي إلى ${targetName}! انتظر قبوله والمواجهة فوراً... 🔥`);
+            alert(`تم إرسال طلب التحدي إلى ${targetName}! لو وافق هتدخلوا روم إكس أو فوراً... 🔥`);
         }
 
-        // الاستماع لطلبات التحدي الواردة للمستخدم الحالي
+        // 3. استقبال الطلبات بطريقة آمنة (بدون Index معقد)
         function listenToIncomingChallenges() {
-            db.collection("challenges").where("toId", "==", currentUser.uid).where("status", "==", "pending")
+            db.collection("challenges").where("toId", "==", currentUser.uid)
             .onSnapshot(snapshot => {
-                snapshot.forEach(doc => {
-                    const challenge = doc.data();
-                    let accept = confirm(`⚔️ اللاعب [ ${challenge.fromName} ] يتحداك الآن في مواجهة أونلاين حية! هل تقبل التحدي؟`);
-                    if(accept) {
-                        doc.ref.update({ status: "accepted" });
-                        // إنشاء غرفة لعب مخصصة لهم فوراً
-                        db.collection("rooms").add({
-                            player1: challenge.fromId, p1Name: challenge.fromName, p1Clicks: 50,
-                            player2: currentUser.uid, p2Name: currentUser.displayName, p2Clicks: 50, status: "playing"
-                        }).then(roomRef => {
-                            activeRoomId = roomRef.id;
-                            switchTab('online');
-                            listenToRoom();
-                        });
-                    } else {
-                        doc.ref.update({ status: "rejected" });
+                snapshot.docChanges().forEach(change => {
+                    if (change.type === "added") {
+                        const challenge = change.doc.data();
+                        // فلترة الطلبات المعلقة برمجياً
+                        if(challenge.status === "pending" && (Date.now() - challenge.timestamp < 60000)) { 
+                            let accept = confirm(`⚔️ اللاعب [ ${challenge.fromName} ] بيتحداك في جيم إكس أو (Tic-Tac-Toe)! تقبل؟`);
+                            if(accept) {
+                                change.doc.ref.update({ status: "accepted" });
+                                // إنشاء روم إكس أو
+                                db.collection("rooms").add({
+                                    gameType: "xo",
+                                    player1: challenge.fromId, p1Name: challenge.fromName,
+                                    player2: currentUser.uid, p2Name: currentUser.displayName,
+                                    turn: challenge.fromId, // اللي بعت الطلب بيلعب الأول
+                                    board: ["","","","","","","","",""],
+                                    winner: null,
+                                    status: "playing"
+                                }).then(roomRef => {
+                                    activeRoomId = roomRef.id;
+                                    switchTab('xo');
+                                    listenToXORoom();
+                                });
+                            } else {
+                                change.doc.ref.update({ status: "rejected" });
+                            }
+                        }
                     }
                 });
             });
 
-            // الاستماع لحالة طلب التحدي الذي أرسلته أنت للتأكد هل تم قبوله
-            db.collection("challenges").where("fromId", "==", currentUser.uid).where("status", "==", "accepted")
+            // الاستماع لقبول الطلب اللي انت بعته
+            db.collection("challenges").where("fromId", "==", currentUser.uid)
             .onSnapshot(snapshot => {
-                snapshot.forEach(doc => {
-                    doc.ref.delete(); // مسح الطلب بعد التفعيل
-                    alert("🎉 تم قبول التحدي! جاري تحويلك لساحة المواجهة الآن...");
-                    switchTab('online');
-                    // البحث التلقائي عن الغرفة المشتركة التي تم إنشاؤها
-                    db.collection("rooms").where("player1", "==", currentUser.uid).where("status", "==", "playing").limit(1).get().then(s => {
-                        if(!s.empty) { activeRoomId = s.docs[0].id; listenToRoom(); }
-                    });
+                snapshot.docChanges().forEach(change => {
+                    if (change.type === "modified") {
+                        const challenge = change.doc.data();
+                        if(challenge.status === "accepted") {
+                            change.doc.ref.delete();
+                            switchTab('xo');
+                            // البحث عن روم الإكس أو الخاصة بيك
+                            db.collection("rooms").where("player1", "==", currentUser.uid).where("status", "==", "playing").limit(1).get().then(s => {
+                                if(!s.empty) { activeRoomId = s.docs[0].id; listenToXORoom(); }
+                            });
+                        }
+                    }
                 });
             });
         }
 
-        // نظام شراء مساعدات الألعاب وخصم الكوينز الفعلي
-        function buyPowerUp(powerUpName, cost) {
-            if(userProfile.coins >= cost) {
-                db.collection("users_profile").doc(currentUser.uid).update({
-                    coins: userProfile.coins - cost
-                });
-                alert(`🎉 مبروك! اشتريت ميزة [ ${powerUpName} ] بنجاح، وتم خصم ${cost} كوينز من حسابك لاستخدامها في معاركك القادمة!`);
-            } else {
-                alert("❌ رصيدك الحالي من الكوينز لا يكفي لشراء هذه الميزة. العب وسحق الخصوم لتجمع المزيد! 🪙");
-            }
-        }
-
-        function switchTab(tab) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById(`page-${tab}`).classList.add('active');
-            document.getElementById(`nav-${tab}`).classList.add('active');
-        }
-
-        /* --- نظام القيمة الحقيقية وسحب الجوائز --- */
-        function claimReward(rewardName, cost) {
-            if(userProfile.coins >= cost) {
-                let playerInput = prompt("أدخل رقم هاتف أو معرف الحساب (ID) لإرسال الجائزة عليه:");
-                if(!playerInput) return;
+        /* --- لعبة إكس أو أونلاين (X-O Multiplayer) --- */
+        function listenToXORoom() {
+            if(roomListener) roomListener();
+            roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => {
+                let data = doc.data();
+                if(!data || data.gameType !== "xo") return;
                 
-                db.collection("users_profile").doc(currentUser.uid).update({ coins: userProfile.coins - cost });
+                let myChar = (currentUser.uid === data.player1) ? "X" : "O";
+                let isMyTurn = (data.turn === currentUser.uid);
                 
-                db.collection("withdrawal_requests").add({
-                    userId: currentUser.uid,
-                    playerName: currentUser.displayName,
-                    email: currentUser.email,
-                    reward: rewardName,
-                    details: playerInput,
-                    status: "جاري المراجعة والتحويل ⏳",
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                let statusText = isMyTurn ? `دورك الآن يا بطل (${myChar})` : "انتظر دور الخصم...";
+                if(data.winner) {
+                    statusText = (data.winner === currentUser.uid) ? "🏆 مبروووك! أنت الفائز!" : (data.winner === "draw" ? "تعادل!" : "😢 خسرت الجيم!");
+                }
+                document.getElementById('xo-status-text').innerText = statusText;
+
+                // رسم البورد
+                let boardHtml = "";
+                data.board.forEach((cell, index) => {
+                    let cellClass = cell === "X" ? "xo-x" : (cell === "O" ? "xo-o" : "");
+                    boardHtml += `<div class="xo-cell ${cellClass}" onclick="playXOMove(${index}, ${isMyTurn}, '${myChar}')">${cell}</div>`;
                 });
-                alert("🎉 تم تسجيل طلبك بنجاح! سيتم مراجعته وإرسال الهدية لحسابك خلال أقل من 24 ساعة.");
-            } else {
-                alert("❌ عذراً! رصيد الكوينز لديك لا يكفي لشراء هذه الجائزة الحقيقية. استمر باللعب وفز بالتحديات!");
-            }
+                document.getElementById('xo-board-div').innerHTML = boardHtml;
+
+                if(data.winner) {
+                    roomListener(); // وقف الاستماع بعد الفوز
+                    setTimeout(() => { switchTab('online'); }, 3000); // رجوع للصفحة بعد 3 ثواني
+                }
+            });
         }
 
-        /* --- اللعبة 1: حرب الفضاء المتطورة (Single Player) --- */
+        function playXOMove(index, isMyTurn, myChar) {
+            if(!isMyTurn) return;
+            
+            db.collection("rooms").doc(activeRoomId).get().then(doc => {
+                let data = doc.data();
+                if(data.board[index] === "" && !data.winner) {
+                    data.board[index] = myChar;
+                    let nextTurn = (currentUser.uid === data.player1) ? data.player2 : data.player1;
+                    
+                    // فحص الفوز
+                    let winner = checkXOWinner(data.board);
+                    let updateData = { board: data.board, turn: nextTurn };
+                    
+                    if(winner) {
+                        updateData.winner = winner === "X" ? data.player1 : (winner === "O" ? data.player2 : "draw");
+                        // إضافة كوينز للفائز
+                        if(updateData.winner === currentUser.uid) {
+                            db.collection("users_profile").doc(currentUser.uid).update({ coins: userProfile.coins + 20 });
+                        }
+                    }
+                    db.collection("rooms").doc(activeRoomId).update(updateData);
+                }
+            });
+        }
+
+        function checkXOWinner(b) {
+            const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for(let i=0; i<lines.length; i++) {
+                const [x,y,z] = lines[i];
+                if(b[x] && b[x] === b[y] && b[x] === b[z]) return b[x];
+            }
+            if(!b.includes("")) return "draw";
+            return null;
+        }
+
+        /* --- اللعبة 1: حرب الفضاء المتطورة (نجوم وأشكال أفضل) --- */
         let canvas = document.getElementById('space-canvas'), ctx = canvas.getContext('2d');
-        let spaceInterval = null, playerX = 210, bullets = [], enemies = [], spaceScore = 0;
+        let spaceInterval = null, playerX = 210, bullets = [], enemies = [], spaceScore = 0, stars = [];
         
+        for(let i=0; i<50; i++) stars.push({x: Math.random()*450, y: Math.random()*300, size: Math.random()*2, speed: Math.random()*2+1});
+
         canvas.addEventListener('mousemove', (e) => {
             let rect = canvas.getBoundingClientRect();
             playerX = e.clientX - rect.left - 15;
@@ -359,125 +425,123 @@
 
         function startSpaceGame() {
             if(spaceInterval) clearInterval(spaceInterval);
-                bullets = []; enemies = []; spaceScore = 0;
-                spaceInterval = setInterval(() => {
-                ctx.clearRect(0,0,450,300);
+            bullets = []; enemies = []; spaceScore = 0;
+            spaceInterval = setInterval(() => {
+                // رسم الخلفية والنجوم
+                ctx.fillStyle = "#020617"; ctx.fillRect(0,0,450,300);
+                ctx.fillStyle = "white";
+                stars.forEach(s => { 
+                    s.y += s.speed; if(s.y > 300) { s.y = 0; s.x = Math.random()*450; }
+                    ctx.fillRect(s.x, s.y, s.size, s.size);
+                });
                 
+                // رسم السفينة بشكل احترافي
                 ctx.fillStyle = "#38bdf8";
-                ctx.fillRect(playerX, 260, 30, 20);
+                ctx.beginPath(); ctx.moveTo(playerX + 15, 250); ctx.lineTo(playerX + 30, 280); ctx.lineTo(playerX, 280); ctx.fill();
+                // نار المحرك
+                ctx.fillStyle = "#f43f5e"; ctx.fillRect(playerX+10, 280, 10, Math.random()*15+5);
 
-                if(Math.random() < 0.08) bullets.push({x: playerX + 13, y: 250});
+                // إطلاق ليزر
+                if(Math.random() < 0.1) bullets.push({x: playerX + 13, y: 250});
                 
-                ctx.fillStyle = "#f43f5e";
+                ctx.fillStyle = "#fbbf24";
                 bullets.forEach((b, bi) => {
-                    b.y -= 5; ctx.fillRect(b.x, b.y, 4, 10);
+                    b.y -= 7; ctx.fillRect(b.x, b.y, 4, 12);
                     if(b.y < 0) bullets.splice(bi, 1);
                 });
 
-                if(Math.random() < 0.04) enemies.push({x: Math.random()*420, y: 0, size: 20});
+                // الكويكبات الحمراء
+                if(Math.random() < 0.05 + (spaceScore/1000)) enemies.push({x: Math.random()*420, y: -20, size: Math.random()*15+15});
                 
-                ctx.fillStyle = "#e2e8f0";
+                ctx.fillStyle = "#f43f5e";
                 enemies.forEach((en, ei) => {
-                    en.y += 3;
+                    en.y += 3 + (spaceScore/50);
                     ctx.beginPath(); ctx.arc(en.x, en.y, en.size/2, 0, Math.PI*2); ctx.fill();
 
                     bullets.forEach((b, bi) => {
-                        if(b.x > en.x - 10 && b.x < en.x + 10 && b.y > en.y - 10 && b.y < en.y + 10) {
+                        if(b.x > en.x - en.size/2 && b.x < en.x + en.size/2 && b.y > en.y - en.size/2 && b.y < en.y + en.size/2) {
                             enemies.splice(ei, 1); bullets.splice(bi, 1);
-                            spaceScore += 5;
+                            spaceScore += 10;
                         }
                     });
 
-                    if(en.y > 300) {
+                    // الاصطدام بالسفينة أو النزول لأسفل
+                    if(en.y > 300 || (Math.abs(en.x - (playerX+15)) < 15 && Math.abs(en.y - 265) < 15)) {
                         clearInterval(spaceInterval);
-                        let rewardCoins = Math.floor(spaceScore / 10);
-                        db.collection("users_profile").doc(currentUser.uid).update({ coins: userProfile.coins + rewardCoins });
-                        alert(`💥 جيم أوفر! دمرت سفن وكسبت ${rewardCoins} كوينز في رصيدك الفعلي.`);
+                        let rewardCoins = Math.floor(spaceScore / 20);
+                        if(rewardCoins > 0) db.collection("users_profile").doc(currentUser.uid).update({ coins: userProfile.coins + rewardCoins });
+                        alert(`💥 جيم أوفر! كسبت ${rewardCoins} كوينز.`);
                     }
                 });
                 
-                ctx.fillStyle = "white"; ctx.fillText("النقاط: " + spaceScore, 15, 20);
+                ctx.fillStyle = "white"; ctx.font = "16px Arial"; ctx.fillText("النقاط: " + spaceScore, 15, 25);
             }, 1000/40);
         }
 
-        /* --- اللعبة 2: نظام تحدي الأونلاين المباشر (Multiplayer) --- */
+        // دالة التنقل بين الصفحات
+        function switchTab(tab) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(`page-${tab}`).classList.add('active');
+            if(document.getElementById(`nav-${tab}`)) document.getElementById(`nav-${tab}`).classList.add('active');
+        }
+
+        function claimReward(rewardName, cost) {
+            if(userProfile.coins >= cost) {
+                let playerInput = prompt("أدخل رقم هاتف أو ID الجائزة:");
+                if(!playerInput) return;
+                db.collection("users_profile").doc(currentUser.uid).update({ coins: userProfile.coins - cost });
+                db.collection("withdrawal_requests").add({
+                    userId: currentUser.uid, playerName: currentUser.displayName, reward: rewardName, details: playerInput,
+                    status: "قيد المراجعة", timestamp: Date.now()
+                });
+                alert("🎉 تم تسجيل طلبك بنجاح!");
+            } else { alert("❌ رصيدك لا يكفي."); }
+        }
+
+        /* --- ساحة لعبة الضغط العشوائية (كما هي) --- */
         function startMatchmaking() {
-            document.getElementById('btn-matchmake').innerText = "جاري البحث عن منافس حقيقي أونلاين... ⏳";
-            
-            db.collection("rooms").where("status", "==", "waiting").limit(1).get().then(snap => {
+            document.getElementById('btn-matchmake').innerText = "جاري البحث... ⏳";
+            db.collection("rooms").where("status", "==", "waiting").where("gameType", "==", "tap").limit(1).get().then(snap => {
                 if(!snap.empty) {
-                    let room = snap.docs[0];
-                    activeRoomId = room.id;
-                    db.collection("rooms").doc(activeRoomId).update({
-                        player2: currentUser.uid, p2Name: currentUser.displayName, status: "playing"
-                    }).then(() => listenToRoom());
+                    activeRoomId = snap.docs[0].id;
+                    db.collection("rooms").doc(activeRoomId).update({ player2: currentUser.uid, status: "playing" }).then(() => listenToTapRoom());
                 } else {
-                    db.collection("rooms").add({
-                        player1: currentUser.uid, p1Name: currentUser.displayName, p1Clicks: 50,
-                        player2: "", p2Name: "", p2Clicks: 50, status: "waiting"
-                    }).then(docRef => {
-                        activeRoomId = docRef.id;
-                        listenToRoom();
+                    db.collection("rooms").add({ gameType: "tap", player1: currentUser.uid, p1Clicks: 50, player2: "", p2Clicks: 50, status: "waiting" }).then(docRef => {
+                        activeRoomId = docRef.id; listenToTapRoom();
                     });
                 }
             });
         }
-
-        function listenToRoom() {
+        function listenToTapRoom() {
             if(roomListener) roomListener();
             roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => {
-                let data = doc.data();
-                if(!data) return;
-
+                let data = doc.data(); if(!data || data.gameType !== "tap") return;
                 if(data.status === "playing") {
                     document.getElementById('btn-matchmake').style.display = 'none';
                     document.getElementById('multiplayer-arena').style.display = 'block';
                     document.getElementById('btn-duel-tap').disabled = false;
-                    
                     let total = data.p1Clicks + data.p2Clicks;
-                    let p1Percent = (data.p1Clicks / total) * 100;
-                    let p2Percent = (data.p2Clicks / total) * 100;
-
-                    if(currentUser.uid === data.player1) {
-                        document.getElementById('duel-my-bar').style.width = p1Percent + "%";
-                        document.getElementById('duel-opp-bar').style.width = p2Percent + "%";
-                    } else {
-                        document.getElementById('duel-my-bar').style.width = p2Percent + "%";
-                        document.getElementById('duel-opp-bar').style.width = p1Percent + "%";
-                    }
-
+                    let p1p = (data.p1Clicks / total) * 100, p2p = (data.p2Clicks / total) * 100;
+                    if(currentUser.uid === data.player1) { document.getElementById('duel-my-bar').style.width = p1p+"%"; document.getElementById('duel-opp-bar').style.width = p2p+"%"; } 
+                    else { document.getElementById('duel-my-bar').style.width = p2p+"%"; document.getElementById('duel-opp-bar').style.width = p1p+"%"; }
                     if(data.p1Clicks >= 90 || data.p2Clicks >= 90) {
-                        roomListener();
-                        document.getElementById('btn-duel-tap').disabled = true;
-                        document.getElementById('multiplayer-arena').style.display = 'none';
-                        document.getElementById('btn-matchmake').style.display = 'block';
+                        roomListener(); document.getElementById('btn-duel-tap').disabled = true;
+                        document.getElementById('multiplayer-arena').style.display = 'none'; document.getElementById('btn-matchmake').style.display = 'block';
                         document.getElementById('btn-matchmake').innerText = "بحث عن خصم عشوائي 🔍";
-
-                        let amIPlayer1 = (currentUser.uid === data.player1);
-                        let p1Won = data.p1Clicks >= 90;
-
-                        if((amIPlayer1 && p1Won) || (!amIPlayer1 && !p1Won)) {
-                            db.collection("users_profile").doc(currentUser.uid).update({ coins: userProfile.coins + 50 });
-                            alert("🏆 مبروك!! سحقت الخصم في التحدي الحي وكسبت 50 كوينز كاملة لنفسك!");
-                        } else {
-                            alert("😢 حظ أوفر.. الخصم كان أسرع منك وخد الـ 50 كوينز. جرب تلاعبه تاني!");
-                        }
+                        let won = (currentUser.uid===data.player1 && data.p1Clicks>=90) || (currentUser.uid===data.player2 && data.p2Clicks>=90);
+                        if(won) { db.collection("users_profile").doc(currentUser.uid).update({ coins: userProfile.coins + 50 }); alert("🏆 سحقت الخصم وكسبت 50 كوينز!"); } 
+                        else { alert("😢 الخصم كان أسرع منك!"); }
                         db.collection("rooms").doc(activeRoomId).delete();
                     }
                 }
             });
         }
-
         function sendDuelTap() {
-            let updateData = {};
             db.collection("rooms").doc(activeRoomId).get().then(doc => {
                 let data = doc.data();
-                if(currentUser.uid === data.player1) {
-                    updateData.p1Clicks = data.p1Clicks + 3; updateData.p2Clicks = data.p2Clicks - 2;
-                } else {
-                    updateData.p2Clicks = data.p2Clicks + 3; updateData.p1Clicks = data.p1Clicks - 2;
-                }
-                db.collection("rooms").doc(activeRoomId).update(updateData);
+                if(currentUser.uid === data.player1) db.collection("rooms").doc(activeRoomId).update({ p1Clicks: data.p1Clicks+3, p2Clicks: data.p2Clicks-2 });
+                else db.collection("rooms").doc(activeRoomId).update({ p2Clicks: data.p2Clicks+3, p1Clicks: data.p1Clicks-2 });
             });
         }
     </script>
