@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة GOHN PRO للألعاب والمكافآت 🎮</title>
+    <title id="site-title">منصة GOHN PRO للألعاب والمكافآت 🎮</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -19,7 +19,6 @@
             --btn-danger-shadow: #dc2626;
             --btn-edit-bg: #f59e0b;
             --btn-edit-shadow: #d97706;
-            
             --text-dark: #1e293b;
             --text-muted: #64748b;
             --nav-bg: rgba(30, 41, 59, 0.95);
@@ -231,11 +230,11 @@
             display: flex; align-items: center; justify-content: center; font-size: 2.8rem; margin-bottom: 15px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1); background-size: cover; background-position: center; overflow: hidden;
         }
-        .thumb-space { background: linear-gradient(135deg, #0f172a, #334155); }
         .thumb-pvz { background: linear-gradient(135deg, #22c55e, #15803d); }
         .thumb-xo { background: linear-gradient(135deg, #6366f1, #4338ca); }
         .thumb-tap { background: linear-gradient(135deg, #f59e0b, #b45309); }
         .thumb-rps { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+        .thumb-color { background: linear-gradient(135deg, #667eea, #764ba2); }
 
         .game-info h4 { font-size: 1.15rem; font-weight: 900; color: var(--text-dark); margin-bottom: 6px; }
         .game-info p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; font-weight: 500; }
@@ -249,12 +248,11 @@
             font-size: 0.75rem; font-weight: 800; margin-top: 8px; color: white;
         }
 
-        #space-canvas, #pvz-canvas {
+        #pvz-canvas {
             border-radius: 20px; display: block; margin: 15px auto; max-width: 100%;
             box-shadow: 0 15px 35px rgba(0,0,0,0.2); border: 4px solid white;
+            background: #8B4513;
         }
-        #space-canvas { background: #0f172a; }
-        #pvz-canvas { background: #4a7c23; border-color: #2d5016; }
 
         .pvz-controls { display: flex; justify-content: center; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
         .plant-selector {
@@ -317,6 +315,20 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.15); border: 4px solid white; background: white;
         }
         .custom-game-iframe { width: 100%; height: 600px; border: none; display: block; }
+
+        /* Site Settings Panel */
+        .site-settings-panel {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+        }
+        .site-settings-panel h4 {
+            margin-bottom: 15px;
+            color: var(--btn-chat-bg);
+            font-weight: 900;
+        }
     </style>
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -335,8 +347,19 @@
     <div id="admin-menu-btn" class="admin-menu-btn" onclick="toggleAdminPanel()">⚙️</div>
 
     <div id="admin-panel" class="admin-panel">
-        <h3>🎮 لوحة تحكم المالك</h3>
-        <div class="admin-form-group">
+        <h3> لوحة تحكم المالك</h3>
+        
+        <!-- Site Settings Section -->
+        <div class="site-settings-panel">
+            <h4>⚙️ إعدادات الموقع</h4>
+            <div class="admin-form-group">
+                <label>اسم الموقع:</label>
+                <input type="text" id="site-name-input" placeholder="منصة GOHN PRO">
+            </div>
+            <button class="btn-3d btn-chat" onclick="updateSiteSettings()">💾 حفظ إعدادات الموقع</button>
+        </div>
+
+        <div class="admin-form-group" style="margin-top: 20px;">
             <label>اسم اللعبة:</label>
             <input type="text" id="admin-game-name" placeholder="مثال: لعبة تجميع الجزر">
         </div>
@@ -387,13 +410,13 @@
             <img id="user-avatar" class="user-avatar" src="">
             <span id="user-displayname" class="user-name">..</span>
         </div>
-        <div class="brand">GOHN PRO</div>
-        <div id="coin-badge" class="coin-badge" style="display:none;">🥕 <span id="user-coins">0</span></div>
+        <div class="brand" id="navbar-brand">GOHN PRO</div>
+        <div id="coin-badge" class="coin-badge" style="display:none;"> <span id="user-coins">0</span></div>
     </div>
 
     <div class="container">
         <div class="main-panel glass-panel" id="view-auth">
-            <h2 class="panel-title">🪴 مرحباً بك في المنصة</h2>
+            <h2 class="panel-title" id="welcome-title">🪴 مرحباً بك في المنصة</h2>
             <p style="color:var(--text-muted); margin-bottom:30px; font-size:1.05rem; font-weight:700; line-height:1.6;">سجل دخولك، نافس أصدقائك، واجمع الجزر 🥕 لترقية حسابك!</p>
             <button class="btn-3d btn-chat" onclick="login()">تسجيل الدخول السريع بجوجل 🚀</button>
         </div>
@@ -406,22 +429,12 @@
                     <p style="color:var(--text-muted); font-size:0.9rem; font-weight: 700; margin-bottom:20px; text-align:right;">العب بنفسك واجمع الجزر! 🥕</p>
                     
                     <div class="games-grid-horizontal" id="offline-games-grid">
-                        <div class="game-cover-card" onclick="openOfflineGame('space')">
-                            <div class="game-thumb thumb-space">🚀</div>
-                            <div class="game-info">
-                                <h4>معركة الفضاء</h4>
-                                <p>دمر الكويكبات واجمع الجزر</p>
-                                <span class="game-prize">جائزة: حتى 50 </span>
-                                <span class="game-type-badge" style="background:var(--btn-trade-bg)">أوفلاين 🎮</span>
-                            </div>
-                        </div>
-
                         <div class="game-cover-card" onclick="openOfflineGame('pvz')">
                             <div class="game-thumb thumb-pvz">🌻</div>
                             <div class="game-info">
                                 <h4>Plants vs Zombies</h4>
                                 <p>دافع عن منزلك ضد الزومبي</p>
-                                <span class="game-prize">جائزة: 25 </span>
+                                <span class="game-prize">جائزة: 25 🥕</span>
                                 <span class="game-type-badge" style="background:var(--btn-trade-bg)">أوفلاين 🎮</span>
                             </div>
                         </div>
@@ -434,7 +447,7 @@
                         <p style="color:var(--text-muted); font-size:0.9rem; font-weight:700;">جاري البحث...</p>
                     </div>
 
-                    <h3 style="color:var(--primary-blue); margin-bottom:15px; font-weight:900; text-align: right;"> 1️⃣ اختر لعبة للتحدي</h3>
+                    <h3 style="color:var(--primary-blue); margin-bottom:15px; font-weight:900; text-align: right;">🎮 1️⃣ اختر لعبة للتحدي</h3>
                     
                     <div class="games-grid-horizontal" id="online-games-grid"></div>
 
@@ -443,23 +456,14 @@
                     </div>
                 </div>
 
-                <div id="page-space" class="page">
-                    <h3 style="color:#6366f1; margin-bottom:8px; font-weight:900;">🚀 معركة الفضاء</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px; font-size:0.9rem; font-weight:700;">دمر الكويكبات واجمع الجزر!</p>
-                    <canvas id="space-canvas" width="400" height="280"></canvas>
-                    <div style="font-weight: 900; font-size:1.2rem; margin: 15px 0;">النقاط: <span id="space-score" style="color: var(--btn-chat-bg);">0</span></div>
-                    <button class="btn-3d btn-games" onclick="startSpaceGame()">ابدأ المعركة 🕹️</button>
-                    <button class="btn-3d btn-danger-3d" onclick="exitOfflineGame()">خروج</button>
-                </div>
-
                 <div id="page-pvz" class="page">
                     <h3 style="color:#22c55e; margin-bottom:8px; font-weight:900;">🌻 Plants vs Zombies</h3>
                     <p style="color:var(--text-muted); margin-bottom:15px; font-size:0.9rem; font-weight:700;">دافع عن منزلك ضد الزومبي!</p>
                     
                     <div class="pvz-controls">
-                        <div class="plant-selector active" data-plant="sunflower" onclick="selectPVZPlant('sunflower')">🌻<br><small style="font-size:0.8rem; font-weight:800;">50🥕</small></div>
+                        <div class="plant-selector active" data-plant="sunflower" onclick="selectPVZPlant('sunflower')"><br><small style="font-size:0.8rem; font-weight:800;">50🥕</small></div>
                         <div class="plant-selector" data-plant="peashooter" onclick="selectPVZPlant('peashooter')">🌱<br><small style="font-size:0.8rem; font-weight:800;">100🥕</small></div>
-                        <div class="plant-selector" data-plant="wallnut" onclick="selectPVZPlant('wallnut')">🥜<br><small style="font-size:0.8rem; font-weight:800;">50</small></div>
+                        <div class="plant-selector" data-plant="wallnut" onclick="selectPVZPlant('wallnut')">🥜<br><small style="font-size:0.8rem; font-weight:800;">50🥕</small></div>
                     </div>
                     
                     <canvas id="pvz-canvas" width="400" height="300"></canvas>
@@ -506,7 +510,7 @@
                     <div class="rps-arena" id="rps-arena" style="display:none;">
                         <div class="rps-choices">
                             <button class="rps-btn" id="rps-rock" onclick="sendRPSMove('rock')">✊</button>
-                            <button class="rps-btn" id="rps-paper" onclick="sendRPSMove('paper')"></button>
+                            <button class="rps-btn" id="rps-paper" onclick="sendRPSMove('paper')">✋</button>
                             <button class="rps-btn" id="rps-scissors" onclick="sendRPSMove('scissors')">✌️</button>
                         </div>
                         <div id="rps-result" class="rps-result"></div>
@@ -523,11 +527,11 @@
                         <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('legend_title', 500)">شراء</button>
                     </div>
                     <div class="reward-item">
-                        <div><strong style="font-size:1.05rem; color:var(--text-dark);">🖼️ إطار ذهبي مميز</strong><br><small style="color:var(--btn-trade-bg); font-weight:800; font-size:0.85rem;">التكلفة: 300 </small></div>
+                        <div><strong style="font-size:1.05rem; color:var(--text-dark);">️ إطار ذهبي مميز</strong><br><small style="color:var(--btn-trade-bg); font-weight:800; font-size:0.85rem;">التكلفة: 300 🥕</small></div>
                         <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('gold_frame', 300)">شراء</button>
                     </div>
                     <div class="reward-item">
-                        <div><strong style="font-size:1.05rem; color:var(--text-dark);"> مضاعف جزر x2</strong><br><small style="color:var(--btn-trade-bg); font-weight:800; font-size:0.85rem;">التكلفة: 200 🥕</small></div>
+                        <div><strong style="font-size:1.05rem; color:var(--text-dark);">🍀 مضاعف جزر x2</strong><br><small style="color:var(--btn-trade-bg); font-weight:800; font-size:0.85rem;">التكلفة: 200 </small></div>
                         <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('luck_boost', 200)">شراء</button>
                     </div>
                 </div>
@@ -561,11 +565,11 @@
         let isAdmin = false;
         let currentCustomGameId = null;
         let currentCustomGamePrize = 0;
-        let editingGameId = null; // متغير لتتبع اللعبة التي يتم تعديلها
+        let editingGameId = null;
 
         const OWNER_EMAIL = "gohngohn099@gmail.com";
 
-        function showToast(message, type = "info", icon = "🔔") {
+        function showToast(message, type = "info", icon = "") {
             const toast = document.getElementById("custom-toast");
             document.getElementById("toast-message").innerText = message;
             document.getElementById("toast-icon").innerText = icon;
@@ -584,6 +588,7 @@
                     isAdmin = true;
                     document.getElementById('admin-menu-btn').classList.add('show');
                     loadCustomGamesForAdmin();
+                    loadSiteSettings();
                 }
                 
                 document.getElementById('view-auth').style.display = 'none';
@@ -631,15 +636,45 @@
                     db.collection("users_profile").doc(currentUser.uid).update({ 
                         coins: firebase.firestore.FieldValue.increment(finalReward)
                     });
-                    showToast(`🏆 ربحت ${finalReward}  من اللعبة!`, "success", "🎮");
+                    showToast(`🏆 ربحت ${finalReward} 🥕 من اللعبة!`, "success", "🎮");
                 }
             }
         });
 
+        // Site Settings Functions
+        function loadSiteSettings() {
+            db.collection("site_settings").doc("main").get().then(doc => {
+                if (doc.exists) {
+                    const settings = doc.data();
+                    if (settings.siteName) {
+                        document.getElementById('site-title').innerText = settings.siteName;
+                        document.getElementById('navbar-brand').innerText = settings.siteName.split(' ')[0];
+                        document.getElementById('site-name-input').value = settings.siteName;
+                    }
+                }
+            });
+        }
+
+        function updateSiteSettings() {
+            const siteName = document.getElementById('site-name-input').value;
+            if (!siteName) {
+                showToast("⚠️ يجب إدخال اسم الموقع!", "danger");
+                return;
+            }
+            
+            db.collection("site_settings").doc("main").set({
+                siteName: siteName,
+                updatedAt: Date.now()
+            }, { merge: true }).then(() => {
+                document.getElementById('site-title').innerText = siteName;
+                document.getElementById('navbar-brand').innerText = siteName.split(' ')[0];
+                showToast("✅ تم تحديث إعدادات الموقع!", "success");
+            });
+        }
+
         function toggleAdminPanel() {
             const panel = document.getElementById('admin-panel');
             panel.classList.toggle('show');
-            // إعادة تعيين حالة التعديل عند إغلاق اللوحة
             if (!panel.classList.contains('show')) {
                 resetAdminForm();
             }
@@ -666,7 +701,7 @@
             const prize = parseInt(document.getElementById('admin-game-prize').value);
 
             if(!name || !code) {
-                showToast("️ يجب إدخال اسم اللعبة والكود!", "danger");
+                showToast("⚠️ يجب إدخال اسم اللعبة والكود!", "danger");
                 return;
             }
 
@@ -678,7 +713,6 @@
             };
 
             if (editingGameId) {
-                // تعديل لعبة موجودة
                 db.collection("custom_games").doc(editingGameId).update(gameData).then(() => {
                     showToast("✅ تم تعديل اللعبة بنجاح!", "success");
                     resetAdminForm();
@@ -689,7 +723,6 @@
                     showToast("❌ خطأ: " + err.message, "danger");
                 });
             } else {
-                // إضافة لعبة جديدة
                 gameData.createdAt = Date.now();
                 db.collection("custom_games").add(gameData).then(() => {
                     showToast("✅ تم إضافة اللعبة بنجاح!", "success");
@@ -711,7 +744,6 @@
                     const game = doc.data();
                     editingGameId = gameId;
                     
-                    // ملء الحقول بالبيانات الحالية
                     document.getElementById('admin-game-name').value = game.name;
                     document.getElementById('admin-game-desc').value = game.desc;
                     document.getElementById('admin-game-image').value = game.image || '';
@@ -719,14 +751,12 @@
                     document.getElementById('admin-game-prize').value = game.prize;
                     document.getElementById('admin-game-code').value = game.code;
                     
-                    // تغيير نص الزر
                     document.getElementById('admin-save-btn').innerHTML = '💾 حفظ التعديلات';
                     document.getElementById('admin-save-btn').className = 'btn-3d btn-trade';
                     
-                    // فتح لوحة التحكم
                     document.getElementById('admin-panel').classList.add('show');
                     
-                    showToast("📝 يمكنك تعديل بيانات اللعبة الآن", "info", "✏️");
+                    showToast("📝 يمكنك تعديل بيانات اللعبة الآن", "info", "️");
                 }
             }).catch(err => {
                 showToast("❌ خطأ في تحميل البيانات: " + err.message, "danger");
@@ -760,7 +790,7 @@
                         <div class="admin-game-item">
                             <div>
                                 <div class="game-name">${game.name}</div>
-                                <div class="game-type">${game.type === 'online' ? ' أونلاين' : '🎮 أوفلاين'} - ${game.prize} </div>
+                                <div class="game-type">${game.type === 'online' ? '👥 أونلاين' : '🎮 أوفلاين'} - ${game.prize} </div>
                             </div>
                             <div class="game-actions">
                                 <button class="edit-btn" onclick="editGame('${doc.id}')">✏️ تعديل</button>
@@ -779,8 +809,8 @@
 
             const defaultGames = [
                 { id: 'xo', name: 'إكس أو كلاسيك', desc: 'اللعبة الأيقونية', icon: '❌⭕', type: 'online', prize: 20, class: 'thumb-xo' },
-                { id: 'tap', name: 'حرب السرعة', desc: 'اضغط أسرع!', icon: '⚡👆', type: 'online', prize: 15, class: 'thumb-tap' },
-                { id: 'rps', name: 'حجر ورقة مقص', desc: 'استراتيجية سريعة', icon: '✊✋️', type: 'online', prize: 10, class: 'thumb-rps' }
+                { id: 'tap', name: 'حرب السرعة', desc: 'اضغط أسرع!', icon: '⚡', type: 'online', prize: 15, class: 'thumb-tap' },
+                { id: 'rps', name: 'حجر ورقة مقص', desc: 'استراتيجية سريعة', icon: '✊✋✌️', type: 'online', prize: 10, class: 'thumb-rps' }
             ];
 
             defaultGames.forEach(game => {
@@ -804,7 +834,7 @@
             db.collection("custom_games").where("status", "==", "active").where("type", "==", "offline").onSnapshot(snapshot => {
                 snapshot.forEach(doc => {
                     const game = doc.data();
-                    const icon = game.image ? `<img src="${game.image}" style="width:100%; height:100%; object-fit:cover; border-radius:18px;">` : '';
+                    const icon = game.image ? `<img src="${game.image}" style="width:100%; height:100%; object-fit:cover; border-radius:18px;">` : '🎮';
                     const card = createGameCard(doc.id, game.name, game.desc, icon, game.type, game.prize, null, true);
                     card.classList.add('custom-offline-card');
                     card.onclick = () => openCustomGame(doc.id, game.name, game.desc, game.code, game.prize);
@@ -829,7 +859,7 @@
                 <div class="game-info">
                     <h4>${name}</h4>
                     <p>${desc}</p>
-                    <span class="game-prize">جائزة: ${prize} </span><br>
+                    <span class="game-prize">جائزة: ${prize} 🥕</span><br>
                     ${typeBadge}
                 </div>
             `;
@@ -848,8 +878,7 @@
         }
 
         function openOfflineGame(gameId) {
-            if(gameId === 'space') { switchTab('space'); initSpaceCanvas(); } 
-            else if(gameId === 'pvz') { switchTab('pvz'); initPVZCanvas(); }
+            if(gameId === 'pvz') { switchTab('pvz'); initPVZCanvas(); }
         }
 
         function openCustomGame(gameId, name, desc, code, prize, roomId = null) {
@@ -886,7 +915,6 @@
         }
 
         function exitOfflineGame() {
-            if(spaceInterval) { clearInterval(spaceInterval); spaceInterval = null; }
             if(pvzInterval) { clearInterval(pvzInterval); pvzInterval = null; }
             pvzGameActive = false;
             switchTab('games');
@@ -906,7 +934,7 @@
                 status: "pending", 
                 timestamp: Date.now()
             }).then(() => {
-                showToast(`✅ تم إرسال تحدي ${gameName} إلى ${targetName}!`, "success", "");
+                showToast(`✅ تم إرسال تحدي ${gameName} إلى ${targetName}!`, "success", "🚀");
             });
         }
 
@@ -1039,7 +1067,7 @@
                 let data = doc.data(); if(!data || data.gameType !== "xo") return;
                 let myChar = (currentUser.uid === data.player1) ? "X" : "O";
                 let isMyTurn = (data.turn === currentUser.uid);
-                let statusText = data.winner ? (data.winner === currentUser.uid ? "🏆 فزت بـ 20 🥕!" : (data.winner === "draw" ? "تعادل!" : "😢 خسرت!")) : (isMyTurn ? `دورك (${myChar})` : "انتظر دور الخصم...");
+                let statusText = data.winner ? (data.winner === currentUser.uid ? "🏆 فزت بـ 20 !" : (data.winner === "draw" ? "تعادل!" : "😢 خسرت!")) : (isMyTurn ? `دورك (${myChar})` : "انتظر دور الخصم...");
                 document.getElementById('xo-status-text').innerText = statusText;
 
                 let boardHtml = "";
@@ -1201,110 +1229,7 @@
             switchTab("online"); 
         }
 
-        let spaceCanvas, spaceCtx, spaceInterval = null;
-        let playerX = 185, bullets = [], enemies = [], spaceScore = 0, stars = [];
-
-        function initSpaceCanvas() {
-            spaceCanvas = document.getElementById('space-canvas');
-            spaceCtx = spaceCanvas.getContext('2d');
-            stars = [];
-            for(let i=0; i<30; i++) {
-                stars.push({ x: Math.random()*400, y: Math.random()*280, size: Math.random()*2, speed: Math.random()*1+0.5 });
-            }
-            
-            spaceCanvas.onmousemove = (e) => { 
-                let rect = spaceCanvas.getBoundingClientRect(); 
-                playerX = (e.clientX - rect.left) * (400 / rect.width) - 15; 
-            };
-            spaceCanvas.ontouchmove = (e) => { 
-                e.preventDefault();
-                let rect = spaceCanvas.getBoundingClientRect(); 
-                if(e.touches[0]) playerX = (e.touches[0].clientX - rect.left) * (400 / rect.width) - 15; 
-            };
-        }
-
-        function startSpaceGame() {
-            if(spaceInterval) clearInterval(spaceInterval);
-            bullets = []; enemies = []; spaceScore = 0;
-            document.getElementById('space-score').innerText = '0';
-            
-            spaceInterval = setInterval(() => {
-                spaceCtx.fillStyle = "#0f172a"; 
-                spaceCtx.fillRect(0,0,400,280);
-                
-                spaceCtx.fillStyle = "white";
-                for(let s of stars) { 
-                    s.y += s.speed; 
-                    if(s.y > 280) { s.y = 0; s.x = Math.random()*400; }
-                    spaceCtx.fillRect(s.x, s.y, s.size, s.size);
-                }
-                
-                spaceCtx.fillStyle = "#6366f1";
-                spaceCtx.beginPath(); 
-                spaceCtx.moveTo(playerX + 15, 230); 
-                spaceCtx.lineTo(playerX + 30, 260); 
-                spaceCtx.lineTo(playerX, 260); 
-                spaceCtx.fill();
-                
-                if(Math.random() < 0.08) bullets.push({x: playerX + 13, y: 230});
-                spaceCtx.fillStyle = "#22c55e";
-                for(let i = bullets.length - 1; i >= 0; i--) {
-                    let b = bullets[i];
-                    b.y -= 6;
-                    spaceCtx.fillRect(b.x, b.y, 4, 10);
-                    if(b.y < 0) bullets.splice(i, 1);
-                }
-
-                if(Math.random() < 0.04) enemies.push({x: Math.random()*380, y: -10, size: 16});
-                spaceCtx.fillStyle = "#ef4444";
-                for(let i = enemies.length - 1; i >= 0; i--) {
-                    let en = enemies[i];
-                    en.y += 2.2;
-                    spaceCtx.beginPath(); 
-                    spaceCtx.arc(en.x, en.y, en.size/2, 0, Math.PI*2); 
-                    spaceCtx.fill();
-
-                    let hitByBullet = false;
-                    for(let j = bullets.length - 1; j >= 0; j--) {
-                        let b = bullets[j];
-                        if(b.x > en.x - 10 && b.x < en.x + 10 && b.y > en.y - 10 && b.y < en.y + 10) {
-                            bullets.splice(j, 1);
-                            hitByBullet = true; break;
-                        }
-                    }
-                    
-                    if(hitByBullet) {
-                        enemies.splice(i, 1);
-                        spaceScore += 10;
-                        document.getElementById('space-score').innerText = spaceScore;
-                        continue;
-                    }
-
-                    if(en.y > 280 || (Math.abs(en.x - (playerX+15)) < 15 && en.y > 230)) {
-                        enemies.splice(i, 1);
-                        clearInterval(spaceInterval); spaceInterval = null;
-                        
-                        let finalCarrots = Math.floor(spaceScore / 20);
-                        if(finalCarrots > 0 && currentUser) {
-                            let multiplier = (userProfile.luckBoost) ? 2 : 1;
-                            let reward = finalCarrots * multiplier;
-                            db.collection("users_profile").doc(currentUser.uid).update({ 
-                                coins: firebase.firestore.FieldValue.increment(reward), 
-                                luckBoost: false 
-                            });
-                            showToast(`💥 انتهت المعركة! ربحت ${reward} 🥕`, "success", "🥕");
-                        } else {
-                            showToast("💥 انتهت المعركة! حاول مرة أخرى.", "danger", "🛸");
-                        }
-                        return;
-                    }
-                }
-                
-                spaceCtx.fillStyle = "#fff"; spaceCtx.font = "bold 16px Tajawal"; 
-                spaceCtx.fillText("النقاط: " + spaceScore, 15, 25);
-            }, 1000/35);
-        }
-
+        // Plants vs Zombies Game
         let pvzCanvas, pvzCtx, pvzInterval;
         let pvzSun = 150, pvzWave = 1;
         let pvzPlants = [], pvzZombies = [], pvzProjectiles = [], pvzSunDrops = [];
@@ -1321,16 +1246,20 @@
                 const x = (e.clientX - rect.left) * (400 / rect.width);
                 const y = (e.clientY - rect.top) * (300 / rect.height);
                 
+                // Collect sun
                 for(let i = pvzSunDrops.length - 1; i >= 0; i--) {
                     let drop = pvzSunDrops[i];
                     if(Math.abs(drop.x - x) < 20 && Math.abs(drop.y - y) < 20) {
                         pvzSun += 25; pvzSunDrops.splice(i, 1);
-                        updatePVZUI(); showToast("+25 ☀️", "success", "☀️");
+                        updatePVZUI(); showToast("+25 ️", "success", "☀️");
                         return;
                     }
                 }
                 
-                const row = Math.floor(y / 60); const col = Math.floor(x / 80);
+                // Place plant
+                const row = Math.floor(y / 60);
+                const col = Math.floor(x / 80);
+                
                 if(row < 0 || row >= 5 || col < 1 || col > 4) return;
                 
                 const plantCost = pvzSelectedPlant === 'sunflower' ? 50 : pvzSelectedPlant === 'peashooter' ? 100 : 50;
@@ -1368,99 +1297,189 @@
 
         function pvzGameLoop() {
             pvzFrameCount++;
-            pvzCtx.fillStyle = '#4a7c23'; pvzCtx.fillRect(0, 0, 400, 300);
             
-            pvzCtx.strokeStyle = 'rgba(0,0,0,0.15)'; pvzCtx.lineWidth = 1;
-            for(let i=0; i<=5; i++) { pvzCtx.beginPath(); pvzCtx.moveTo(0, i*60); pvzCtx.lineTo(400, i*60); pvzCtx.stroke(); }
-            for(let i=0; i<=5; i++) { pvzCtx.beginPath(); pvzCtx.moveTo(i*80, 0); pvzCtx.lineTo(i*80, 300); pvzCtx.stroke(); }
+            // Clear canvas
+            pvzCtx.fillStyle = '#8B4513';
+            pvzCtx.fillRect(0, 0, 400, 300);
             
-            if(pvzFrameCount % 300 === 0) {
-                pvzSunDrops.push({ x: 50 + Math.random() * 300, y: 0, targetY: 50 + Math.random() * 200, speed: 1 });
+            // Draw grid
+            pvzCtx.strokeStyle = 'rgba(0,0,0,0.2)';
+            pvzCtx.lineWidth = 1;
+            for(let i=0; i<=5; i++) {
+                pvzCtx.beginPath();
+                pvzCtx.moveTo(0, i*60);
+                pvzCtx.lineTo(400, i*60);
+                pvzCtx.stroke();
+            }
+            for(let i=0; i<=5; i++) {
+                pvzCtx.beginPath();
+                pvzCtx.moveTo(i*80, 0);
+                pvzCtx.lineTo(i*80, 300);
+                pvzCtx.stroke();
             }
             
+            // Spawn sun from sky
+            if(pvzFrameCount % 300 === 0) {
+                pvzSunDrops.push({
+                    x: 50 + Math.random() * 300,
+                    y: 0,
+                    targetY: 50 + Math.random() * 200,
+                    speed: 1
+                });
+            }
+            
+            // Draw and update sun drops
             for(let i = pvzSunDrops.length - 1; i >= 0; i--) {
                 let drop = pvzSunDrops[i];
                 if(drop.y < drop.targetY) drop.y += drop.speed;
-                pvzCtx.font = '25px Arial'; pvzCtx.fillText('☀️', drop.x - 12, drop.y + 8);
+                pvzCtx.font = '25px Arial';
+                pvzCtx.fillText('️', drop.x - 12, drop.y + 8);
             }
             
+            // Spawn zombies
             if(pvzFrameCount % Math.max(60, 180 - pvzWave * 20) === 0) {
                 const row = Math.floor(Math.random() * 5);
-                pvzZombies.push({ x: 400, y: row * 60 + 15, row: row, speed: 0.4 + (pvzWave * 0.08), health: 100 + pvzWave * 20, eating: false });
+                pvzZombies.push({
+                    x: 400, y: row * 60 + 15, row: row,
+                    speed: 0.4 + (pvzWave * 0.08),
+                    health: 100 + pvzWave * 20,
+                    eating: false
+                });
             }
             
+            // Draw and update plants
             for(let i = pvzPlants.length - 1; i >= 0; i--) {
                 let plant = pvzPlants[i];
-                const emoji = plant.type === 'sunflower' ? '🌻' : plant.type === 'peashooter' ? '🌱' : '🥜';
-                pvzCtx.font = '35px Arial'; pvzCtx.fillText(emoji, plant.x, plant.y + 35);
                 
+                const emoji = plant.type === 'sunflower' ? '🌻' : plant.type === 'peashooter' ? '🌱' : '🥜';
+                pvzCtx.font = '35px Arial';
+                pvzCtx.fillText(emoji, plant.x, plant.y + 35);
+                
+                // Sunflower produces sun
                 if(plant.type === 'sunflower') {
                     plant.sunTimer++;
                     if(plant.sunTimer >= 180) {
                         plant.sunTimer = 0;
-                        pvzSunDrops.push({ x: plant.x + 15, y: plant.y, targetY: plant.y + 30, speed: 0.5 });
+                        pvzSunDrops.push({
+                            x: plant.x + 15,
+                            y: plant.y,
+                            targetY: plant.y + 30,
+                            speed: 0.5
+                        });
                     }
                 }
                 
+                // Peashooter shoots
                 if(plant.type === 'peashooter') {
                     const hasZombieInRow = pvzZombies.some(z => z.row === plant.row && z.x > plant.x);
                     if(hasZombieInRow && pvzFrameCount % 45 === 0) {
-                        pvzProjectiles.push({ x: plant.x + 40, y: plant.y + 20, row: plant.row, speed: 4 });
+                        pvzProjectiles.push({
+                            x: plant.x + 40,
+                            y: plant.y + 20,
+                            row: plant.row,
+                            speed: 4
+                        });
                     }
                 }
             }
             
+            // Draw and update zombies
             for(let i = pvzZombies.length - 1; i >= 0; i--) {
                 let zombie = pvzZombies[i];
-                pvzCtx.font = '35px Arial'; pvzCtx.fillText('🧟', zombie.x, zombie.y + 35);
+                
+                pvzCtx.font = '35px Arial';
+                pvzCtx.fillText('', zombie.x, zombie.y + 35);
                 
                 const plantInPath = pvzPlants.find(p => p.row === zombie.row && Math.abs(p.x + 20 - zombie.x) < 25);
                 
                 if(plantInPath) {
-                    zombie.eating = true; plantInPath.health -= 0.5;
-                    if(plantInPath.health <= 0) { pvzPlants.splice(pvzPlants.indexOf(plantInPath), 1); zombie.eating = false; }
+                    zombie.eating = true;
+                    plantInPath.health -= 0.5;
+                    if(plantInPath.health <= 0) {
+                        pvzPlants.splice(pvzPlants.indexOf(plantInPath), 1);
+                        zombie.eating = false;
+                    }
                 } else {
-                    zombie.eating = false; zombie.x -= zombie.speed;
+                    zombie.eating = false;
+                    zombie.x -= zombie.speed;
                 }
                 
-                if(zombie.x < -20) { endPVZGame(false); return; }
+                if(zombie.x < -20) {
+                    endPVZGame(false);
+                    return;
+                }
             }
             
+            // Draw and update projectiles
             for(let i = pvzProjectiles.length - 1; i >= 0; i--) {
                 let proj = pvzProjectiles[i];
-                pvzCtx.fillStyle = '#22c55e'; pvzCtx.beginPath(); pvzCtx.arc(proj.x, proj.y, 6, 0, Math.PI * 2); pvzCtx.fill();
+                
+                pvzCtx.fillStyle = '#22c55e';
+                pvzCtx.beginPath();
+                pvzCtx.arc(proj.x, proj.y, 6, 0, Math.PI * 2);
+                pvzCtx.fill();
+                
                 proj.x += proj.speed;
                 
-                if(proj.x > 420) { pvzProjectiles.splice(i, 1); continue; }
+                if(proj.x > 420) {
+                    pvzProjectiles.splice(i, 1);
+                    continue;
+                }
                 
                 let hit = false;
                 for(let j = pvzZombies.length - 1; j >= 0; j--) {
                     let zombie = pvzZombies[j];
                     if(zombie.row === proj.row && Math.abs(proj.x - zombie.x) < 20) {
-                        zombie.health -= 25; hit = true;
-                        if(zombie.health <= 0) { pvzZombies.splice(j, 1); pvzSun += 10; updatePVZUI(); }
+                        zombie.health -= 25;
+                        hit = true;
+                        
+                        if(zombie.health <= 0) {
+                            pvzZombies.splice(j, 1);
+                            pvzSun += 10;
+                            updatePVZUI();
+                        }
                         break;
                     }
                 }
-                if(hit) pvzProjectiles.splice(i, 1);
+                
+                if(hit) {
+                    pvzProjectiles.splice(i, 1);
+                }
             }
             
+            // Increase wave
             if(pvzFrameCount > 0 && pvzFrameCount % 900 === 0) {
-                pvzWave++; updatePVZUI(); showToast(`🌊 الموجة ${pvzWave}!`, "info", "🌊");
+                pvzWave++;
+                updatePVZUI();
+                showToast(`🌊 الموجة ${pvzWave}!`, "info", "");
             }
-            if(pvzWave > 5) { endPVZGame(true); }
+            
+            // Win condition
+            if(pvzWave > 5) {
+                endPVZGame(true);
+            }
         }
 
-        function updatePVZUI() { document.getElementById('pvz-sun').innerText = pvzSun; document.getElementById('pvz-wave').innerText = pvzWave; }
+        function updatePVZUI() {
+            document.getElementById('pvz-sun').innerText = pvzSun;
+            document.getElementById('pvz-wave').innerText = pvzWave;
+        }
 
         function endPVZGame(won) {
             pvzGameActive = false;
-            if(pvzInterval) clearInterval(pvzInterval); pvzInterval = null;
+            if(pvzInterval) clearInterval(pvzInterval);
+            pvzInterval = null;
+            
             if(won) {
                 const reward = 25 * (userProfile.luckBoost ? 2 : 1);
-                db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(reward), luckBoost: false });
-                showToast(` فزت! ربحت ${reward} `, "success", "🏆");
-            } else { showToast("😢 الزومبي اخترق دفاعاتك!", "danger", "🧟"); }
+                db.collection("users_profile").doc(currentUser.uid).update({
+                    coins: firebase.firestore.FieldValue.increment(reward),
+                    luckBoost: false
+                });
+                showToast(`🏆 فزت! ربحت ${reward} 🥕`, "success", "🏆");
+            } else {
+                showToast("😢 الزومبي اخترق دفاعاتك!", "danger", "🧟");
+            }
         }
 
         function buyUpgrade(upgradeType, cost) {
@@ -1471,8 +1490,12 @@
                 else if(upgradeType === 'gold_frame') { updateData.frame = "gold"; msg = "تم إضافة الإطار الذهبي!"; }
                 else if(upgradeType === 'luck_boost') { updateData.luckBoost = true; msg = "مضاعف الجزر مفعل!"; }
                 
-                db.collection("users_profile").doc(currentUser.uid).update(updateData).then(() => { showToast(msg + " ✅", "success", "🎉"); });
-            } else { showToast("رصيدك من الجزر  غير كافٍ!", "danger", "❌"); }
+                db.collection("users_profile").doc(currentUser.uid).update(updateData).then(() => {
+                    showToast(msg + " ✅", "success", "🎉");
+                });
+            } else {
+                showToast("رصيدك من الجزر 🥕 غير كافٍ!", "danger", "❌");
+            }
         }
 
         function switchTab(tab) {
@@ -1481,8 +1504,11 @@
             document.getElementById(`page-${tab}`).classList.add('active');
             if(document.getElementById(`nav-${tab}`)) document.getElementById(`nav-${tab}`).classList.add('active');
             
-            if(tab !== 'space' && spaceInterval) { clearInterval(spaceInterval); spaceInterval = null; }
-            if(tab !== 'pvz' && pvzInterval) { clearInterval(pvzInterval); pvzInterval = null; pvzGameActive = false; }
+            if(tab !== 'pvz' && pvzInterval) {
+                clearInterval(pvzInterval);
+                pvzInterval = null;
+                pvzGameActive = false;
+            }
         }
     </script>
 </body>
