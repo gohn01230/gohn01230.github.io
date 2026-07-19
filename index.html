@@ -17,6 +17,8 @@
             --btn-trade-shadow: #d97706;
             --btn-danger-bg: #ef4444; 
             --btn-danger-shadow: #dc2626;
+            --btn-edit-bg: #f59e0b;
+            --btn-edit-shadow: #d97706;
             
             --text-dark: #1e293b;
             --text-muted: #64748b;
@@ -44,7 +46,6 @@
             align-items: center;
         }
 
-        /* Glassmorphism Classes */
         .glass-panel {
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(16px);
@@ -104,12 +105,19 @@
         
         .admin-game-list { margin-top: 25px; border-top: 2px dashed #e2e8f0; padding-top: 20px; }
         .admin-game-item {
-            background: white; border: 1px solid #fee2e2; border-radius: 14px;
+            background: white; border: 1px solid #e2e8f0; border-radius: 14px;
             padding: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
         .admin-game-item .game-name { font-weight: 800; font-size: 0.95rem; color: var(--text-dark); }
         .admin-game-item .game-type { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+        .game-actions { display: flex; gap: 8px; }
+        .edit-btn {
+            background: var(--btn-edit-bg); color: white; border: none; padding: 8px 14px;
+            border-radius: 10px; cursor: pointer; font-weight: 800; font-size: 0.85rem;
+            box-shadow: 0 4px 0 var(--btn-edit-shadow); transition: all 0.1s;
+        }
+        .edit-btn:active { transform: translateY(4px); box-shadow: 0 0 0 var(--btn-edit-shadow); }
         .delete-btn {
             background: var(--btn-danger-bg); color: white; border: none; padding: 8px 14px;
             border-radius: 10px; cursor: pointer; font-weight: 800; font-size: 0.85rem;
@@ -355,7 +363,7 @@
             <label>كود اللعبة (HTML كامل):</label>
             <textarea id="admin-game-code" placeholder='<!DOCTYPE html><html>...</html>' style="min-height: 200px; font-family: monospace; font-size: 0.8rem;"></textarea>
         </div>
-        <button class="btn-3d btn-chat" onclick="addNewGame()">➕ إضافة اللعبة</button>
+        <button class="btn-3d btn-chat" id="admin-save-btn" onclick="addNewGame()">➕ إضافة اللعبة</button>
         <button class="btn-3d btn-danger-3d" style="margin-top: 10px;" onclick="toggleAdminPanel()">❌ إغلاق</button>
         
         <div class="admin-game-list" id="admin-game-list">
@@ -403,7 +411,7 @@
                             <div class="game-info">
                                 <h4>معركة الفضاء</h4>
                                 <p>دمر الكويكبات واجمع الجزر</p>
-                                <span class="game-prize">جائزة: حتى 50 🥕</span>
+                                <span class="game-prize">جائزة: حتى 50 </span>
                                 <span class="game-type-badge" style="background:var(--btn-trade-bg)">أوفلاين 🎮</span>
                             </div>
                         </div>
@@ -413,7 +421,7 @@
                             <div class="game-info">
                                 <h4>Plants vs Zombies</h4>
                                 <p>دافع عن منزلك ضد الزومبي</p>
-                                <span class="game-prize">جائزة: 25 🥕</span>
+                                <span class="game-prize">جائزة: 25 </span>
                                 <span class="game-type-badge" style="background:var(--btn-trade-bg)">أوفلاين 🎮</span>
                             </div>
                         </div>
@@ -426,7 +434,7 @@
                         <p style="color:var(--text-muted); font-size:0.9rem; font-weight:700;">جاري البحث...</p>
                     </div>
 
-                    <h3 style="color:var(--primary-blue); margin-bottom:15px; font-weight:900; text-align: right;">🎮 1️⃣ اختر لعبة للتحدي</h3>
+                    <h3 style="color:var(--primary-blue); margin-bottom:15px; font-weight:900; text-align: right;"> 1️⃣ اختر لعبة للتحدي</h3>
                     
                     <div class="games-grid-horizontal" id="online-games-grid"></div>
 
@@ -451,7 +459,7 @@
                     <div class="pvz-controls">
                         <div class="plant-selector active" data-plant="sunflower" onclick="selectPVZPlant('sunflower')">🌻<br><small style="font-size:0.8rem; font-weight:800;">50🥕</small></div>
                         <div class="plant-selector" data-plant="peashooter" onclick="selectPVZPlant('peashooter')">🌱<br><small style="font-size:0.8rem; font-weight:800;">100🥕</small></div>
-                        <div class="plant-selector" data-plant="wallnut" onclick="selectPVZPlant('wallnut')">🥜<br><small style="font-size:0.8rem; font-weight:800;">50🥕</small></div>
+                        <div class="plant-selector" data-plant="wallnut" onclick="selectPVZPlant('wallnut')">🥜<br><small style="font-size:0.8rem; font-weight:800;">50</small></div>
                     </div>
                     
                     <canvas id="pvz-canvas" width="400" height="300"></canvas>
@@ -463,7 +471,6 @@
                     <button class="btn-3d btn-danger-3d" onclick="exitOfflineGame()">خروج</button>
                 </div>
 
-                <!-- صفحة الألعاب المخصصة -->
                 <div id="page-custom-game" class="page">
                     <h3 id="custom-game-title" style="color:#6366f1; margin-bottom:8px; font-weight:900;">لعبة مخصصة</h3>
                     <p id="custom-game-desc" style="color:var(--text-muted); margin-bottom:15px; font-size:0.9rem; font-weight:700;">وصف اللعبة</p>
@@ -499,7 +506,7 @@
                     <div class="rps-arena" id="rps-arena" style="display:none;">
                         <div class="rps-choices">
                             <button class="rps-btn" id="rps-rock" onclick="sendRPSMove('rock')">✊</button>
-                            <button class="rps-btn" id="rps-paper" onclick="sendRPSMove('paper')">✋</button>
+                            <button class="rps-btn" id="rps-paper" onclick="sendRPSMove('paper')"></button>
                             <button class="rps-btn" id="rps-scissors" onclick="sendRPSMove('scissors')">✌️</button>
                         </div>
                         <div id="rps-result" class="rps-result"></div>
@@ -516,11 +523,11 @@
                         <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('legend_title', 500)">شراء</button>
                     </div>
                     <div class="reward-item">
-                        <div><strong style="font-size:1.05rem; color:var(--text-dark);">🖼️ إطار ذهبي مميز</strong><br><small style="color:var(--btn-trade-bg); font-weight:800; font-size:0.85rem;">التكلفة: 300 🥕</small></div>
+                        <div><strong style="font-size:1.05rem; color:var(--text-dark);">🖼️ إطار ذهبي مميز</strong><br><small style="color:var(--btn-trade-bg); font-weight:800; font-size:0.85rem;">التكلفة: 300 </small></div>
                         <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('gold_frame', 300)">شراء</button>
                     </div>
                     <div class="reward-item">
-                        <div><strong style="font-size:1.05rem; color:var(--text-dark);">🍀 مضاعف جزر x2</strong><br><small style="color:var(--btn-trade-bg); font-weight:800; font-size:0.85rem;">التكلفة: 200 🥕</small></div>
+                        <div><strong style="font-size:1.05rem; color:var(--text-dark);"> مضاعف جزر x2</strong><br><small style="color:var(--btn-trade-bg); font-weight:800; font-size:0.85rem;">التكلفة: 200 🥕</small></div>
                         <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('luck_boost', 200)">شراء</button>
                     </div>
                 </div>
@@ -554,6 +561,7 @@
         let isAdmin = false;
         let currentCustomGameId = null;
         let currentCustomGamePrize = 0;
+        let editingGameId = null; // متغير لتتبع اللعبة التي يتم تعديلها
 
         const OWNER_EMAIL = "gohngohn099@gmail.com";
 
@@ -623,7 +631,7 @@
                     db.collection("users_profile").doc(currentUser.uid).update({ 
                         coins: firebase.firestore.FieldValue.increment(finalReward)
                     });
-                    showToast(`🏆 ربحت ${finalReward} 🥕 من اللعبة!`, "success", "🎮");
+                    showToast(`🏆 ربحت ${finalReward}  من اللعبة!`, "success", "🎮");
                 }
             }
         });
@@ -631,6 +639,22 @@
         function toggleAdminPanel() {
             const panel = document.getElementById('admin-panel');
             panel.classList.toggle('show');
+            // إعادة تعيين حالة التعديل عند إغلاق اللوحة
+            if (!panel.classList.contains('show')) {
+                resetAdminForm();
+            }
+        }
+
+        function resetAdminForm() {
+            editingGameId = null;
+            document.getElementById('admin-save-btn').innerHTML = '➕ إضافة اللعبة';
+            document.getElementById('admin-save-btn').className = 'btn-3d btn-chat';
+            document.getElementById('admin-game-name').value = '';
+            document.getElementById('admin-game-desc').value = '';
+            document.getElementById('admin-game-image').value = '';
+            document.getElementById('admin-game-type').value = 'online';
+            document.getElementById('admin-game-prize').value = '25';
+            document.getElementById('admin-game-code').value = '';
         }
 
         function addNewGame() {
@@ -642,27 +666,70 @@
             const prize = parseInt(document.getElementById('admin-game-prize').value);
 
             if(!name || !code) {
-                showToast("⚠️ يجب إدخال اسم اللعبة والكود!", "danger");
+                showToast("️ يجب إدخال اسم اللعبة والكود!", "danger");
                 return;
             }
 
-            db.collection("custom_games").add({
+            const gameData = {
                 name, desc, image, code, type, prize,
                 createdBy: currentUser.uid,
-                createdAt: Date.now(),
+                updatedAt: Date.now(),
                 status: "active"
-            }).then(() => {
-                showToast("✅ تم إضافة اللعبة بنجاح!", "success");
-                loadCustomGamesForAdmin();
-                loadOnlineGames();
-                loadOfflineCustomGames();
-                toggleAdminPanel();
-                document.getElementById('admin-game-name').value = '';
-                document.getElementById('admin-game-desc').value = '';
-                document.getElementById('admin-game-image').value = '';
-                document.getElementById('admin-game-code').value = '';
+            };
+
+            if (editingGameId) {
+                // تعديل لعبة موجودة
+                db.collection("custom_games").doc(editingGameId).update(gameData).then(() => {
+                    showToast("✅ تم تعديل اللعبة بنجاح!", "success");
+                    resetAdminForm();
+                    loadCustomGamesForAdmin();
+                    loadOnlineGames();
+                    loadOfflineCustomGames();
+                }).catch(err => {
+                    showToast("❌ خطأ: " + err.message, "danger");
+                });
+            } else {
+                // إضافة لعبة جديدة
+                gameData.createdAt = Date.now();
+                db.collection("custom_games").add(gameData).then(() => {
+                    showToast("✅ تم إضافة اللعبة بنجاح!", "success");
+                    resetAdminForm();
+                    loadCustomGamesForAdmin();
+                    loadOnlineGames();
+                    loadOfflineCustomGames();
+                }).catch(err => {
+                    showToast("❌ خطأ: " + err.message, "danger");
+                });
+            }
+            
+            toggleAdminPanel();
+        }
+
+        function editGame(gameId) {
+            db.collection("custom_games").doc(gameId).get().then(doc => {
+                if (doc.exists) {
+                    const game = doc.data();
+                    editingGameId = gameId;
+                    
+                    // ملء الحقول بالبيانات الحالية
+                    document.getElementById('admin-game-name').value = game.name;
+                    document.getElementById('admin-game-desc').value = game.desc;
+                    document.getElementById('admin-game-image').value = game.image || '';
+                    document.getElementById('admin-game-type').value = game.type;
+                    document.getElementById('admin-game-prize').value = game.prize;
+                    document.getElementById('admin-game-code').value = game.code;
+                    
+                    // تغيير نص الزر
+                    document.getElementById('admin-save-btn').innerHTML = '💾 حفظ التعديلات';
+                    document.getElementById('admin-save-btn').className = 'btn-3d btn-trade';
+                    
+                    // فتح لوحة التحكم
+                    document.getElementById('admin-panel').classList.add('show');
+                    
+                    showToast("📝 يمكنك تعديل بيانات اللعبة الآن", "info", "✏️");
+                }
             }).catch(err => {
-                showToast("❌ خطأ: " + err.message, "danger");
+                showToast("❌ خطأ في تحميل البيانات: " + err.message, "danger");
             });
         }
 
@@ -693,9 +760,12 @@
                         <div class="admin-game-item">
                             <div>
                                 <div class="game-name">${game.name}</div>
-                                <div class="game-type">${game.type === 'online' ? '👥 أونلاين' : '🎮 أوفلاين'} - ${game.prize} 🥕</div>
+                                <div class="game-type">${game.type === 'online' ? ' أونلاين' : '🎮 أوفلاين'} - ${game.prize} </div>
                             </div>
-                            <button class="delete-btn" onclick="deleteGame('${doc.id}')">🗑️ حذف</button>
+                            <div class="game-actions">
+                                <button class="edit-btn" onclick="editGame('${doc.id}')">✏️ تعديل</button>
+                                <button class="delete-btn" onclick="deleteGame('${doc.id}')">🗑️ حذف</button>
+                            </div>
                         </div>
                     `;
                 });
@@ -710,7 +780,7 @@
             const defaultGames = [
                 { id: 'xo', name: 'إكس أو كلاسيك', desc: 'اللعبة الأيقونية', icon: '❌⭕', type: 'online', prize: 20, class: 'thumb-xo' },
                 { id: 'tap', name: 'حرب السرعة', desc: 'اضغط أسرع!', icon: '⚡👆', type: 'online', prize: 15, class: 'thumb-tap' },
-                { id: 'rps', name: 'حجر ورقة مقص', desc: 'استراتيجية سريعة', icon: '✊✋✌️', type: 'online', prize: 10, class: 'thumb-rps' }
+                { id: 'rps', name: 'حجر ورقة مقص', desc: 'استراتيجية سريعة', icon: '✊✋️', type: 'online', prize: 10, class: 'thumb-rps' }
             ];
 
             defaultGames.forEach(game => {
@@ -734,7 +804,7 @@
             db.collection("custom_games").where("status", "==", "active").where("type", "==", "offline").onSnapshot(snapshot => {
                 snapshot.forEach(doc => {
                     const game = doc.data();
-                    const icon = game.image ? `<img src="${game.image}" style="width:100%; height:100%; object-fit:cover; border-radius:18px;">` : '🎮';
+                    const icon = game.image ? `<img src="${game.image}" style="width:100%; height:100%; object-fit:cover; border-radius:18px;">` : '';
                     const card = createGameCard(doc.id, game.name, game.desc, icon, game.type, game.prize, null, true);
                     card.classList.add('custom-offline-card');
                     card.onclick = () => openCustomGame(doc.id, game.name, game.desc, game.code, game.prize);
@@ -759,7 +829,7 @@
                 <div class="game-info">
                     <h4>${name}</h4>
                     <p>${desc}</p>
-                    <span class="game-prize">جائزة: ${prize} 🥕</span><br>
+                    <span class="game-prize">جائزة: ${prize} </span><br>
                     ${typeBadge}
                 </div>
             `;
@@ -782,7 +852,6 @@
             else if(gameId === 'pvz') { switchTab('pvz'); initPVZCanvas(); }
         }
 
-        // تم التعديل لتمرير تفاصيل الروم إذا كانت اللعبة أونلاين
         function openCustomGame(gameId, name, desc, code, prize, roomId = null) {
             currentCustomGameId = gameId;
             currentCustomGamePrize = prize;
@@ -793,7 +862,6 @@
             
             let injectedCode = code;
             if (roomId) {
-                // إعطاء اللاعب الكود الخاص بالغرفة و هويته لربطه في قواعد بيانات الـ Firebase للعبة المخصصة
                 injectedCode = `<script>window.ACTIVE_ROOM_ID = "${roomId}"; window.CURRENT_USER_ID = "${currentUser.uid}";<\/script>` + code;
             }
             
@@ -808,7 +876,6 @@
             currentCustomGameId = null;
             currentCustomGamePrize = 0;
 
-            // تنظيف الغرفة إذا كانت لعبة أونلاين
             if (activeRoomId) {
                 db.collection("rooms").doc(activeRoomId).delete();
                 activeRoomId = null;
@@ -839,7 +906,7 @@
                 status: "pending", 
                 timestamp: Date.now()
             }).then(() => {
-                showToast(`✅ تم إرسال تحدي ${gameName} إلى ${targetName}!`, "success", "🚀");
+                showToast(`✅ تم إرسال تحدي ${gameName} إلى ${targetName}!`, "success", "");
             });
         }
 
@@ -896,7 +963,6 @@
             });
         }
 
-        // تم التعديل لإضافة دعم الألعاب المخصصة في الروم
         function acceptChallenge() {
             if(!currentChallengeId) return;
             let chalRef = db.collection("challenges").doc(currentChallengeId);
@@ -926,7 +992,6 @@
                         initialData.p2Move = ""; 
                         initialData.winner = "";
                     } else {
-                        // لعبة مخصصة أونلاين
                         initialData.customGame = true;
                     }
                     
@@ -949,13 +1014,11 @@
             document.getElementById("challenge-modal").classList.remove("show");
         }
 
-        // تم التعديل لجلب و تشغيل الألعاب المخصصة الأونلاين
         function enterGameRoom(gameType, oppName) {
             if(gameType === "xo") enterXORoom(oppName);
             else if(gameType === "tap") enterTapRoom(oppName);
             else if(gameType === "rps") enterRPSRoom(oppName);
             else {
-                // فتح اللعبة المخصصة الأونلاين (تم إصلاح المشكلة هنا)
                 db.collection("custom_games").doc(gameType).get().then(doc => {
                     if (doc.exists) {
                         let gameData = doc.data();
@@ -1138,7 +1201,6 @@
             switchTab("online"); 
         }
 
-        // ================= لعبة الفضاء =================
         let spaceCanvas, spaceCtx, spaceInterval = null;
         let playerX = 185, bullets = [], enemies = [], spaceScore = 0, stars = [];
 
@@ -1243,7 +1305,6 @@
             }, 1000/35);
         }
 
-        // ================= لعبة PVZ =================
         let pvzCanvas, pvzCtx, pvzInterval;
         let pvzSun = 150, pvzWave = 1;
         let pvzPlants = [], pvzZombies = [], pvzProjectiles = [], pvzSunDrops = [];
@@ -1398,7 +1459,7 @@
             if(won) {
                 const reward = 25 * (userProfile.luckBoost ? 2 : 1);
                 db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(reward), luckBoost: false });
-                showToast(`🏆 فزت! ربحت ${reward} 🥕`, "success", "🏆");
+                showToast(` فزت! ربحت ${reward} `, "success", "🏆");
             } else { showToast("😢 الزومبي اخترق دفاعاتك!", "danger", "🧟"); }
         }
 
@@ -1411,7 +1472,7 @@
                 else if(upgradeType === 'luck_boost') { updateData.luckBoost = true; msg = "مضاعف الجزر مفعل!"; }
                 
                 db.collection("users_profile").doc(currentUser.uid).update(updateData).then(() => { showToast(msg + " ✅", "success", "🎉"); });
-            } else { showToast("رصيدك من الجزر 🥕 غير كافٍ!", "danger", "❌"); }
+            } else { showToast("رصيدك من الجزر  غير كافٍ!", "danger", "❌"); }
         }
 
         function switchTab(tab) {
