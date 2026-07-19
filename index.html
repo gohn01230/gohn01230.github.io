@@ -193,46 +193,7 @@ auth.onAuthStateChanged(function(user){
 });
 window.addEventListener('pagehide',function(){if(currentUser){db.collection("users_profile").doc(currentUser.uid).update({status:"offline"})}});
 window.addEventListener('beforeunload',function(){if(currentUser) db.collection("users_profile").doc(currentUser.uid).update({status:"offline"})});
-window.addEventListener('message',function(e){
-  if(!e.data || !e.data.type) return;
-  if(e.data.type==='gameResult'){
-    var reward=Math.floor((e.data.score||0)/10);
-    if(reward>0&&currentUser){
-      var finalReward=Math.min(reward,currentCustomGamePrize||reward);
-      db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(finalReward)});
-      showToast('ربحت '+finalReward+' 🥕',"success","🏆");
-    }
-    // لو اللعبة انتهت في غرفة اونلاين، حدث الغرفة
-    if(activeRoomId && e.data.winner){
-      try{ db.collection("rooms").doc(activeRoomId).update({status:'finished', winner:e.data.winner}); }catch(err){}
-    }
-  }
-  else if(e.data.type==='customGameMove'){
-    // حركة جاية من اللعبة جوه ال iframe - ابعتها للفايربيز عشان توصل للخصم
-    if(activeRoomId && currentUser){
-      var move=e.data;
-      try{
-        db.collection("rooms").doc(activeRoomId).update({['playerData.'+currentUser.uid]:{row:move.row,col:move.col,player:move.player,timestamp:firebase.firestore.FieldValue.serverTimestamp(),timestampNum:Date.now()}});
-      }catch(err){ console.error('failed to write move', err); }
-    }
-  }
-  else if(e.data.type==='customGameReady'){
-    // اللعبة جاهزة - ابعت لها بياناتها
-    if(activeRoomId){
-      db.collection("rooms").doc(activeRoomId).get().then(function(doc){
-        if(doc.exists){
-          var d=doc.data();
-          var myPid=(currentUser.uid===d.player1)?'player1':'player2';
-          var oppName=(myPid==='player1')?(d.p2Name||'الخصم'):(d.p1Name||'الخصم');
-          var iframe=document.getElementById('custom-game-iframe');
-          if(iframe && iframe.contentWindow){
-            try{ iframe.contentWindow.postMessage({type:'customGameInit', myPlayerId:myPid, opponentName:oppName}, '*'); }catch(e){}
-          }
-        }
-      });
-    }
-  }
-});
+window.addEventListener('message',function(e){if(e.data&&e.data.type==='gameResult'){var reward=Math.floor((e.data.score||0)/10);if(reward>0&&currentUser){var finalReward=Math.min(reward,currentCustomGamePrize||reward);db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(finalReward)});showToast('ربحت '+finalReward+' 🥕',"success","🏆") }}});
 function toggleAdminPanel(){document.getElementById('admin-panel').classList.toggle('show')}
 function addNewGame(){
  var name=document.getElementById('admin-game-name').value,desc=document.getElementById('admin-game-desc').value,image=document.getElementById('admin-game-image').value,code=document.getElementById('admin-game-code').value,type=document.getElementById('admin-game-type').value,prize=parseInt(document.getElementById('admin-game-prize').value);
@@ -273,84 +234,23 @@ function createGameCard(id,name,desc,icon,type,prize,cls,isCustom){
 }
 function selectGame(id,type,name){selectedGame={id:id,type:type,name:name};document.querySelectorAll('#online-games-grid .game-cover-card').forEach(function(c){c.classList.remove('selected')});var t=document.querySelector('#online-games-grid .game-cover-card[data-game="'+id+'"]');if(t) t.classList.add('selected');document.getElementById('selection-hint').classList.add('show');showToast('اخترت '+name,"success","✅")}
 function openOfflineGame(id){if(id==='space'){switchTab('space');initSpaceCanvas()}else if(id==='pvz'){switchTab('pvz');initPVZCanvas()}}
-function openCustomGame(id,name,desc,code,prize,roomId){
-  currentCustomGameId=id; currentCustomGamePrize=prize; activeRoomId=roomId||null;
-  document.getElementById('custom-game-title').innerText=name;
-  document.getElementById('custom-game-desc').innerText=desc;
-  var c=code;
-  if(roomId){
-    c='<script>window.ACTIVE_ROOM_ID="'+roomId+'";window.CURRENT_USER_ID="'+currentUser.uid+'";</scr"+"ipt>'+code;
-  }
-  document.getElementById('custom-game-iframe').srcdoc=c;
-  switchTab('custom-game');
-  // لو فيه غرفة، ابدأ مراقبة حركات الخصم وابعتهالل iframe
-  if(roomId){
-    if(roomListener) roomListener();
-    roomListener=db.collection("rooms").doc(roomId).onSnapshot(function(doc){
-      if(!doc.exists) return;
-      var d=doc.data();
-      if(d.status==='finished' && window.gameActiveCustom!==false){
-        // اللعبة انتهت
-        var iframe=document.getElementById('custom-game-iframe');
-        if(iframe && iframe.contentWindow){
-          try{ iframe.contentWindow.postMessage({type:'gameEnded', winner:d.winner}, '*'); }catch(e){}
-        }
-        return;
-      }
-      // حدد مين الخصم
-      var oppId = (currentUser.uid===d.player1)? d.player2 : d.player1;
-      if(d.playerData && d.playerData[oppId]){
-        var move=d.playerData[oppId];
-        // ابعت الحركة للعبة جوه ال iframe
-        var iframe=document.getElementById('custom-game-iframe');
-        if(iframe && iframe.contentWindow && move.row!==undefined){
-          try{
-            iframe.contentWindow.postMessage({type:'opponentMove', row:move.row, col:move.col, player:move.player}, '*');
-            iframe.contentWindow.postMessage({type:'customGameMoveOpponent', row:move.row, col:move.col, player:move.player}, '*');
-          }catch(e){}
-        }
-      }
-      // ابعت بيانات الغرفة كاملة مرة واحدة للتهيئة
-      var iframe2=document.getElementById('custom-game-iframe');
-      if(iframe2 && iframe2.contentWindow && d.player1 && d.player2){
-        try{
-          var myPid=(currentUser.uid===d.player1)?'player1':'player2';
-          var oppName=(myPid==='player1')?(d.p2Name||'الخصم'):(d.p1Name||'الخصم');
-          var boardFromData=null;
-          if(d.playerData){
-            var tempBoard=Array(6).fill().map(function(){return Array(7).fill(0)});
-            var moveCount=0;
-            Object.values(d.playerData).forEach(function(m){ if(m.row!==undefined && tempBoard[m.row][m.col]===0){ tempBoard[m.row][m.col]=m.player; moveCount++; } });
-            boardFromData=tempBoard;
-            var currentP = moveCount%2===0?1:2;
-            iframe2.contentWindow.postMessage({type:'customGameInit', myPlayerId:myPid, opponentName:oppName, board:boardFromData, currentPlayer:currentP}, '*');
-          }
-        }catch(e){}
-      }
-    });
-    // بعد ما ال iframe يحمل، ابعتله تهيئة
-    var iframeEl=document.getElementById('custom-game-iframe');
-    if(iframeEl){
-      iframeEl.onload=function(){
-        setTimeout(function(){
-          if(!activeRoomId) return;
-          db.collection("rooms").doc(activeRoomId).get().then(function(doc){
-            if(doc.exists){
-              var d=doc.data();
-              var myPid=(currentUser.uid===d.player1)?'player1':'player2';
-              var oppName=(myPid==='player1')?(d.p2Name||'الخصم'):(d.p1Name||'الخصم');
-              try{ iframeEl.contentWindow.postMessage({type:'customGameInit', myPlayerId:myPid, opponentName:oppName}, '*'); }catch(e){}
-            }
-          });
-        }, 800);
-      };
-    }
-  }
-}
+function openCustomGame(id,name,desc,code,prize,roomId){currentCustomGameId=id;currentCustomGamePrize=prize;activeRoomId=roomId||null;document.getElementById('custom-game-title').innerText=name;document.getElementById('custom-game-desc').innerText=desc;var c=code;if(roomId) c='<script>window.ACTIVE_ROOM_ID="'+roomId+'";window.CURRENT_USER_ID="'+currentUser.uid+'";<\/script>'+code;document.getElementById('custom-game-iframe').srcdoc=c;switchTab('custom-game')}
 function exitCustomGame(){document.getElementById('custom-game-iframe').srcdoc='';currentCustomGameId=null;currentCustomGamePrize=0;if(activeRoomId){db.collection("rooms").doc(activeRoomId).delete();activeRoomId=null;switchTab('online')}else switchTab('games')}
 function exitOfflineGame(){switchTab('games')}
 function sendChallengeTo(tid,tname){if(!selectedGame){showToast("اختر لعبة أولاً!","danger");return}var gname=selectedGame.name||"لعبة";db.collection("challenges").add({fromId:currentUser.uid,fromName:currentUser.displayName||"لاعب",toId:tid,gameType:selectedGame.id,gameTypeName:gname,status:"pending",timestamp:Date.now()}).then(function(){showToast('أرسلت تحدي '+gname+' لـ '+tname,"success","⚔")})}
-function listenToActivePlayers(){db.collection("users_profile").where("status","==","online").onSnapshot(function(snap){var html="";snap.forEach(function(doc){if(doc.id!==currentUser.uid&&(Date.now()-doc.data().lastActiveNum<120000)){var p=doc.data();html+='<div class="player-item"><div class="player-info"><img src="'+p.photoURL+'" class="player-avatar-list"><div><div style="font-weight:900;font-size:.85rem">'+p.fullName+'</div><div style="font-size:.7rem;color:var(--green);font-weight:800"><span class="status-dot"></span>متصل</div></div></div><button class="btn-3d btn-games btn-sm-3d" onclick="sendChallengeTo(''+doc.id+'',''+p.fullName+'')">تحدي</button></div>'}});document.getElementById("active-players-list").innerHTML=html||'<p style="color:var(--muted);text-align:center;padding:10px;font-size:.8rem">لا أحد متصل</p>'})}
+function listenToActivePlayers(){
+  db.collection("users_profile").where("status","==","online").onSnapshot(function(snap){
+    var html="";
+    snap.forEach(function(doc){
+      if(doc.id!==currentUser.uid && (Date.now()-(doc.data().lastActiveNum||0)<120000)){
+        var p=doc.data();
+        var safeName=(p.fullName||'لاعب').replace(/'/g,"");
+        html+='<div class="player-item"><div class="player-info"><img src="'+(p.photoURL||'https://via.placeholder.com/40')+'" class="player-avatar-list"><div><div style="font-weight:900;font-size:.85rem">'+safeName+'</div><div style="font-size:.7rem;color:var(--green);font-weight:800"><span class="status-dot"></span>متصل</div></div></div><button class="btn-3d btn-games btn-sm-3d" onclick="sendChallengeTo(\''+doc.id+'\',\''+safeName+'\')">تحدي</button></div>';
+      }
+    });
+    document.getElementById("active-players-list").innerHTML=html||'<p style="color:var(--muted);text-align:center;padding:10px;font-size:.8rem">لا أحد متصل</p>';
+  });
+}
 function listenToChallenges(){
  db.collection("challenges").where("toId","==",currentUser.uid).onSnapshot(function(snap){snap.docChanges().forEach(function(ch){if(ch.type==="added"){var d=ch.doc.data();if(d.status==="pending"&&(Date.now()-d.timestamp<60000)){currentChallengeId=ch.doc.id;document.getElementById("challenge-text").innerText=d.fromName+' يتحداك في '+(d.gameTypeName||"لعبة")+'!';document.getElementById("modal-overlay").style.display="block";document.getElementById("challenge-modal").classList.add("show")}}})});
  db.collection("challenges").where("fromId","==",currentUser.uid).onSnapshot(function(snap){snap.docChanges().forEach(function(ch){var d=ch.doc.data();if(d&&d.status==="accepted"){ch.doc.ref.delete();activeRoomId=d.roomId;currentGameType=d.gameType;closeAllModals();enterGameRoom(currentGameType,d.toName)}else if(d&&d.status==="rejected"){ch.doc.ref.delete();showToast("تم الرفض","danger")}} )});
