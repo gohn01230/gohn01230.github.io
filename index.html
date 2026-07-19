@@ -234,7 +234,17 @@ function createGameCard(id,name,desc,icon,type,prize,cls,isCustom){
 }
 function selectGame(id,type,name){selectedGame={id:id,type:type,name:name};document.querySelectorAll('#online-games-grid .game-cover-card').forEach(function(c){c.classList.remove('selected')});var t=document.querySelector('#online-games-grid .game-cover-card[data-game="'+id+'"]');if(t) t.classList.add('selected');document.getElementById('selection-hint').classList.add('show');showToast('اخترت '+name,"success","✅")}
 function openOfflineGame(id){if(id==='space'){switchTab('space');initSpaceCanvas()}else if(id==='pvz'){switchTab('pvz');initPVZCanvas()}}
-function openCustomGame(id,name,desc,code,prize,roomId){currentCustomGameId=id;currentCustomGamePrize=prize;activeRoomId=roomId||null;document.getElementById('custom-game-title').innerText=name;document.getElementById('custom-game-desc').innerText=desc;var c=code;if(roomId) c='<script>window.ACTIVE_ROOM_ID="'+roomId+'";window.CURRENT_USER_ID="'+currentUser.uid+'";<\/script>'+code;document.getElementById('custom-game-iframe').srcdoc=c;switchTab('custom-game')}
+function openCustomGame(id,name,desc,code,prize,roomId){
+  currentCustomGameId=id;currentCustomGamePrize=prize;activeRoomId=roomId||null;
+  document.getElementById('custom-game-title').innerText=name;
+  document.getElementById('custom-game-desc').innerText=desc;
+  var c=code;
+  if(roomId){
+    c='<scr'+'ipt>window.ACTIVE_ROOM_ID="'+roomId+'";window.CURRENT_USER_ID="'+currentUser.uid+'";</scr'+'ipt>'+code;
+  }
+  document.getElementById('custom-game-iframe').srcdoc=c;
+  switchTab('custom-game');
+}
 function exitCustomGame(){document.getElementById('custom-game-iframe').srcdoc='';currentCustomGameId=null;currentCustomGamePrize=0;if(activeRoomId){db.collection("rooms").doc(activeRoomId).delete();activeRoomId=null;switchTab('online')}else switchTab('games')}
 function exitOfflineGame(){switchTab('games')}
 function sendChallengeTo(tid,tname){if(!selectedGame){showToast("اختر لعبة أولاً!","danger");return}var gname=selectedGame.name||"لعبة";db.collection("challenges").add({fromId:currentUser.uid,fromName:currentUser.displayName||"لاعب",toId:tid,gameType:selectedGame.id,gameTypeName:gname,status:"pending",timestamp:Date.now()}).then(function(){showToast('أرسلت تحدي '+gname+' لـ '+tname,"success","⚔")})}
