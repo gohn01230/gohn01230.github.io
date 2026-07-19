@@ -70,7 +70,6 @@
             display: none;
         }
         .admin-menu-btn.show { display: block; }
-        .admin-menu-btn:hover { background: rgba(99, 102, 241, 0.2); transform: scale(1.1); }
 
         .admin-panel {
             position: fixed;
@@ -128,7 +127,6 @@
             font-size: 0.8rem;
             box-shadow: 0 3px 0 var(--btn-danger-shadow);
         }
-        .delete-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--btn-danger-shadow); }
 
         .container { width: 92%; max-width: 500px; margin-top: 20px; flex: 1; }
 
@@ -148,7 +146,7 @@
         .btn-3d {
             width: 100%; padding: 16px 20px; border: none; border-radius: 18px;
             font-family: 'Tajawal', sans-serif; font-weight: 800; font-size: 1.05rem;
-            color: white; cursor: pointer; position: relative; transition: all 0.1s ease;
+            color: white; cursor: pointer; transition: all 0.1s ease;
             display: flex; justify-content: center; align-items: center; gap: 10px;
             margin-bottom: 15px;
         }
@@ -159,9 +157,6 @@
         .btn-danger-3d { background: var(--btn-danger-bg); box-shadow: 0 5px 0 var(--btn-danger-shadow); }
         
         .btn-sm-3d { width: auto; padding: 8px 16px; font-size: 0.85rem; border-radius: 12px; margin-bottom: 0; }
-        .btn-sm-3d.btn-games { box-shadow: 0 3px 0 var(--btn-games-shadow); }
-        .btn-sm-3d.btn-chat { box-shadow: 0 3px 0 var(--btn-chat-shadow); }
-        .btn-sm-3d.btn-danger-3d { box-shadow: 0 3px 0 var(--btn-danger-shadow); }
 
         .page { display: none; animation: popUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.15); }
         .page.active { display: block; }
@@ -180,39 +175,6 @@
         }
         .nav-item.active { color: white; background: rgba(255,255,255,0.15); }
         .nav-icon { font-size: 1.3rem; margin-bottom: 3px; }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
-            z-index: 299; display: none;
-            animation: fadeIn 0.2s ease;
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        #challenge-modal {
-            position: fixed; 
-            top: 50%; 
-            left: 50%; 
-            transform: translate(-50%, -50%);
-            width: 88%; max-width: 380px; 
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(15px); 
-            border-radius: 24px; 
-            padding: 25px 20px; 
-            text-align: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.35); 
-            z-index: 300; 
-            display: none;
-            border: 3px solid var(--btn-games-bg);
-        }
-        #challenge-modal.show {
-            display: block;
-            animation: modalBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes modalBounce { 
-            from { opacity: 0; transform: translate(-50%, -50%) scale(0.7); } 
-            to { opacity: 1; transform: translate(-50%, -50%) scale(1); } 
-        }
 
         .toast-notification {
             position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
@@ -325,7 +287,6 @@
         #pvz-canvas {
             background: #4a7c23;
             border: 3px solid #2d5016;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
 
         .pvz-controls {
@@ -350,21 +311,17 @@
             justify-content: center;
             flex-direction: column;
         }
-        .plant-selector:hover { transform: scale(1.1); }
         .plant-selector.active {
             border-color: var(--btn-games-bg);
             background: #dcfce7;
-            box-shadow: 0 0 10px var(--btn-games-bg);
         }
 
         .xo-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 280px; margin: 0 auto 20px auto; }
         .xo-cell {
             background: rgba(255, 255, 255, 0.7); border: 2px solid rgba(255,255,255,0.8);
             height: 80px; border-radius: 16px; display: flex; justify-content: center; align-items: center;
-            font-size: 2.5rem; font-weight: 900; cursor: pointer; transition: 0.2s;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+            font-size: 2.5rem; font-weight: 900; cursor: pointer;
         }
-        .xo-cell:active { transform: translateY(3px); box-shadow: none; }
         .xo-x { color: #6366f1; }
         .xo-o { color: #ef4444; }
 
@@ -377,11 +334,9 @@
         .rps-choices { display: flex; justify-content: center; gap: 15px; margin: 25px 0; }
         .rps-btn {
             font-size: 2.5rem; background: white; border: 3px solid rgba(0,0,0,0.08);
-            width: 85px; height: 85px; border-radius: 50%; cursor: pointer; transition: 0.2s;
+            width: 85px; height: 85px; border-radius: 50%; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 5px 0 rgba(0,0,0,0.1);
         }
-        .rps-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 rgba(0,0,0,0.1); }
         .rps-btn:disabled { opacity: 0.4; cursor: not-allowed; }
         .rps-result { font-size: 1.2rem; font-weight: 900; min-height: 40px; margin-top: 15px; }
 
@@ -413,7 +368,6 @@
         }
         .selection-hint.show { display: block; animation: popUp 0.3s ease; }
 
-        /* iframe للألعاب المخصصة */
         .custom-game-container {
             width: 100%;
             margin: 15px 0;
@@ -427,6 +381,19 @@
             border: none;
             background: white;
         }
+
+        .challenge-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 88%; max-width: 380px; background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px); border-radius: 24px; padding: 25px 20px; text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.35); z-index: 300; display: none;
+            border: 3px solid var(--btn-games-bg);
+        }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+            z-index: 299; display: none;
+        }
     </style>
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -439,8 +406,6 @@
         <span id="toast-icon" style="font-size: 1.5rem;">🔔</span>
         <div style="flex: 1;"><p id="toast-message" style="font-size: 0.9rem; font-weight: 700; color: var(--text-dark);"></p></div>
     </div>
-
-    <div id="modal-overlay" class="modal-overlay" onclick="closeAllModals()"></div>
 
     <div id="admin-menu-btn" class="admin-menu-btn" onclick="toggleAdminPanel()">⋮</div>
 
@@ -476,13 +441,14 @@
         <button class="btn-3d btn-chat" onclick="addNewGame()">➕ إضافة اللعبة</button>
         <button class="btn-3d btn-danger-3d" style="margin-top: 10px;" onclick="toggleAdminPanel()">❌ إغلاق</button>
         
-        <div class="admin-game-list" id="admin-game-list">
+        <div class="admin-game-list">
             <h4 style="margin-bottom: 10px; color: var(--btn-danger-bg);">🗑️ الألعاب المضافة</h4>
             <div id="custom-games-list"></div>
         </div>
     </div>
 
-    <div id="challenge-modal">
+    <div id="modal-overlay" class="modal-overlay" onclick="closeAllModals()"></div>
+    <div id="challenge-modal" class="challenge-modal">
         <div style="font-size: 2.5rem; margin-bottom: 10px;">🔥</div>
         <h3 style="margin-bottom: 6px; font-weight:800;">تحدي مواجهة حية!</h3>
         <p id="challenge-text" style="color: var(--text-muted); margin-bottom: 18px; font-size: 0.95rem; font-weight: 700;">...</p>
@@ -544,7 +510,7 @@
                         <p style="color:var(--text-muted); font-size:0.85rem;">جاري البحث...</p>
                     </div>
 
-                    <h3 style="color:#2b6cb0; margin-bottom:10px; font-weight:800; text-align: right;">🎮 1️⃣ اختر لعبة للتحدي</h3>
+                    <h3 style="color:#2b6cb0; margin-bottom:10px; font-weight:800; text-align: right;">🎮 اختر لعبة للتحدي</h3>
                     
                     <div class="games-grid-horizontal" id="online-games-grid"></div>
 
@@ -555,16 +521,14 @@
 
                 <div id="page-space" class="page">
                     <h3 style="color:#6366f1; margin-bottom:5px; font-weight:900;">🚀 معركة الفضاء</h3>
-                    <p style="color:var(--text-muted); margin-bottom:10px; font-size:0.85rem;">دمر الكويكبات واجمع الجزر!</p>
                     <canvas id="space-canvas" width="400" height="280"></canvas>
                     <div style="font-weight: 800; margin: 10px 0;">النقاط: <span id="space-score" style="color: var(--btn-chat-bg);">0</span></div>
                     <button class="btn-3d btn-games" onclick="startSpaceGame()">ابدأ المعركة 🕹️</button>
-                    <button class="btn-3d btn-danger-3d" onclick="exitOfflineGame()">خروج</button>
+                    <button class="btn-3d btn-danger-3d" onclick="switchTab('games')">خروج</button>
                 </div>
 
                 <div id="page-pvz" class="page">
                     <h3 style="color:#22c55e; margin-bottom:5px; font-weight:900;">🌻 Plants vs Zombies</h3>
-                    <p style="color:var(--text-muted); margin-bottom:10px; font-size:0.85rem;">دافع عن منزلك ضد الزومبي!</p>
                     
                     <div class="pvz-controls">
                         <div class="plant-selector active" data-plant="sunflower" onclick="selectPVZPlant('sunflower')">🌻<br><small style="font-size:0.7rem">50🥕</small></div>
@@ -578,10 +542,9 @@
                         🌊 الموجة: <span id="pvz-wave">1</span>
                     </div>
                     <button class="btn-3d btn-games" onclick="startPVZGame()">🌻 ابدأ اللعبة</button>
-                    <button class="btn-3d btn-danger-3d" onclick="exitOfflineGame()">خروج</button>
+                    <button class="btn-3d btn-danger-3d" onclick="switchTab('games')">خروج</button>
                 </div>
 
-                <!-- صفحة الألعاب المخصصة -->
                 <div id="page-custom-game" class="page">
                     <h3 id="custom-game-title" style="color:#6366f1; margin-bottom:5px; font-weight:900;">لعبة مخصصة</h3>
                     <p id="custom-game-desc" style="color:var(--text-muted); margin-bottom:10px; font-size:0.85rem;">وصف اللعبة</p>
@@ -595,7 +558,7 @@
                     <h3 style="color:var(--btn-chat-bg); margin-bottom:5px; font-weight:900;">❌ إكس أو أونلاين ⭕</h3>
                     <p id="xo-status-text" style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">جاري التجهيز...</p>
                     <div class="xo-board" id="xo-board-div"></div>
-                    <button class="btn-3d btn-danger-3d" onclick="exitRoom()">انسحاب</button>
+                    <button class="btn-3d btn-danger-3d" onclick="switchTab('online')">انسحاب</button>
                 </div>
 
                 <div id="page-tap" class="page">
@@ -608,7 +571,7 @@
                         </div>
                         <button class="btn-3d btn-trade tap-btn" id="tap-btn-action" onclick="sendTapClick()" disabled>اضغط!</button>
                     </div>
-                    <button class="btn-3d btn-danger-3d" style="margin-top:20px;" onclick="exitRoom()">انسحاب</button>
+                    <button class="btn-3d btn-danger-3d" style="margin-top:20px;" onclick="switchTab('online')">انسحاب</button>
                 </div>
 
                 <div id="page-rps" class="page">
@@ -622,7 +585,7 @@
                         </div>
                         <div id="rps-result" class="rps-result"></div>
                     </div>
-                    <button class="btn-3d btn-danger-3d" style="margin-top:20px;" onclick="exitRoom()">انسحاب</button>
+                    <button class="btn-3d btn-danger-3d" style="margin-top:20px;" onclick="switchTab('online')">انسحاب</button>
                 </div>
 
                 <div id="page-rewards" class="page">
@@ -667,9 +630,10 @@
         const auth = firebase.auth(), db = firebase.firestore();
         let currentUser = null, userProfile = { coins: 0 };
         let activeRoomId = null, currentGameType = "";
-        let roomListener = null, currentChallengeId = null;
-        let selectedGame = null;
+        let roomListener = null;
         let isAdmin = false;
+        let currentChallengeId = null;
+        let selectedGame = null;
         let currentCustomGameId = null;
         let currentCustomGamePrize = 0;
 
@@ -731,26 +695,379 @@
             if(currentUser) db.collection("users_profile").doc(currentUser.uid).update({ status: "offline" });
         });
 
-        // استقبال النتائج من الألعاب المخصصة
+        // ================== استقبال الرسائل من الألعاب ==================
         window.addEventListener('message', (event) => {
-            if (event.data && event.data.type === 'gameResult') {
-                const score = event.data.score || 0;
-                const reward = Math.floor(score / 10);
-                
-                if (reward > 0 && currentUser) {
-                    const finalReward = Math.min(reward, currentCustomGamePrize);
+            const data = event.data;
+            if (!data || !data.type) return;
+            
+            if (data.type === 'gameResult') {
+                const score = data.score || 0;
+                const reward = Math.min(Math.floor(score / 10), currentCustomGamePrize);
+                if (reward > 0 && currentUser && currentGameType !== 'custom') {
                     db.collection("users_profile").doc(currentUser.uid).update({ 
-                        coins: firebase.firestore.FieldValue.increment(finalReward)
+                        coins: firebase.firestore.FieldValue.increment(reward)
                     });
-                    showToast(`🏆 ربحت ${finalReward} 🥕 من اللعبة!`, "success", "🎮");
+                    showToast(`🏆 ربحت ${reward} 🥕 من اللعبة!`, "success", "🎮");
                 }
+            }
+            else if (data.type === 'myMove' && activeRoomId) {
+                db.collection("rooms").doc(activeRoomId).update({
+                    [`playerData.${currentUser.uid}`]: {
+                        x: data.x,
+                        y: data.y,
+                        timestamp: Date.now(),
+                        ...data
+                    }
+                });
+            }
+            else if (data.type === 'myAction' && activeRoomId) {
+                db.collection("rooms").doc(activeRoomId).update({
+                    [`actions.${currentUser.uid}`]: {
+                        action: data.action,
+                        score: data.score,
+                        timestamp: Date.now()
+                    }
+                });
+            }
+            else if (data.type === 'quitGame') {
+                exitCustomGame();
             }
         });
 
-        // --- نظام إدارة المالك ---
+        // ================== نظام التحديات ==================
+        function listenToChallenges() {
+            db.collection("challenges").where("toId", "==", currentUser.uid).onSnapshot(snapshot => {
+                snapshot.docChanges().forEach(change => {
+                    if (change.type === "added") {
+                        let data = change.doc.data();
+                        if(data.status === "pending" && (Date.now() - data.timestamp < 60000)) {
+                            currentChallengeId = change.doc.id;
+                            let gameName = data.gameTypeName || 'لعبة';
+                            document.getElementById("challenge-text").innerText = `[ ${data.fromName} ] يتحداك في ${gameName}!`;
+                            document.getElementById("modal-overlay").style.display = "block";
+                            document.getElementById("challenge-modal").style.display = "block";
+                        }
+                    }
+                });
+            });
+        }
+
+        function acceptChallenge() {
+            if(!currentChallengeId) return;
+            
+            let chalRef = db.collection("challenges").doc(currentChallengeId);
+            chalRef.get().then(doc => {
+                if(doc.exists) {
+                    let cData = doc.data();
+                    let roomRef = db.collection("rooms").doc();
+                    activeRoomId = roomRef.id;
+                    
+                    let initialData = { 
+                        gameType: cData.gameType, 
+                        player1: cData.fromId, p1Name: cData.fromName, 
+                        player2: currentUser.uid, p2Name: currentUser.displayName, 
+                        status: "playing" 
+                    };
+                    
+                    if(cData.gameType === "xo") {
+                        initialData.turn = cData.fromId; 
+                        initialData.board = ["","","","","","","","",""]; 
+                        initialData.winner = null;
+                    } else if(cData.gameType === "tap") {
+                        initialData.p1Clicks = 50; 
+                        initialData.p2Clicks = 50;
+                    } else if(cData.gameType === "rps") {
+                        initialData.p1Move = ""; 
+                        initialData.p2Move = ""; 
+                        initialData.winner = "";
+                    } else if(cData.gameType === "custom") {
+                        initialData.customGameId = cData.customGameId;
+                        initialData.customGameName = cData.customGameName;
+                        initialData.customGameCode = cData.customGameCode;
+                        initialData.customGameDesc = cData.customGameDesc;
+                        initialData.customGamePrize = cData.customGamePrize;
+                    }
+                    
+                    roomRef.set(initialData).then(() => {
+                        chalRef.update({ status: "accepted", roomId: activeRoomId, toName: currentUser.displayName });
+                        document.getElementById("modal-overlay").style.display = "none";
+                        document.getElementById("challenge-modal").style.display = "none";
+                        
+                        enterGameRoom(cData.gameType, cData.fromName, cData);
+                    });
+                }
+            });
+        }
+
+        function rejectChallenge() {
+            if(currentChallengeId) db.collection("challenges").doc(currentChallengeId).update({ status: "rejected" });
+            document.getElementById("modal-overlay").style.display = "none";
+            document.getElementById("challenge-modal").style.display = "none";
+        }
+
+        function sendChallengeTo(targetId, targetName) {
+            if(!selectedGame) {
+                showToast("⚠️ يجب اختيار لعبة أولاً!", "danger", "❌");
+                return;
+            }
+            
+            let challengeData = {
+                fromId: currentUser.uid, 
+                fromName: currentUser.displayName || "لاعب",
+                toId: targetId, 
+                gameType: selectedGame.isCustom ? 'custom' : selectedGame.id, 
+                gameTypeName: selectedGame.name,
+                customGameId: selectedGame.isCustom ? selectedGame.id : null,
+                customGameName: selectedGame.isCustom ? selectedGame.name : null,
+                customGameCode: selectedGame.isCustom ? selectedGame.code : null,
+                customGameDesc: selectedGame.isCustom ? selectedGame.desc : null,
+                customGamePrize: selectedGame.isCustom ? selectedGame.prize : null,
+                status: "pending", 
+                timestamp: Date.now()
+            };
+            
+            db.collection("challenges").add(challengeData).then(() => {
+                showToast(`✅ تم إرسال تحدي ${selectedGame.name} إلى ${targetName}!`, "success", "🚀");
+            });
+        }
+
+        function enterGameRoom(gameType, oppName, roomDataOrChallengeData) {
+            if(gameType === "xo") {
+                switchTab("xo");
+                document.getElementById("xo-status-text").innerText = `ضد: ${oppName}`;
+                setupXORoom();
+            } else if(gameType === "tap") {
+                switchTab("tap");
+                document.getElementById("tap-status-text").innerText = `ضد: ${oppName}`;
+                setupTapRoom();
+            } else if(gameType === "rps") {
+                switchTab("rps");
+                document.getElementById("rps-status-text").innerText = `ضد: ${oppName}`;
+                setupRPSRoom();
+            } else if(gameType === "custom" && roomDataOrChallengeData) {
+                currentCustomGameId = roomDataOrChallengeData.customGameId;
+                currentCustomGamePrize = roomDataOrChallengeData.customGamePrize;
+                currentGameType = 'custom';
+                
+                document.getElementById('custom-game-title').innerText = roomDataOrChallengeData.customGameName;
+                document.getElementById('custom-game-desc').innerText = roomDataOrChallengeData.customGameDesc;
+                
+                const iframe = document.getElementById('custom-game-iframe');
+                iframe.srcdoc = roomDataOrChallengeData.customGameCode;
+                
+                switchTab('custom-game');
+                
+                const myId = currentUser.uid;
+                const myPlayerId = (roomDataOrChallengeData.player1 === myId) ? 'player1' : 'player2';
+                const oppNameToUse = (myPlayerId === 'player1') ? roomDataOrChallengeData.p2Name : roomDataOrChallengeData.p1Name;
+
+                setTimeout(() => {
+                    if(iframe.contentWindow) {
+                        iframe.contentWindow.postMessage({
+                            type: 'matchFound',
+                            myPlayerId: myPlayerId,
+                            opponentName: oppNameToUse || oppName,
+                            roomId: activeRoomId
+                        }, '*');
+                    }
+                }, 1000);
+                
+                setupCustomGameListener();
+            }
+        }
+
+        function setupCustomGameListener() {
+            if(roomListener) roomListener();
+            roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => {
+                if(!doc.exists) return;
+                const data = doc.data();
+                if(data.gameType !== 'custom') return;
+                
+                const iframe = document.getElementById('custom-game-iframe');
+                if(!iframe || !iframe.contentWindow) return;
+                
+                const oppId = currentUser.uid === data.player1 ? data.player2 : data.player1;
+                
+                if(data.playerData && data.playerData[oppId]) {
+                    iframe.contentWindow.postMessage({
+                        type: 'opponentMove',
+                        ...data.playerData[oppId]
+                    }, '*');
+                }
+                
+                if(data.actions && data.actions[oppId]) {
+                    iframe.contentWindow.postMessage({
+                        type: 'opponentAction',
+                        action: data.actions[oppId].action,
+                        score: data.actions[oppId].score
+                    }, '*');
+                }
+                
+                if(data.status === 'finished') {
+                    roomListener();
+                    const winnerId = data.winner;
+                    if(winnerId === currentUser.uid) {
+                        db.collection("users_profile").doc(currentUser.uid).update({
+                            coins: firebase.firestore.FieldValue.increment(currentCustomGamePrize || 0)
+                        });
+                        showToast(`🏆 فزت بـ ${currentCustomGamePrize} 🥕!`, "success", "🏆");
+                    } else {
+                        showToast("😢 خسرت المباراة!", "danger", "💔");
+                    }
+                    
+                    setTimeout(() => {
+                        db.collection("rooms").doc(activeRoomId).delete().catch(()=>{});
+                        exitCustomGame();
+                    }, 3000);
+                }
+            });
+        }
+
+        // ================== نظام الألعاب ==================
+        function loadOnlineGames() {
+            const grid = document.getElementById('online-games-grid');
+            grid.innerHTML = '';
+
+            const defaultGames = [
+                { id: 'xo', name: 'إكس أو', desc: 'اللعبة الأيقونية', icon: '❌⭕', type: 'online', prize: 20, class: 'thumb-xo' },
+                { id: 'tap', name: 'حرب السرعة', desc: 'اضغط أسرع!', icon: '⚡👆', type: 'online', prize: 15, class: 'thumb-tap' },
+                { id: 'rps', name: 'حجر ورقة مقص', desc: 'استراتيجية سريعة', icon: '✊✋✌️', type: 'online', prize: 10, class: 'thumb-rps' }
+            ];
+
+            defaultGames.forEach(game => {
+                grid.appendChild(createGameCard(game.id, game.name, game.desc, game.icon, game.type, game.prize, game.class, false, null));
+            });
+
+            db.collection("custom_games").where("status", "==", "active").where("type", "==", "online").onSnapshot(snapshot => {
+                snapshot.forEach(doc => {
+                    const game = doc.data();
+                    const icon = game.image ? `<img src="${game.image}" style="width:100%; height:100%; object-fit:cover; border-radius:16px;">` : '🎮';
+                    grid.appendChild(createGameCard(doc.id, game.name, game.desc, icon, game.type, game.prize, null, true, game));
+                });
+            });
+        }
+
+        function createGameCard(id, name, desc, icon, type, prize, className, isCustom = false, gameData = null) {
+            const div = document.createElement('div');
+            div.className = 'game-cover-card';
+            div.dataset.game = id;
+            div.dataset.type = type;
+            
+            if(type === 'online') {
+                div.onclick = () => {
+                    selectedGame = { 
+                        id: id, 
+                        name: name, 
+                        type: type, 
+                        prize: prize, 
+                        isCustom: isCustom,
+                        code: isCustom ? gameData.code : null,
+                        desc: isCustom ? gameData.desc : null
+                    };
+                    document.querySelectorAll('#online-games-grid .game-cover-card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                    div.classList.add('selected');
+                    document.getElementById('selection-hint').classList.add('show');
+                    showToast(`تم اختيار: ${name}`, "success", "✅");
+                };
+            }
+            
+            const typeBadge = type === 'online' ? '<span class="game-type-badge" style="background:var(--btn-games-bg)">أونلاين 👥</span>' : 
+                              '<span class="game-type-badge" style="background:var(--btn-trade-bg)">أوفلاين 🎮</span>';
+            
+            div.innerHTML = `
+                <div class="game-thumb ${className || ''}" style="${className ? '' : 'background:linear-gradient(135deg, #6366f1, #4f46e5)'}">${icon}</div>
+                <div class="game-info">
+                    <h4>${name}</h4>
+                    <p>${desc}</p>
+                    <span class="game-prize">جائزة: ${prize} 🥕</span>
+                    ${typeBadge}
+                </div>
+            `;
+            
+            return div;
+        }
+
+        function loadOfflineCustomGames() {
+            const grid = document.getElementById('offline-games-grid');
+            const customCards = grid.querySelectorAll('.custom-offline-card');
+            customCards.forEach(card => card.remove());
+            
+            db.collection("custom_games").where("status", "==", "active").where("type", "==", "offline").onSnapshot(snapshot => {
+                snapshot.forEach(doc => {
+                    const game = doc.data();
+                    const icon = game.image ? `<img src="${game.image}" style="width:100%; height:100%; object-fit:cover; border-radius:16px;">` : '🎮';
+                    const card = createGameCard(doc.id, game.name, game.desc, icon, game.type, game.prize, null, true, game);
+                    card.classList.add('custom-offline-card');
+                    card.onclick = () => openCustomGame(doc.id, game.name, game.desc, game.code, game.prize);
+                    grid.appendChild(card);
+                });
+            });
+        }
+
+        function openOfflineGame(gameId) {
+            if(gameId === 'space') switchTab('space');
+            else if(gameId === 'pvz') switchTab('pvz');
+        }
+
+        function openCustomGame(gameId, name, desc, code, prize) {
+            currentCustomGameId = gameId;
+            currentCustomGamePrize = prize;
+            currentGameType = 'offline';
+            
+            document.getElementById('custom-game-title').innerText = name;
+            document.getElementById('custom-game-desc').innerText = desc;
+            
+            const iframe = document.getElementById('custom-game-iframe');
+            iframe.srcdoc = code;
+            
+            switchTab('custom-game');
+        }
+
+        function exitCustomGame() {
+            const iframe = document.getElementById('custom-game-iframe');
+            if(iframe) iframe.srcdoc = '';
+            currentCustomGameId = null;
+            currentCustomGamePrize = 0;
+            currentGameType = '';
+            
+            if (roomListener) {
+                roomListener();
+                roomListener = null;
+            }
+            if (activeRoomId) {
+                db.collection("rooms").doc(activeRoomId).delete().catch(() => {});
+                activeRoomId = null;
+            }
+            
+            switchTab('online');
+        }
+
+        // ================== إدارة اللاعبين ==================
+        function listenToActivePlayers() {
+            db.collection("users_profile").where("status", "==", "online").onSnapshot(snapshot => {
+                let html = "";
+                snapshot.forEach(doc => {
+                    if(doc.id !== currentUser.uid && (Date.now() - doc.data().lastActive < 300000)) {
+                        let pData = doc.data();
+                        html += `<div class="player-item">
+                            <div class="player-info">
+                                <img src="${pData.photoURL}" class="player-avatar-list">
+                                <div><div style="font-weight:800; font-size:0.9rem;">${pData.fullName}</div>
+                                <div style="font-size:0.75rem; color:var(--btn-games-bg);"><span class="status-dot"></span>متصل</div></div>
+                            </div>
+                            <button class="btn-3d btn-games btn-sm-3d" onclick="sendChallengeTo('${doc.id}', '${pData.fullName}')">تحدي ⚔️</button>
+                        </div>`;
+                    }
+                });
+                document.getElementById("active-players-list").innerHTML = html || '<p style="color:var(--text-muted); font-size:0.85rem; padding:15px;">لا يوجد متصلين حالياً</p>';
+            });
+        }
+
+        // ================== لوحة التحكم ==================
         function toggleAdminPanel() {
-            const panel = document.getElementById('admin-panel');
-            panel.classList.toggle('show');
+            document.getElementById('admin-panel').classList.toggle('show');
         }
 
         function addNewGame() {
@@ -781,21 +1098,16 @@
                 document.getElementById('admin-game-desc').value = '';
                 document.getElementById('admin-game-image').value = '';
                 document.getElementById('admin-game-code').value = '';
-            }).catch(err => {
-                showToast("❌ خطأ: " + err.message, "danger");
             });
         }
 
         function deleteGame(gameId) {
             if(!confirm("هل أنت متأكد من حذف هذه اللعبة؟")) return;
-            
             db.collection("custom_games").doc(gameId).delete().then(() => {
-                showToast("✅ تم حذف اللعبة بنجاح!", "success");
+                showToast("✅ تم حذف اللعبة!", "success");
                 loadCustomGamesForAdmin();
                 loadOnlineGames();
                 loadOfflineCustomGames();
-            }).catch(err => {
-                showToast("❌ خطأ في الحذف: " + err.message, "danger");
             });
         }
 
@@ -805,10 +1117,9 @@
             
             db.collection("custom_games").where("status", "==", "active").onSnapshot(snapshot => {
                 if(snapshot.empty) {
-                    list.innerHTML = '<p style="color:var(--text-muted); font-size:0.85rem; text-align:center;">لا توجد ألعاب مضافة</p>';
+                    list.innerHTML = '<p style="color:var(--text-muted); font-size:0.85rem; text-align:center;">لا توجد ألعاب</p>';
                     return;
                 }
-                
                 let html = '';
                 snapshot.forEach(doc => {
                     const game = doc.data();
@@ -818,7 +1129,7 @@
                                 <div class="game-name">${game.name}</div>
                                 <div class="game-type">${game.type === 'online' ? '👥 أونلاين' : '🎮 أوفلاين'} - ${game.prize} 🥕</div>
                             </div>
-                            <button class="delete-btn" onclick="deleteGame('${doc.id}')">🗑️ حذف</button>
+                            <button class="delete-btn" onclick="deleteGame('${doc.id}')">🗑️</button>
                         </div>
                     `;
                 });
@@ -826,273 +1137,24 @@
             });
         }
 
-        function loadOnlineGames() {
-            const grid = document.getElementById('online-games-grid');
-            grid.innerHTML = '';
-
-            const defaultGames = [
-                { id: 'xo', name: 'إكس أو كلاسيك', desc: 'اللعبة الأيقونية', icon: '❌⭕', type: 'online', prize: 20, class: 'thumb-xo' },
-                { id: 'tap', name: 'حرب السرعة', desc: 'اضغط أسرع!', icon: '⚡👆', type: 'online', prize: 15, class: 'thumb-tap' },
-                { id: 'rps', name: 'حجر ورقة مقص', desc: 'استراتيجية سريعة', icon: '✊✋✌️', type: 'online', prize: 10, class: 'thumb-rps' }
-            ];
-
-            defaultGames.forEach(game => {
-                grid.appendChild(createGameCard(game.id, game.name, game.desc, game.icon, game.type, game.prize, game.class));
-            });
-
-            db.collection("custom_games").where("status", "==", "active").where("type", "==", "online").onSnapshot(snapshot => {
-                snapshot.forEach(doc => {
-                    const game = doc.data();
-                    const icon = game.image ? `<img src="${game.image}" style="width:100%; height:100%; object-fit:cover; border-radius:16px;">` : '🎮';
-                    grid.appendChild(createGameCard(doc.id, game.name, game.desc, icon, game.type, game.prize, null, true));
-                });
-            });
-        }
-
-        function loadOfflineCustomGames() {
-            const grid = document.getElementById('offline-games-grid');
-            
-            const customCards = grid.querySelectorAll('.custom-offline-card');
-            customCards.forEach(card => card.remove());
-            
-            db.collection("custom_games").where("status", "==", "active").where("type", "==", "offline").onSnapshot(snapshot => {
-                snapshot.forEach(doc => {
-                    const game = doc.data();
-                    const icon = game.image ? `<img src="${game.image}" style="width:100%; height:100%; object-fit:cover; border-radius:16px;">` : '🎮';
-                    const card = createGameCard(doc.id, game.name, game.desc, icon, game.type, game.prize, null, true);
-                    card.classList.add('custom-offline-card');
-                    card.onclick = () => openCustomGame(doc.id, game.name, game.desc, game.code, game.prize);
-                    grid.appendChild(card);
-                });
-            });
-        }
-
-        function createGameCard(id, name, desc, icon, type, prize, className, isCustom = false) {
-            const div = document.createElement('div');
-            div.className = 'game-cover-card';
-            div.dataset.game = id;
-            div.dataset.type = type;
-            
-            if(type === 'online') {
-                div.onclick = () => selectGame(id, type);
-            }
-            
-            const typeBadge = type === 'online' ? '<span class="game-type-badge" style="background:var(--btn-games-bg)">أونلاين 👥</span>' : 
-                              '<span class="game-type-badge" style="background:var(--btn-trade-bg)">أوفلاين 🎮</span>';
-            
-            div.innerHTML = `
-                <div class="game-thumb ${className || ''}" style="${className ? '' : 'background:linear-gradient(135deg, #6366f1, #4f46e5)'}">${icon}</div>
-                <div class="game-info">
-                    <h4>${name}</h4>
-                    <p>${desc}</p>
-                    <span class="game-prize">جائزة: ${prize} 🥕</span>
-                    ${typeBadge}
-                </div>
-            `;
-            
-            return div;
-        }
-
-        function selectGame(gameId, gameType) {
-            selectedGame = { id: gameId, type: gameType };
-            document.querySelectorAll('#online-games-grid .game-cover-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            const targetCard = document.querySelector(`#online-games-grid .game-cover-card[data-game="${gameId}"]`);
-            if(targetCard) targetCard.classList.add('selected');
-            document.getElementById('selection-hint').classList.add('show');
-            
-            const gameName = gameId === 'xo' ? 'إكس أو' : 
-                            gameId === 'tap' ? 'حرب السرعة' : 
-                            gameId === 'rps' ? 'حجر ورقة مقص' : 'لعبة مخصصة';
-            
-            showToast(`تم اختيار: ${gameName}`, "success", "✅");
-        }
-
-        function openOfflineGame(gameId) {
-            if(gameId === 'space') {
-                switchTab('space');
-                initSpaceCanvas();
-            } else if(gameId === 'pvz') {
-                switchTab('pvz');
-                initPVZCanvas();
-            }
-        }
-
-        function openCustomGame(gameId, name, desc, code, prize) {
-            currentCustomGameId = gameId;
-            currentCustomGamePrize = prize;
-            
-            document.getElementById('custom-game-title').innerText = name;
-            document.getElementById('custom-game-desc').innerText = desc;
-            
-            const iframe = document.getElementById('custom-game-iframe');
-            iframe.srcdoc = code;
-            
-            switchTab('custom-game');
-        }
-
-        function exitCustomGame() {
-            const iframe = document.getElementById('custom-game-iframe');
-            iframe.srcdoc = '';
-            currentCustomGameId = null;
-            currentCustomGamePrize = 0;
-            switchTab('games');
-        }
-
-        function exitOfflineGame() {
-            if(spaceInterval) { clearInterval(spaceInterval); spaceInterval = null; }
-            if(pvzInterval) { clearInterval(pvzInterval); pvzInterval = null; }
-            pvzGameActive = false;
-            switchTab('games');
-        }
-
-        function sendChallengeTo(targetId, targetName) {
-            if(!selectedGame) {
-                showToast("⚠️ يجب اختيار لعبة أولاً!", "danger", "❌");
-                return;
-            }
-            
-            let gameName = selectedGame.id === 'xo' ? "إكس أو" : 
-                          selectedGame.id === 'tap' ? "حرب السرعة" : 
-                          selectedGame.id === 'rps' ? "حجر ورقة مقص" : "لعبة مخصصة";
-            
-            db.collection("challenges").add({
-                fromId: currentUser.uid, 
-                fromName: currentUser.displayName || "لاعب",
-                toId: targetId, 
-                gameType: selectedGame.id, 
-                gameTypeName: gameName,
-                status: "pending", 
-                timestamp: Date.now()
-            }).then(() => {
-                showToast(`✅ تم إرسال تحدي ${gameName} إلى ${targetName}!`, "success", "🚀");
-            });
-        }
-
-        function listenToActivePlayers() {
-            db.collection("users_profile").where("status", "==", "online").onSnapshot(snapshot => {
-                let html = "";
-                snapshot.forEach(doc => {
-                    if(doc.id !== currentUser.uid && (Date.now() - doc.data().lastActive < 300000)) {
-                        let pData = doc.data();
-                        html += `<div class="player-item">
-                            <div class="player-info">
-                                <img src="${pData.photoURL}" class="player-avatar-list">
-                                <div><div style="font-weight:800; font-size:0.9rem;">${pData.fullName}</div>
-                                <div style="font-size:0.75rem; color:var(--btn-games-bg);"><span class="status-dot"></span>متصل</div></div>
-                            </div>
-                            <button class="btn-3d btn-games btn-sm-3d" onclick="sendChallengeTo('${doc.id}', '${pData.fullName}')">تحدي ⚔️</button>
-                        </div>`;
-                    }
-                });
-                document.getElementById("active-players-list").innerHTML = html || '<p style="color:var(--text-muted); font-size:0.85rem; padding:15px;">لا يوجد متصلين حالياً</p>';
-            });
-        }
-
-        function listenToChallenges() {
-            db.collection("challenges").where("toId", "==", currentUser.uid).onSnapshot(snapshot => {
-                snapshot.docChanges().forEach(change => {
-                    if (change.type === "added") {
-                        let data = change.doc.data();
-                        if(data.status === "pending" && (Date.now() - data.timestamp < 60000)) {
-                            currentChallengeId = change.doc.id;
-                            let gameName = data.gameTypeName || "لعبة";
-                            document.getElementById("challenge-text").innerText = `[ ${data.fromName} ] يتحداك في ${gameName}!`;
-                            document.getElementById("modal-overlay").style.display = "block";
-                            document.getElementById("challenge-modal").classList.add("show");
-                        }
-                    }
-                });
-            });
-
-            db.collection("challenges").where("fromId", "==", currentUser.uid).onSnapshot(snapshot => {
-                snapshot.docChanges().forEach(change => {
-                    let data = change.doc.data();
-                    if(data && data.status === "accepted") {
-                        change.doc.ref.delete();
-                        activeRoomId = data.roomId;
-                        currentGameType = data.gameType;
-                        closeAllModals();
-                        enterGameRoom(currentGameType, data.toName);
-                    } else if(data && data.status === "rejected") {
-                        change.doc.ref.delete();
-                        showToast("رفض الخصم طلب التحدي.", "danger", "❌");
-                    }
-                });
-            });
-        }
-
-        function acceptChallenge() {
-            if(!currentChallengeId) return;
-            let chalRef = db.collection("challenges").doc(currentChallengeId);
-            chalRef.get().then(doc => {
-                if(doc.exists) {
-                    let cData = doc.data();
-                    let roomRef = db.collection("rooms").doc();
-                    activeRoomId = roomRef.id;
-                    currentGameType = cData.gameType;
-                    
-                    let initialData = { 
-                        gameType: currentGameType, 
-                        player1: cData.fromId, p1Name: cData.fromName, 
-                        player2: currentUser.uid, p2Name: currentUser.displayName, 
-                        status: "playing" 
-                    };
-                    
-                    if(currentGameType === "xo") {
-                        initialData.turn = cData.fromId; 
-                        initialData.board = ["","","","","","","","",""]; 
-                        initialData.winner = null;
-                    } else if(currentGameType === "tap") {
-                        initialData.p1Clicks = 50; 
-                        initialData.p2Clicks = 50;
-                    } else if(currentGameType === "rps") {
-                        initialData.p1Move = ""; 
-                        initialData.p2Move = ""; 
-                        initialData.winner = "";
-                    }
-                    
-                    roomRef.set(initialData).then(() => {
-                        chalRef.update({ status: "accepted", roomId: activeRoomId, toName: currentUser.displayName });
-                        closeAllModals();
-                        enterGameRoom(currentGameType, cData.fromName);
-                    });
-                }
-            });
-        }
-
-        function rejectChallenge() {
-            if(currentChallengeId) db.collection("challenges").doc(currentChallengeId).update({ status: "rejected" });
-            closeAllModals();
-        }
-
-        function closeAllModals() {
-            document.getElementById("modal-overlay").style.display = "none";
-            document.getElementById("challenge-modal").classList.remove("show");
-        }
-
-        function enterGameRoom(gameType, oppName) {
-            if(gameType === "xo") enterXORoom(oppName);
-            else if(gameType === "tap") enterTapRoom(oppName);
-            else if(gameType === "rps") enterRPSRoom(oppName);
-        }
-
-        function enterXORoom(oppName) {
-            switchTab("xo");
-            document.getElementById("xo-status-text").innerText = `ضد: ${oppName}`;
+        // ================== الألعاب الافتراضية ==================
+        function setupXORoom() {
             if(roomListener) roomListener();
             roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => {
                 let data = doc.data(); if(!data || data.gameType !== "xo") return;
                 let myChar = (currentUser.uid === data.player1) ? "X" : "O";
                 let isMyTurn = (data.turn === currentUser.uid);
-                let statusText = data.winner ? (data.winner === currentUser.uid ? "🏆 فزت بـ 20 🥕!" : (data.winner === "draw" ? "تعادل!" : "😢 خسرت!")) : (isMyTurn ? `دورك (${myChar})` : "انتظر دور الخصم...");
+                let statusText = data.winner ? (data.winner === currentUser.uid ? "🏆 فزت!" : (data.winner === "draw" ? "🤝 تعادل!" : "😢 خسرت!")) : (isMyTurn ? `دورك (${myChar})` : "انتظر دور الخصم...");
                 document.getElementById('xo-status-text').innerText = statusText;
 
                 let boardHtml = "";
                 data.board.forEach((cell, index) => {
                     let cellClass = cell === "X" ? "xo-x" : (cell === "O" ? "xo-o" : "");
-                    boardHtml += `<div class="xo-cell ${cellClass}" onclick="playXOMove(${index}, ${isMyTurn}, '${myChar}')">${cell}</div>`;
+                    if(isMyTurn && cell === "") {
+                        boardHtml += `<div class="xo-cell ${cellClass}" onclick="playXOMove(${index}, '${myChar}')">${cell}</div>`;
+                    } else {
+                        boardHtml += `<div class="xo-cell ${cellClass}">${cell}</div>`;
+                    }
                 });
                 document.getElementById('xo-board-div').innerHTML = boardHtml;
 
@@ -1104,11 +1166,10 @@
             });
         }
 
-        function playXOMove(index, isMyTurn, myChar) {
-            if(!isMyTurn) return;
+        function playXOMove(index, myChar) {
             db.collection("rooms").doc(activeRoomId).get().then(doc => {
                 let data = doc.data();
-                if(data.board[index] === "" && !data.winner) {
+                if(data.board[index] === "" && !data.winner && (data.turn === currentUser.uid)) {
                     data.board[index] = myChar;
                     let nextTurn = (currentUser.uid === data.player1) ? data.player2 : data.player1;
                     let winner = checkXOWinner(data.board);
@@ -1128,20 +1189,15 @@
             return !b.includes("") ? "draw" : null;
         }
 
-        function enterTapRoom(oppName) {
-            switchTab("tap");
-            document.getElementById("tap-status-text").innerText = `ضد: ${oppName}`;
+        function setupTapRoom() {
             document.getElementById("tap-arena").style.display = "block";
             document.getElementById("tap-btn-action").disabled = false;
-            
             if(roomListener) roomListener();
             roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => {
                 let data = doc.data(); if(!data || data.gameType !== "tap") return;
-                
                 let total = data.p1Clicks + data.p2Clicks;
                 let p1p = Math.max(0, (data.p1Clicks / total) * 100);
                 let p2p = Math.max(0, (data.p2Clicks / total) * 100);
-                
                 let amIPlayer1 = (currentUser.uid === data.player1);
                 let myP = amIPlayer1 ? p1p : p2p;
                 let oppP = amIPlayer1 ? p2p : p1p;
@@ -1155,7 +1211,7 @@
                     roomListener();
                     document.getElementById("tap-btn-action").disabled = true;
                     let won = (amIPlayer1 && data.p1Clicks >= 100) || (!amIPlayer1 && data.p2Clicks >= 100);
-                    document.getElementById("tap-status-text").innerText = won ? "🏆 فزت بـ 15 🥕!" : "😢 خسرت!";
+                    document.getElementById("tap-status-text").innerText = won ? "🏆 فزت!" : "😢 خسرت!";
                     if(won) db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(15) });
                     setTimeout(() => { db.collection("rooms").doc(activeRoomId).delete(); switchTab('online'); }, 3500);
                 }
@@ -1173,17 +1229,13 @@
             });
         }
 
-        function enterRPSRoom(oppName) {
-            switchTab("rps");
-            document.getElementById("rps-status-text").innerText = `ضد: ${oppName}`;
+        function setupRPSRoom() {
             document.getElementById("rps-arena").style.display = "block";
             document.getElementById("rps-result").innerText = "";
             enableRPSButtons(true);
-            
             if(roomListener) roomListener();
             roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => {
                 let data = doc.data(); if(!data || data.gameType !== "rps") return;
-                
                 let amIPlayer1 = (currentUser.uid === data.player1);
                 let myMove = amIPlayer1 ? data.p1Move : data.p2Move;
                 
@@ -1197,20 +1249,16 @@
                     let resultText = "";
                     enableRPSButtons(false);
                     
-                    if(result === "draw") {
-                        resultText = "🤝 تعادل!";
-                    } else if((result === "p1" && amIPlayer1) || (result === "p2" && !amIPlayer1)) {
-                        resultText = "🏆 فزت بـ 10 🥕!";
-                        db.collection("users_profile").doc(currentUser.uid).update({ 
-                            coins: firebase.firestore.FieldValue.increment(10) 
-                        });
+                    if(result === "draw") resultText = "🤝 تعادل!";
+                    else if((result === "p1" && amIPlayer1) || (result === "p2" && !amIPlayer1)) {
+                        resultText = "🏆 فزت!";
+                        db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(10) });
                     } else {
-                        resultText = "😢 خسرت الجولة!";
+                        resultText = "😢 خسرت!";
                     }
                     
                     document.getElementById("rps-result").innerText = resultText;
                     roomListener();
-                    
                     setTimeout(() => {
                         if(amIPlayer1) db.collection("rooms").doc(activeRoomId).delete();
                         switchTab("online");
@@ -1243,43 +1291,22 @@
             document.getElementById("rps-scissors").disabled = !status;
         }
 
-        function exitRoom() { 
-            if(roomListener) roomListener(); 
-            switchTab("online"); 
+        function closeAllModals() {
+            document.getElementById("modal-overlay").style.display = "none";
+            document.getElementById("challenge-modal").style.display = "none";
         }
 
-        // ================= لعبة الفضاء =================
+        // ================== الألعاب الأوفلاين ==================
         let spaceCanvas, spaceCtx, spaceInterval = null;
         let playerX = 185, bullets = [], enemies = [], spaceScore = 0, stars = [];
-
-        function initSpaceCanvas() {
-            spaceCanvas = document.getElementById('space-canvas');
-            spaceCtx = spaceCanvas.getContext('2d');
-            stars = [];
-            for(let i=0; i<30; i++) {
-                stars.push({
-                    x: Math.random()*400, 
-                    y: Math.random()*280, 
-                    size: Math.random()*2, 
-                    speed: Math.random()*1+0.5
-                });
-            }
-            
-            spaceCanvas.onmousemove = (e) => { 
-                let rect = spaceCanvas.getBoundingClientRect(); 
-                playerX = (e.clientX - rect.left) * (400 / rect.width) - 15; 
-            };
-            spaceCanvas.ontouchmove = (e) => { 
-                e.preventDefault();
-                let rect = spaceCanvas.getBoundingClientRect(); 
-                if(e.touches[0]) playerX = (e.touches[0].clientX - rect.left) * (400 / rect.width) - 15; 
-            };
-        }
 
         function startSpaceGame() {
             if(spaceInterval) clearInterval(spaceInterval);
             bullets = []; enemies = []; spaceScore = 0;
             document.getElementById('space-score').innerText = '0';
+            
+            spaceCanvas = document.getElementById('space-canvas');
+            spaceCtx = spaceCanvas.getContext('2d');
             
             spaceInterval = setInterval(() => {
                 spaceCtx.fillStyle = "#0f172a"; 
@@ -1348,8 +1375,6 @@
                                 luckBoost: false 
                             });
                             showToast(`💥 انتهت المعركة! ربحت ${reward} 🥕`, "success", "🥕");
-                        } else {
-                            showToast("💥 انتهت المعركة! حاول مرة أخرى.", "danger", "🛸");
                         }
                         return;
                     }
@@ -1361,64 +1386,9 @@
             }, 1000/35);
         }
 
-        // ================= لعبة PVZ =================
         let pvzCanvas, pvzCtx, pvzInterval;
-        let pvzSun = 150, pvzWave = 1;
-        let pvzPlants = [], pvzZombies = [], pvzProjectiles = [], pvzSunDrops = [];
-        let pvzSelectedPlant = 'sunflower';
-        let pvzGameActive = false;
-        let pvzFrameCount = 0;
-
-        function initPVZCanvas() {
-            pvzCanvas = document.getElementById('pvz-canvas');
-            pvzCtx = pvzCanvas.getContext('2d');
-            
-            pvzCanvas.onclick = (e) => {
-                if(!pvzGameActive) return;
-                
-                const rect = pvzCanvas.getBoundingClientRect();
-                const x = (e.clientX - rect.left) * (400 / rect.width);
-                const y = (e.clientY - rect.top) * (300 / rect.height);
-                
-                for(let i = pvzSunDrops.length - 1; i >= 0; i--) {
-                    let drop = pvzSunDrops[i];
-                    if(Math.abs(drop.x - x) < 20 && Math.abs(drop.y - y) < 20) {
-                        pvzSun += 25;
-                        pvzSunDrops.splice(i, 1);
-                        updatePVZUI();
-                        showToast("+25 ☀️", "success", "☀️");
-                        return;
-                    }
-                }
-                
-                const row = Math.floor(y / 60);
-                const col = Math.floor(x / 80);
-                
-                if(row < 0 || row >= 5 || col < 1 || col > 4) return;
-                
-                const plantCost = pvzSelectedPlant === 'sunflower' ? 50 : 
-                                 pvzSelectedPlant === 'peashooter' ? 100 : 50;
-                
-                if(pvzSun >= plantCost) {
-                    const exists = pvzPlants.some(p => p.row === row && p.col === col);
-                    if(!exists) {
-                        pvzPlants.push({
-                            x: col * 80 + 20,
-                            y: row * 60 + 10,
-                            type: pvzSelectedPlant,
-                            row: row,
-                            col: col,
-                            health: pvzSelectedPlant === 'wallnut' ? 300 : 100,
-                            sunTimer: 0
-                        });
-                        pvzSun -= plantCost;
-                        updatePVZUI();
-                    }
-                } else {
-                    showToast("☀️ لا تملك شمس كافية!", "danger");
-                }
-            };
-        }
+        let pvzSun = 150, pvzWave = 1, pvzPlants = [], pvzZombies = [], pvzProjectiles = [], pvzSunDrops = [];
+        let pvzSelectedPlant = 'sunflower', pvzGameActive = false;
 
         function selectPVZPlant(plant) {
             pvzSelectedPlant = plant;
@@ -1435,193 +1405,56 @@
             pvzZombies = [];
             pvzProjectiles = [];
             pvzSunDrops = [];
-            pvzFrameCount = 0;
             
-            updatePVZUI();
+            pvzCanvas = document.getElementById('pvz-canvas');
+            pvzCtx = pvzCanvas.getContext('2d');
             
             if(pvzInterval) clearInterval(pvzInterval);
             pvzInterval = setInterval(pvzGameLoop, 1000/30);
-            
             showToast("🌻 ابدأ بزراعة النباتات!", "success");
         }
 
         function pvzGameLoop() {
-            pvzFrameCount++;
-            
             pvzCtx.fillStyle = '#4a7c23';
             pvzCtx.fillRect(0, 0, 400, 300);
-            
-            pvzCtx.strokeStyle = 'rgba(0,0,0,0.15)';
-            pvzCtx.lineWidth = 1;
-            for(let i=0; i<=5; i++) {
+            pvzCtx.strokeStyle = 'rgba(0,0,0,0.1)';
+            for(let i=0; i<5; i++) {
                 pvzCtx.beginPath();
                 pvzCtx.moveTo(0, i*60);
                 pvzCtx.lineTo(400, i*60);
                 pvzCtx.stroke();
             }
-            for(let i=0; i<=5; i++) {
-                pvzCtx.beginPath();
-                pvzCtx.moveTo(i*80, 0);
-                pvzCtx.lineTo(i*80, 300);
-                pvzCtx.stroke();
-            }
             
-            if(pvzFrameCount % 300 === 0) {
-                pvzSunDrops.push({
-                    x: 50 + Math.random() * 300,
-                    y: 0,
-                    targetY: 50 + Math.random() * 200,
-                    speed: 1
-                });
-            }
-            
-            for(let i = pvzSunDrops.length - 1; i >= 0; i--) {
-                let drop = pvzSunDrops[i];
-                if(drop.y < drop.targetY) {
-                    drop.y += drop.speed;
-                }
-                pvzCtx.font = '25px Arial';
-                pvzCtx.fillText('☀️', drop.x - 12, drop.y + 8);
-            }
-            
-            if(pvzFrameCount % Math.max(60, 180 - pvzWave * 20) === 0) {
+            if(Math.random() < 0.02) {
                 const row = Math.floor(Math.random() * 5);
-                pvzZombies.push({
-                    x: 400,
-                    y: row * 60 + 15,
-                    row: row,
-                    speed: 0.4 + (pvzWave * 0.08),
-                    health: 100 + pvzWave * 20,
-                    eating: false
-                });
-            }
-            
-            for(let i = pvzPlants.length - 1; i >= 0; i--) {
-                let plant = pvzPlants[i];
-                
-                const emoji = plant.type === 'sunflower' ? '🌻' : 
-                             plant.type === 'peashooter' ? '🌱' : '🥜';
-                pvzCtx.font = '35px Arial';
-                pvzCtx.fillText(emoji, plant.x, plant.y + 35);
-                
-                if(plant.type === 'sunflower') {
-                    plant.sunTimer++;
-                    if(plant.sunTimer >= 180) {
-                        plant.sunTimer = 0;
-                        pvzSunDrops.push({
-                            x: plant.x + 15,
-                            y: plant.y,
-                            targetY: plant.y + 30,
-                            speed: 0.5
-                        });
-                    }
-                }
-                
-                if(plant.type === 'peashooter') {
-                    const hasZombieInRow = pvzZombies.some(z => z.row === plant.row && z.x > plant.x);
-                    if(hasZombieInRow && pvzFrameCount % 45 === 0) {
-                        pvzProjectiles.push({
-                            x: plant.x + 40,
-                            y: plant.y + 20,
-                            row: plant.row,
-                            speed: 4
-                        });
-                    }
-                }
+                pvzZombies.push({ x: 400, y: row * 60 + 15, speed: 0.3 + (pvzWave * 0.1), health: 100 });
             }
             
             for(let i = pvzZombies.length - 1; i >= 0; i--) {
                 let zombie = pvzZombies[i];
-                
-                pvzCtx.font = '35px Arial';
+                pvzCtx.font = '40px Arial';
                 pvzCtx.fillText('🧟', zombie.x, zombie.y + 35);
-                
-                const plantInPath = pvzPlants.find(p => p.row === zombie.row && Math.abs(p.x + 20 - zombie.x) < 25);
-                
-                if(plantInPath) {
-                    zombie.eating = true;
-                    plantInPath.health -= 0.5;
-                    if(plantInPath.health <= 0) {
-                        pvzPlants.splice(pvzPlants.indexOf(plantInPath), 1);
-                        zombie.eating = false;
-                    }
-                } else {
-                    zombie.eating = false;
-                    zombie.x -= zombie.speed;
-                }
-                
+                zombie.x -= zombie.speed;
                 if(zombie.x < -20) {
                     endPVZGame(false);
                     return;
                 }
             }
             
-            for(let i = pvzProjectiles.length - 1; i >= 0; i--) {
-                let proj = pvzProjectiles[i];
-                
-                pvzCtx.fillStyle = '#22c55e';
-                pvzCtx.beginPath();
-                pvzCtx.arc(proj.x, proj.y, 6, 0, Math.PI * 2);
-                pvzCtx.fill();
-                
-                proj.x += proj.speed;
-                
-                if(proj.x > 420) {
-                    pvzProjectiles.splice(i, 1);
-                    continue;
-                }
-                
-                let hit = false;
-                for(let j = pvzZombies.length - 1; j >= 0; j--) {
-                    let zombie = pvzZombies[j];
-                    if(zombie.row === proj.row && Math.abs(proj.x - zombie.x) < 20) {
-                        zombie.health -= 25;
-                        hit = true;
-                        
-                        if(zombie.health <= 0) {
-                            pvzZombies.splice(j, 1);
-                            pvzSun += 10;
-                            updatePVZUI();
-                        }
-                        break;
-                    }
-                }
-                
-                if(hit) {
-                    pvzProjectiles.splice(i, 1);
-                }
-            }
-            
-            if(pvzFrameCount > 0 && pvzFrameCount % 900 === 0) {
+            if(pvzZombies.length === 0 && Math.random() < 0.005) {
                 pvzWave++;
-                updatePVZUI();
-                showToast(`🌊 الموجة ${pvzWave}!`, "info", "🌊");
+                if(pvzWave > 5) endPVZGame(true);
             }
-            
-            if(pvzWave > 5) {
-                endPVZGame(true);
-            }
-        }
-
-        function updatePVZUI() {
-            document.getElementById('pvz-sun').innerText = pvzSun;
-            document.getElementById('pvz-wave').innerText = pvzWave;
         }
 
         function endPVZGame(won) {
             pvzGameActive = false;
-            if(pvzInterval) clearInterval(pvzInterval);
-            pvzInterval = null;
-            
+            clearInterval(pvzInterval);
             if(won) {
-                const reward = 25 * (userProfile.luckBoost ? 2 : 1);
-                db.collection("users_profile").doc(currentUser.uid).update({ 
-                    coins: firebase.firestore.FieldValue.increment(reward),
-                    luckBoost: false
-                });
-                showToast(`🏆 فزت! ربحت ${reward} 🥕`, "success", "🏆");
+                db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(25) });
+                showToast(`🏆 فزت! ربحت 25 🥕`, "success");
             } else {
-                showToast("😢 الزومبي اخترق دفاعاتك!", "danger", "🧟");
+                showToast("😢 الزومبي اخترق دفاعاتك!", "danger");
             }
         }
 
@@ -1647,15 +1480,8 @@
             document.getElementById(`page-${tab}`).classList.add('active');
             if(document.getElementById(`nav-${tab}`)) document.getElementById(`nav-${tab}`).classList.add('active');
             
-            if(tab !== 'space' && spaceInterval) { 
-                clearInterval(spaceInterval); 
-                spaceInterval = null; 
-            }
-            if(tab !== 'pvz' && pvzInterval) { 
-                clearInterval(pvzInterval); 
-                pvzInterval = null; 
-                pvzGameActive = false;
-            }
+            if(tab !== 'space' && spaceInterval) { clearInterval(spaceInterval); spaceInterval = null; }
+            if(tab !== 'pvz' && pvzInterval) { clearInterval(pvzInterval); pvzInterval = null; pvzGameActive = false; }
         }
     </script>
 </body>
