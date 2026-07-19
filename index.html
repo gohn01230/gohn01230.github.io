@@ -250,7 +250,7 @@ function listenToActivePlayers(){
     });
     document.getElementById("active-players-list").innerHTML=html||'<p style="color:var(--muted);text-align:center;padding:10px;font-size:.8rem">لا أحد متصل</p>';
   });
-});
+})
  db.collection("challenges").where("fromId","==",currentUser.uid).onSnapshot(function(snap){snap.docChanges().forEach(function(ch){var d=ch.doc.data();if(d&&d.status==="accepted"){ch.doc.ref.delete();activeRoomId=d.roomId;currentGameType=d.gameType;closeAllModals();enterGameRoom(currentGameType,d.toName)}else if(d&&d.status==="rejected"){ch.doc.ref.delete();showToast("تم الرفض","danger")}} )});
 }
 function acceptChallenge(){if(!currentChallengeId) return;var ref=db.collection("challenges").doc(currentChallengeId);ref.get().then(function(doc){if(doc.exists){var c=doc.data();var roomRef=db.collection("rooms").doc();activeRoomId=roomRef.id;currentGameType=c.gameType;var init={gameType:currentGameType,player1:c.fromId,p1Name:c.fromName,player2:currentUser.uid,p2Name:currentUser.displayName,status:"playing"};if(currentGameType==="xo"){init.turn=c.fromId;init.board=["","","","","","","","",""];init.winner=null}else if(currentGameType==="tap"){init.p1Clicks=50;init.p2Clicks=50}else if(currentGameType==="rps"){init.p1Move="";init.p2Move="";init.winner=""}else{init.customGame=true}roomRef.set(init).then(function(){ref.update({status:"accepted",roomId:activeRoomId,toName:currentUser.displayName});closeAllModals();enterGameRoom(currentGameType,c.fromName)})}})}
