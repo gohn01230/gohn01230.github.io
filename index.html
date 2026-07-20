@@ -2,486 +2,347 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>GOHN CHAT - Discord Clone</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GOHN PRO - Final Fixed</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#3b82f6;--green:#22c55e;--purple:#6366f1;--orange:#f59e0b;--red:#ef4444;--dark:#1e293b;--muted:#64748b}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Tajawal',sans-serif;background:#eef2ff;color:var(--dark);min-height:100vh;padding-bottom:110px;display:flex;flex-direction:column;align-items:center}
+.glass-panel{background:#fff;border:1px solid #e2e8f0;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.navbar{width:92%;max-width:500px;border-radius:20px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:14px;position:relative}
+.brand{font-weight:900;color:var(--blue)}
+.user-info{position:relative;display:flex;align-items:center;gap:8px;background:#fff;padding:5px 10px;border-radius:14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.user-avatar{width:30px;height:30px;border-radius:50%}
+.user-name{font-size:.8rem;font-weight:800}
+.profile-dropdown{position:absolute;top:110%;right:0;background:#fff;border-radius:12px;padding:8px;box-shadow:0 10px 30px rgba(0,0,0,.15);border:1px solid #e2e8f0;min-width:140px;display:none;z-index:200}
+.profile-dropdown.show{display:block}
+.profile-dropdown button{width:100%;padding:10px;border:none;background:#fef2f2;color:var(--red);border-radius:10px;font-weight:800;font-family:'Tajawal';cursor:pointer}
+.coin-badge{background:#fff7ed;color:#ea580c;border:1px solid #fed7aa;padding:5px 12px;border-radius:12px;font-weight:900;display:flex;gap:5px;font-size:.85rem}
+.admin-menu-btn{position:absolute;top:14px;left:10px;font-size:1.3rem;cursor:pointer;padding:6px 10px;border-radius:10px;background:rgba(99,102,241,.1);display:none;color:var(--purple)}
+.admin-menu-btn.show{display:block}
+.container{width:92%;max-width:500px;margin-top:18px;flex:1}
+.main-panel{border-radius:24px;padding:20px 16px;text-align:center}
+.panel-title{font-size:1.5rem;font-weight:900;color:var(--blue);margin-bottom:12px}
+.btn-3d{width:100%;padding:12px 16px;border:none;border-radius:14px;font-family:'Tajawal';font-weight:900;font-size:1rem;color:#fff;cursor:pointer;margin-bottom:10px}
+.btn-3d:active{transform:scale(.97)}
+.btn-games{background:var(--green)} .btn-chat{background:var(--purple)} .btn-danger-3d{background:var(--red)}
+.btn-sm-3d{width:auto;padding:6px 12px;font-size:.8rem;border-radius:10px}
+.page{display:none}.page.active{display:block}
+.bottom-nav{position:fixed;bottom:12px;width:92%;max-width:420px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,.95);border-radius:20px;display:flex;justify-content:space-around;padding:8px;z-index:90}
+.nav-item{display:flex;flex-direction:column;align-items:center;color:#94a3b8;font-size:.7rem;font-weight:800;cursor:pointer;padding:6px 14px;border-radius:12px}
+.nav-item.active{color:#fff;background:rgba(255,255,255,.12)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:299;display:none}
+#challenge-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;max-width:340px;background:#fff;border-radius:20px;padding:20px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.3);z-index:300;display:none;border:3px solid var(--green)}
+#challenge-modal.show{display:block}
+.toast-notification{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-120px);width:85%;max-width:340px;background:#fff;border-radius:14px;padding:10px 14px;display:flex;gap:8px;align-items:center;box-shadow:0 10px 30px rgba(0,0,0,.15);z-index:350;border-right:4px solid var(--purple);opacity:0;transition:.4s}
+.toast-notification.active{transform:translateX(-50%) translateY(0);opacity:1}
+.games-grid-horizontal{display:flex;overflow-x:auto;gap:12px;padding:8px 2px 14px}
+.games-grid-horizontal::-webkit-scrollbar{display:none}
+.game-cover-card{min-width:180px;flex-shrink:0;background:#fff;border:2px solid transparent;border-radius:18px;padding:12px;display:flex;flex-direction:column;align-items:center;text-align:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.game-cover-card.selected{border-color:var(--green);background:#f0fdf4}
+.game-thumb{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:8px}
+.thumb-xo{background:#6366f1}.thumb-tap{background:#f59e0b}.thumb-rps{background:#ef4444}.thumb-space{background:#0f172a}.thumb-pvz{background:#22c55e}
+.game-info h4{font-size:.9rem;font-weight:900;margin-bottom:2px}.game-info p{font-size:.7rem;color:var(--muted);margin-bottom:6px}.game-prize{background:#fff7ed;color:#ea580c;padding:2px 8px;border-radius:8px;font-size:.65rem;font-weight:900;border:1px solid #fed7aa}
+.selection-hint{background:#f0fdf4;border:1px dashed var(--green);color:#16a34a;padding:8px;border-radius:10px;margin-bottom:12px;font-size:.75rem;font-weight:800;display:none}
+.selection-hint.show{display:block}
+.custom-game-container{width:100%;margin:10px 0;border-radius:14px;overflow:hidden;border:2px solid #fff;background:#fff}
+.custom-game-iframe{width:100%;height:500px;border:none;display:block}
+.player-item{display:flex;justify-content:space-between;align-items:center;background:#fff;padding:8px;border-radius:12px;margin-bottom:6px}
+.player-info{display:flex;align-items:center;gap:8px}.player-avatar-list{width:32px;height:32px;border-radius:50%}.status-dot{width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;margin-left:4px}
+.xo-board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:260px;margin:0 auto 16px}
+.xo-cell{background:#fff;height:70px;border-radius:12px;display:flex;justify-content:center;align-items:center;font-size:2rem;font-weight:900;cursor:pointer;box-shadow:0 3px 0 #e2e8f0}
+.rps-choices{display:flex;justify-content:center;gap:12px;margin:16px 0}
+.rps-btn{font-size:2rem;background:#fff;border:none;width:70px;height:70px;border-radius:50%;cursor:pointer;box-shadow:0 3px 0 #e2e8f0}
+.tap-bar-container{width:100%;height:28px;background:#f1f5f9;border-radius:20px;overflow:hidden;margin:14px 0;display:flex;border:2px solid #fff}
+.tap-progress{height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:.75rem}
+#space-canvas,#pvz-canvas{border-radius:12px;display:block;margin:8px auto;max-width:100%;border:2px solid #fff}
+.admin-panel{position:fixed;top:0;right:-350px;width:330px;max-width:90%;height:100vh;background:#fff;box-shadow:-10px 0 30px rgba(0,0,0,.15);z-index:1000;transition:right .3s;padding:16px;overflow-y:auto}
+.admin-panel.show{right:0}
+.admin-form-group{margin-bottom:10px}.admin-form-group label{display:block;margin-bottom:4px;font-weight:800;font-size:.8rem}
+.admin-form-group input,.admin-form-group select,.admin-form-group textarea{width:100%;padding:8px;border:1px solid #e2e8f0;border-radius:8px;font-family:'Tajawal';font-size:.85rem}
+.admin-game-item{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:8px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;font-size:.8rem}
+
+.chat-container{display:flex;flex-direction:column;height:420px;background:#fff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0}
+.chat-messages{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px;background:#f8fafc}
+.chat-message{display:flex;gap:8px;align-items:flex-start;max-width:85%}
+.chat-message.own{flex-direction:row-reverse;align-self:flex-end}
+.chat-message img{width:28px;height:28px;border-radius:50%}
+.chat-bubble{background:#fff;padding:8px 12px;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.06);font-size:.85rem;max-width:200px;word-wrap:break-word}
+.chat-message.own .chat-bubble{background:#6366f1;color:#fff}
+.chat-input-area{display:flex;gap:8px;padding:10px;background:#fff;border-top:1px solid #e2e8f0}
+.chat-input-area input{flex:1;padding:10px 14px;border:1px solid #e2e8f0;border-radius:12px;font-family:'Tajawal';outline:none}
+.chat-input-area button{padding:10px 18px;background:#6366f1;color:#fff;border:none;border-radius:12px;font-weight:800;font-family:'Tajawal';cursor:pointer}
+
+</style>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Tajawal',sans-serif;background:#313338;color:#f2f3f5;height:100vh;overflow:hidden;display:flex;flex-direction:column}
-button{font-family:'Tajawal',sans-serif}
-
-/* LOGIN */
-.login-screen{position:fixed;inset:0;background:#313338;display:flex;align-items:center;justify-content:center;z-index:999}
-.login-card{background:#2b2d31;border-radius:8px;padding:32px;width:90%;max-width:400px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-.login-card h1{font-weight:900;font-size:1.8rem;margin-bottom:8px;color:#fff}
-.login-card p{color:#b5bac1;margin-bottom:20px;font-size:.9rem}
-.btn-discord{width:100%;padding:12px;background:#5865f2;color:#fff;border:none;border-radius:4px;font-weight:700;font-size:1rem;cursor:pointer;transition:.2s}
-.btn-discord:hover{background:#4752c4}
-.btn-discord:disabled{opacity:.6;cursor:not-allowed}
-
-/* DISCORD LAYOUT */
-.app{display:flex;height:100vh;width:100vw;display:none}
-.app.show{display:flex}
-
-/* Servers sidebar */
-.servers-bar{width:72px;background:#1e1f22;padding:12px 0;display:flex;flex-direction:column;align-items:center;gap:8px;overflow-y:auto}
-.server-icon{width:48px;height:48px;background:#313338;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer;transition:.2s;color:#fff;font-weight:900}
-.server-icon:hover{border-radius:16px;background:#5865f2}
-.server-icon.active{border-radius:16px;background:#5865f2}
-.server-divider{width:32px;height:2px;background:#2b2d31;border-radius:1px;margin:4px 0}
-
-/* Channels sidebar */
-.channels-bar{width:240px;background:#2b2d31;display:flex;flex-direction:column}
-.channels-header{height:48px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1f2124;box-shadow:0 1px 0 #1f2124,0 1.5px 0 #232428,0 2px 0 #2b2d31}
-.channels-header h2{font-size:1rem;font-weight:900;color:#fff}
-.channels-list{flex:1;padding:8px;overflow-y:auto}
-.channel-category{color:#80848e;font-size:.75rem;font-weight:700;margin:16px 0 4px 0;padding:0 8px;letter-spacing:.5px}
-.channel-item{padding:6px 8px;border-radius:4px;display:flex;align-items:center;gap:6px;color:#949ba4;cursor:pointer;font-size:.9rem;font-weight:500;margin-bottom:2px}
-.channel-item:hover{background:#35373c;color:#f2f3f5}
-.channel-item.active{background:#404249;color:#fff}
-.channel-item .hash{color:#80848e;font-size:1.1rem}
-.channel-item.active .hash{color:#fff}
-.add-channel-btn{margin-top:8px;padding:6px 8px;border-radius:4px;border:1px dashed #4e5058;background:transparent;color:#949ba4;font-size:.8rem;cursor:pointer;width:100%}
-.add-channel-btn:hover{color:#fff;border-color:#fff}
-
-/* Main chat */
-.chat-area{flex:1;display:flex;flex-direction:column;background:#313338;min-width:0}
-.chat-header{height:48px;background:#313338;border-bottom:1px solid #1f2124;padding:0 16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 0 #1f2124,0 1.5px 0 #232428,0 2px 0 #2b2d31;z-index:2}
-.chat-header .hash{color:#80848e;font-size:1.4rem}
-.chat-header h3{color:#fff;font-weight:700;font-size:1rem}
-.chat-header .topic{color:#b5bac1;font-size:.85rem;margin-right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.messages-container{flex:1;overflow-y:auto;padding:16px 0 8px 0;display:flex;flex-direction:column;gap:2px}
-.message-group{padding:4px 16px 4px 72px;position:relative;min-height:44px}
-.message-group:hover{background:#2e3035}
-.message-group .avatar{position:absolute;right:16px;top:4px;width:40px;height:40px;border-radius:50%;object-fit:cover}
-.message-author{font-weight:500;color:#fff;font-size:.95rem;display:flex;align-items:center;gap:8px}
-.message-author .timestamp{color:#949ba4;font-size:.7rem;font-weight:400}
-.message-text{color:#dcdee1;font-size:.9rem;line-height:1.4;white-space:pre-wrap;word-break:break-word;margin-top:2px}
-.message-text a{color:#00a8fc}
-.message-group.continuation{padding-top:1px;min-height:22px}
-.message-group.continuation .avatar{display:none}
-.message-group.continuation .message-author{display:none}
-.message-actions{position:absolute;left:16px;top:-12px;background:#313338;border:1px solid #3f4147;border-radius:8px;padding:2px;display:none;gap:2px;box-shadow:0 4px 8px rgba(0,0,0,.3)}
-.message-group:hover .message-actions{display:flex}
-.action-btn{width:28px;height:28px;border:none;background:transparent;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#b5bac1}
-.action-btn:hover{background:#2e3035;color:#fff}
-.date-separator{display:flex;align-items:center;gap:12px;padding:8px 16px;margin:8px 0;color:#949ba4;font-size:.7rem;font-weight:700}
-.date-separator::before,.date-separator::after{content:"";flex:1;height:1px;background:#3f4147}
-
-/* Input */
-.chat-input-area{padding:0 16px 24px 16px;background:#313338}
-.chat-input-wrapper{background:#383a40;border-radius:8px;padding:0 12px;display:flex;align-items:flex-end;gap:8px;min-height:44px}
-.chat-input-wrapper:focus-within{outline:none}
-.chat-input{flex:1;background:transparent;border:none;color:#dcdee1;font-family:'Tajawal';font-size:.95rem;padding:12px 0;resize:none;max-height:120px;outline:none}
-.chat-input::placeholder{color:#6d6f78}
-.input-actions{display:flex;align-items:center;gap:4px;padding:8px 0}
-.input-btn{width:32px;height:32px;border:none;background:transparent;color:#b5bac1;cursor:pointer;border-radius:4px;font-size:1.2rem;display:flex;align-items:center;justify-content:center}
-.input-btn:hover{color:#fff}
-.send-btn{width:32px;height:32px;border-radius:50%;background:#5865f2;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.send-btn:disabled{opacity:.4;cursor:not-allowed}
-.send-btn:hover:not(:disabled){background:#4752c4}
-
-/* Members sidebar */
-.members-bar{width:240px;background:#2b2d31;padding:8px;display:flex;flex-direction:column;overflow-y:auto}
-.members-category{color:#80848e;font-size:.7rem;font-weight:700;margin:16px 8px 8px 8px}
-.member-item{display:flex;align-items:center;gap:10px;padding:4px 8px;border-radius:4px;cursor:pointer;color:#949ba4}
-.member-item:hover{background:#35373c;color:#fff}
-.member-avatar{width:32px;height:32px;border-radius:50%;position:relative}
-.member-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover}
-.member-status{position:absolute;bottom:-2px;left:-2px;width:12px;height:12px;background:#23a559;border-radius:50%;border:2px solid #2b2d31}
-.member-info{display:flex;flex-direction:column}
-.member-name{font-size:.9rem;font-weight:500;color:#949ba4}
-.member-item.online .member-name{color:#f2f3f5}
-.member-role{font-size:.7rem;color:#80848e}
-
-/* Mobile */
-@media(max-width:768px){
-  .servers-bar{display:none}
-  .members-bar{display:none}
-  .channels-bar{position:absolute;inset:0;z-index:10;transform:translateX(100%);transition:.3s}
-  .channels-bar.show{transform:translateX(0)}
-  .mobile-menu-btn{display:flex !important}
-}
-.mobile-menu-btn{display:none;width:32px;height:32px;border:none;background:transparent;color:#b5bac1;cursor:pointer;font-size:1.3rem}
-
-/* Toast */
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:#111214;color:#fff;padding:10px 16px;border-radius:4px;font-size:.85rem;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:1000;opacity:0;transition:.3s}
-.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-
-/* Scrollbar */
-::-webkit-scrollbar{width:8px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#1a1b1e;border-radius:4px}
-::-webkit-scrollbar-thumb:hover{background:#1e1f22}
-</style>
 </head>
 <body>
-
-<div id="loginScreen" class="login-screen">
-  <div class="login-card">
-    <h1>GOHN CHAT</h1>
-    <p>ديسكورد عربي كامل - شات صوتي وكتابي مع الأصدقاء</p>
-    <button class="btn-discord" id="loginBtn">تسجيل الدخول بجوجل</button>
-    <p id="loginError" style="color:#fa777c;font-size:.8rem;margin-top:10px;display:none"></p>
-    <p style="color:#80848e;font-size:.7rem;margin-top:16px">بتسجيل دخولك توافق على شروط الاستخدام</p>
-  </div>
+<div id="custom-toast" class="toast-notification"><span id="toast-icon">🔔</span><div style="flex:1"><p id="toast-message" style="font-weight:800;font-size:.85rem"></p></div></div>
+<div id="modal-overlay" class="modal-overlay" onclick="closeAllModals()"></div>
+<div id="admin-menu-btn" class="admin-menu-btn" onclick="toggleAdminPanel()">⚙</div>
+<div id="admin-panel" class="admin-panel">
+<h3>لوحة المالك</h3>
+<div class="admin-form-group"><label>اسم اللعبة</label><input id="admin-game-name"></div>
+<div class="admin-form-group"><label>الوصف</label><textarea id="admin-game-desc"></textarea></div>
+<div class="admin-form-group"><label>رابط الصورة</label><input id="admin-game-image"></div>
+<div class="admin-form-group"><label>النوع</label><select id="admin-game-type"><option value="online">أونلاين</option><option value="offline">أوفلاين</option></select></div>
+<div class="admin-form-group"><label>الجائزة</label><input type="number" id="admin-game-prize" value="25"></div>
+<div class="admin-form-group"><label>كود HTML</label><textarea id="admin-game-code" style="min-height:120px;font-family:monospace;font-size:.7rem"></textarea></div>
+<button class="btn-3d btn-chat" id="admin-save-btn" onclick="addNewGame()">إضافة</button>
+<button class="btn-3d btn-danger-3d" onclick="toggleAdminPanel()">إغلاق</button>
+<div id="custom-games-list" style="margin-top:12px"></div>
 </div>
-
-<div id="app" class="app">
-  <!-- Servers -->
-  <div class="servers-bar">
-    <div class="server-icon active">G</div>
-    <div class="server-divider"></div>
-    <div class="server-icon" style="background:#23a559">+</div>
-  </div>
-
-  <!-- Channels -->
-  <div class="channels-bar" id="channelsBar">
-    <div class="channels-header">
-      <h2>GOHN PRO</h2>
-      <button style="background:transparent;border:none;color:#b5bac1;cursor:pointer">⚙</button>
-    </div>
-    <div class="channels-list" id="channelsList">
-      <div class="channel-category">قنوات نصية</div>
-      <div id="textChannels"></div>
-      <button class="add-channel-btn" id="addChannelBtn">+ إنشاء قناة</button>
-      <div class="channel-category" style="margin-top:20px">قنوات صوتية</div>
-      <div class="channel-item"><span class="hash">🔊</span> عام</div>
-      <div class="channel-item"><span class="hash">🔊</span> ألعاب</div>
-    </div>
-    <div style="background:#232428;padding:8px;display:flex;align-items:center;gap:8px">
-      <img id="userAvatarSmall" src="" style="width:32px;height:32px;border-radius:50%">
-      <div style="flex:1;min-width:0">
-        <div id="userNameSmall" style="color:#fff;font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">...</div>
-        <div style="color:#23a559;font-size:.7rem">متصل</div>
-      </div>
-      <button id="logoutBtn" style="background:transparent;border:none;color:#b5bac1;cursor:pointer">⚙</button>
-    </div>
-  </div>
-
-  <!-- Chat -->
-  <div class="chat-area">
-    <div class="chat-header">
-      <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
-      <span class="hash">#</span>
-      <h3 id="currentChannelName">عام</h3>
-      <span class="topic" id="currentChannelTopic">الدردشة العامة - تكلم مع الجميع</span>
-    </div>
-    <div class="messages-container" id="messagesContainer"></div>
-    <div class="chat-input-area">
-      <div class="chat-input-wrapper">
-        <button class="input-btn">😊</button>
-        <textarea class="chat-input" id="messageInput" placeholder="أرسل رسالة في #عام" rows="1"></textarea>
-        <button class="send-btn" id="sendBtn">➤</button>
-      </div>
-      <div style="color:#6d6f78;font-size:.65rem;margin-top:6px;padding-right:4px">اضغط Enter للإرسال، Shift+Enter لسطر جديد</div>
-    </div>
-  </div>
-
-  <!-- Members -->
-  <div class="members-bar">
-    <div class="members-category" id="onlineCount">متصل — 0</div>
-    <div id="onlineMembersList"></div>
-    <div class="members-category" style="margin-top:20px">أوفلاين —</div>
-    <div id="offlineMembersList" style="opacity:.5"></div>
-  </div>
+<div id="challenge-modal"><div style="font-size:2rem;margin-bottom:8px">🔥</div><h3 style="font-weight:900;margin-bottom:6px">تحدي مباشر!</h3><p id="challenge-text" style="color:var(--muted);margin-bottom:14px;font-weight:700;font-size:.9rem"></p><div style="display:flex;gap:8px"><button class="btn-3d btn-games btn-sm-3d" style="flex:1" onclick="acceptChallenge()">قبول</button><button class="btn-3d btn-danger-3d btn-sm-3d" style="flex:1" onclick="rejectChallenge()">رفض</button></div></div>
+<div class="navbar glass-panel">
+<div id="user-summary" class="user-info" style="display:none" onclick="toggleProfileMenu(event)">
+<img id="user-avatar" class="user-avatar" src=""><span id="user-displayname" class="user-name">..</span>
+<div id="profile-dropdown" class="profile-dropdown"><button onclick="logoutUser()">🚪 تسجيل خروج</button></div>
 </div>
-
-<div id="toast" class="toast"></div>
-
+<div class="brand">GOHN PRO</div>
+<div id="coin-badge" class="coin-badge" style="display:none">🥕 <span id="user-coins">0</span></div>
+</div>
+<div class="container">
+<div class="main-panel glass-panel" id="view-auth">
+<h2 class="panel-title">مرحبا بك 🪴</h2>
+<p style="color:var(--muted);margin-bottom:16px;font-weight:700;font-size:.9rem">سجل دخولك وابدأ اللعب!</p>
+<button class="btn-3d btn-chat" id="loginBtn">🚀 دخول بجوجل</button>
+<p id="loginError" style="color:#ef4444;font-size:.75rem;margin-top:8px;display:none"></p>
+</div>
+<div id="view-main" style="display:none">
+<div class="main-panel glass-panel">
+<div id="page-games" class="page active">
+<h3 style="color:var(--blue);text-align:right;font-weight:900;margin-bottom:6px;font-size:1rem">الألعاب الفردية</h3>
+<div class="games-grid-horizontal" id="offline-games-grid">
+<div class="game-cover-card" onclick="openOfflineGame('space')"><div class="game-thumb thumb-space">🚀</div><div class="game-info"><h4>معركة الفضاء</h4><p>دمر الكويكبات</p><span class="game-prize">حتى 50 🥕</span></div></div>
+<div class="game-cover-card" onclick="openOfflineGame('pvz')"><div class="game-thumb thumb-pvz">🌻</div><div class="game-info"><h4>Plants vs Zombies</h4><p>دافع عن المنزل</p><span class="game-prize">25 🥕</span></div></div>
+</div>
+</div>
+<div id="page-online" class="page">
+<h3 style="color:var(--blue);text-align:right;font-weight:900;margin-bottom:6px;font-size:1rem">المتصلين الآن 🟢</h3>
+<div id="active-players-list" style="max-height:160px;overflow-y:auto;margin-bottom:12px"><p style="color:var(--muted);font-size:.8rem">جاري البحث...</p></div>
+<h3 style="color:var(--blue);text-align:right;font-weight:900;margin-bottom:8px;font-size:1rem">1- اختر لعبة</h3>
+<div class="games-grid-horizontal" id="online-games-grid"></div>
+<div id="selection-hint" class="selection-hint">✅ اختر لاعب من فوق لتحديه!</div>
+</div>
+<div id="page-space" class="page"><h3>🚀 معركة الفضاء</h3><canvas id="space-canvas" width="320" height="200"></canvas><div style="font-weight:900;margin:8px 0">النقاط: <span id="space-score" style="color:var(--purple)">0</span></div><button class="btn-3d btn-games" onclick="startSpaceGame()">ابدأ</button><button class="btn-3d btn-danger-3d" onclick="exitOfflineGame()">خروج</button></div>
+<div id="page-pvz" class="page"><h3>🌻 PVZ</h3><canvas id="pvz-canvas" width="320" height="220"></canvas><div style="margin:8px 0;font-weight:900">☀ <span id="pvz-sun">150</span> | موجة <span id="pvz-wave">1</span></div><button class="btn-3d btn-games" onclick="startPVZGame()">ابدأ</button><button class="btn-3d btn-danger-3d" onclick="exitOfflineGame()">خروج</button></div>
+<div id="page-custom-game" class="page"><h3 id="custom-game-title"></h3><p id="custom-game-desc" style="color:var(--muted);font-size:.8rem;margin-bottom:8px"></p><div class="custom-game-container"><iframe id="custom-game-iframe" class="custom-game-iframe" loading="lazy"></iframe></div><button class="btn-3d btn-danger-3d" onclick="exitCustomGame()">خروج</button></div>
+<div id="page-xo" class="page"><h3>إكس أو أونلاين</h3><p id="xo-status-text" style="margin:8px 0;font-weight:800;font-size:.9rem"></p><div class="xo-board" id="xo-board-div"></div><button class="btn-3d btn-danger-3d" onclick="exitRoom()">انسحاب</button></div>
+<div id="page-tap" class="page"><h3>⚡ حرب السرعة</h3><p id="tap-status-text" style="margin:8px 0;font-weight:800;font-size:.9rem"></p><div id="tap-arena" style="display:none"><div class="tap-bar-container"><div id="tap-my-bar" class="tap-progress" style="background:var(--green);width:50%">50%</div><div id="tap-opp-bar" class="tap-progress" style="background:var(--red);width:50%">50%</div></div><button class="btn-3d" id="tap-btn-action" onclick="sendTapClick()" disabled style="width:100px;height:100px;border-radius:50%;margin:14px auto;background:var(--orange)">اضغط!</button></div><button class="btn-3d btn-danger-3d" onclick="exitRoom()">انسحاب</button></div>
+<div id="page-rps" class="page"><h3>حجر ورقة مقص</h3><p id="rps-status-text" style="margin:8px 0;font-weight:800;font-size:.9rem"></p><div id="rps-arena" style="display:none"><div class="rps-choices"><button class="rps-btn" id="rps-rock" onclick="sendRPSMove('rock')">✊</button><button class="rps-btn" id="rps-paper" onclick="sendRPSMove('paper')">🖐</button><button class="rps-btn" id="rps-scissors" onclick="sendRPSMove('scissors')">✌</button></div><div id="rps-result" style="font-weight:900;margin-top:8px"></div></div><button class="btn-3d btn-danger-3d" onclick="exitRoom()">انسحاب</button></div>
+<div id="page-chat" class="page"><h3 style="color:#6366f1;text-align:right;font-weight:900;margin-bottom:8px;font-size:1rem">💬 الشات العام</h3><div class="chat-container"><div id="chat-messages" class="chat-messages"><p style="color:#64748b;text-align:center;padding:20px;font-size:.8rem">جاري تحميل الرسائل...</p></div><div class="chat-input-area"><input type="text" id="chat-input" placeholder="اكتب رسالة..." maxlength="200"><button id="chat-send-btn">إرسال</button></div></div></div>
+<div id="page-rewards" class="page"><h3>🛒 المتجر</h3><div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:10px;display:flex;justify-content:space-between;align-items:center;margin-top:10px"><div><strong>لقب أسطورة</strong><br><small>500 🥕</small></div><button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('legend_title',500)">شراء</button></div></div>
+</div>
+</div>
+</div>
+<div class="bottom-nav" id="bottom-nav" style="display:none"><div class="nav-item active" id="nav-games" onclick="switchTab('games')"><div style="font-size:1.1rem">🕹</div>الألعاب</div><div class="nav-item" id="nav-online" onclick="switchTab('online')"><div style="font-size:1.1rem">⚔</div>أونلاين</div><div class="nav-item" id="nav-rewards" onclick="switchTab('rewards')"><div style="font-size:1.1rem">🎁</div>المتجر</div></div>
 <script>
-var firebaseConfig = {
-  apiKey: "AIzaSyA5LlGHl9djJsx_Rs3evjd8Xzpn0e25IHI",
-  authDomain: "gohn-games.firebaseapp.com",
-  projectId: "gohn-games",
-  storageBucket: "gohn-games.firebasestorage.app",
-  messagingSenderId: "837388013481",
-  appId: "1:837388013481:web:3d1c87fd31442284653eb8"
+const firebaseConfig = {
+    apiKey: "AIzaSyA5LlGHl9djJsx_Rs3evjd8Xzpn0e25IHI",
+    authDomain: "gohn-games.firebaseapp.com",
+    projectId: "gohn-games",
+    storageBucket: "gohn-games.firebasestorage.app",
+    messagingSenderId: "837388013481",
+    appId: "1:837388013481:web:3d1c87fd31442284653eb8"
 };
 firebase.initializeApp(firebaseConfig);
-var auth = firebase.auth();
-var db = firebase.firestore();
-
-var currentUser=null;
-var currentChannelId="general";
-var currentChannelName="عام";
-var messagesListener=null;
-var presenceInterval=null;
-
-function showToast(m){
-  var t=document.getElementById("toast");
-  t.innerText=m;
-  t.classList.add("show");
-  setTimeout(function(){t.classList.remove("show")},3000);
-}
-
-// LOGIN
-document.getElementById("loginBtn").addEventListener("click", function(){
-  var btn=this;
-  btn.innerText="جاري...";
-  btn.disabled=true;
-  var provider=new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).catch(function(e){
-    showToast(e.message);
-    btn.innerText="تسجيل الدخول بجوجل";
-    btn.disabled=false;
-  });
-});
-
-auth.onAuthStateChanged(function(user){
-  if(user){
-    currentUser=user;
-    document.getElementById("loginScreen").style.display="none";
-    document.getElementById("app").classList.add("show");
-    document.getElementById("userAvatarSmall").src=user.photoURL||"https://via.placeholder.com/40";
-    document.getElementById("userNameSmall").innerText=user.displayName||"مستخدم";
-    // presence
-    db.collection("users_profile").doc(user.uid).set({
-      fullName:user.displayName||"مستخدم",
-      photoURL:user.photoURL||"",
-      status:"online",
-      lastActive:firebase.firestore.FieldValue.serverTimestamp(),
-      lastActiveNum:Date.now()
-    },{merge:true});
-    if(presenceInterval) clearInterval(presenceInterval);
-    presenceInterval=setInterval(function(){
-      if(currentUser) db.collection("users_profile").doc(currentUser.uid).update({
-        lastActive:firebase.firestore.FieldValue.serverTimestamp(),
-        lastActiveNum:Date.now(),
-        status:"online"
-      });
-    },20000);
-    initChannels();
-    listenToMembers();
-  }else{
-    document.getElementById("loginScreen").style.display="flex";
-    document.getElementById("app").classList.remove("show");
-  }
-});
-
-// CHANNELS
-function initChannels(){
-  var defaultChannels=[
-    {id:"general",name:"عام",topic:"الدردشة العامة - تكلم مع الجميع"},
-    {id:"games",name:"ألعاب",topic:"نقاشات عن الألعاب والتحديات"},
-    {id:"memes",name:"ميمز",topic:"ضحك وهزار 😂"},
-    {id:"help",name:"مساعدة",topic:"اطلب المساعدة هنا"}
-  ];
-  // create if not exist
-  defaultChannels.forEach(function(ch){
-    db.collection("chat_channels").doc(ch.id).get().then(function(doc){
-      if(!doc.exists){
-        db.collection("chat_channels").doc(ch.id).set({
-          name:ch.name,
-          topic:ch.topic,
-          createdAt:firebase.firestore.FieldValue.serverTimestamp()
-        });
-      }
-    });
-  });
-  // listen
-  db.collection("chat_channels").orderBy("createdAt").onSnapshot(function(snap){
-    var container=document.getElementById("textChannels");
-    container.innerHTML="";
-    snap.forEach(function(doc){
-      var data=doc.data();
-      var item=document.createElement("div");
-      item.className="channel-item"+(doc.id===currentChannelId?" active":"");
-      item.dataset.id=doc.id;
-      item.dataset.name=data.name;
-      item.dataset.topic=data.topic||"";
-      item.innerHTML='<span class="hash">#</span> '+data.name;
-      item.onclick=function(){switchChannel(doc.id,data.name,data.topic||"")};
-      container.appendChild(item);
-    });
-    if(snap.empty){
-      // fallback
-      defaultChannels.forEach(function(ch){
-        var item=document.createElement("div");
-        item.className="channel-item"+(ch.id===currentChannelId?" active":"");
-        item.dataset.id=ch.id;
-        item.innerHTML='<span class="hash">#</span> '+ch.name;
-        item.onclick=function(){switchChannel(ch.id,ch.name,ch.topic)};
-        container.appendChild(item);
-      });
+const auth = firebase.auth();
+const db = firebase.firestore();
+let currentUser=null,userProfile={coins:0},activeRoomId=null,currentGameType="",roomListener=null,currentChallengeId=null,selectedGame=null,isAdmin=false,currentCustomGameId=null,currentCustomGamePrize=0,editingGameId=null,presenceInterval=null;
+const OWNER_EMAIL = "gohngohn099@gmail.com";
+function showToast(m,t,ic){t=t||"info";ic=ic||"🔔";const toast=document.getElementById("custom-toast");document.getElementById("toast-message").innerText=m;document.getElementById("toast-icon").innerText=ic;toast.className="toast-notification "+t;toast.classList.add("active");setTimeout(function(){toast.classList.remove("active")},3000)}
+function toggleProfileMenu(e){e.stopPropagation();document.getElementById('profile-dropdown').classList.toggle('show')}
+document.addEventListener('click',function(){var d=document.getElementById('profile-dropdown');if(d) d.classList.remove('show')});
+function logoutUser(){if(currentUser){db.collection("users_profile").doc(currentUser.uid).update({status:"offline"}).then(function(){auth.signOut().then(function(){location.reload()})})}else{auth.signOut().then(function(){location.reload()})}}
+window.login = async function(){
+  var btn=document.getElementById('loginBtn');
+  var err=document.getElementById('loginError');
+  if(btn){btn.innerText='جاري...';btn.disabled=true}
+  if(err) err.style.display='none';
+  try{
+    var provider=new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
+  }catch(e){
+    console.error(e);
+    if(e.code==='auth/popup-blocked' || e.code==='auth/popup-closed-by-user'){
+      try{ await auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()); }catch(e2){ if(err){err.innerText=e2.message;err.style.display='block'} }
+    }else if(e.code==='auth/unauthorized-domain'){
+      if(err){err.innerText='الدومين مش مسجل في Firebase > Authorized domains';err.style.display='block'}
+    }else{
+      if(err){err.innerText=e.message;err.style.display='block'}
     }
-  });
-  switchChannel(currentChannelId,currentChannelName,"الدردشة العامة");
-}
-
-function switchChannel(id,name,topic){
-  currentChannelId=id;
-  currentChannelName=name;
-  document.getElementById("currentChannelName").innerText=name;
-  document.getElementById("currentChannelTopic").innerText=topic||"";
-  document.getElementById("messageInput").placeholder="أرسل رسالة في #"+name;
-  document.querySelectorAll(".channel-item").forEach(function(el){el.classList.remove("active")});
-  var activeEl=document.querySelector('.channel-item[data-id="'+id+'"]');
-  if(activeEl) activeEl.classList.add("active");
-  document.getElementById("channelsBar").classList.remove("show");
-  listenToMessages(id);
-}
-
-function listenToMessages(channelId){
-  if(messagesListener) messagesListener();
-  var container=document.getElementById("messagesContainer");
-  container.innerHTML='<div style="padding:20px;text-align:center;color:#949ba4">جاري تحميل الرسائل...</div>';
-  messagesListener=db.collection("chat_messages").where("channelId","==",channelId).orderBy("timestampNum","asc").limit(200).onSnapshot(function(snap){
-    container.innerHTML="";
-    var lastDate="";
-    var lastUserId="";
-    snap.forEach(function(doc){
-      var m=doc.data();
-      var date=new Date(m.timestampNum||Date.now());
-      var dateStr=date.toLocaleDateString("ar-EG");
-      if(dateStr!==lastDate){
-        var sep=document.createElement("div");
-        sep.className="date-separator";
-        sep.innerText=dateStr;
-        container.appendChild(sep);
-        lastDate=dateStr;
-        lastUserId="";
-      }
-      var isContinuation = m.userId===lastUserId && (Date.now() - (m.timestampNum||0) < 300000);
-      var group=document.createElement("div");
-      group.className="message-group"+(isContinuation?" continuation":"");
-      if(!isContinuation){
-        var avatar=document.createElement("img");
-        avatar.className="avatar";
-        avatar.src=m.photoURL||"https://via.placeholder.com/40";
-        group.appendChild(avatar);
-        var author=document.createElement("div");
-        author.className="message-author";
-        var timeStr=date.toLocaleTimeString("ar-EG",{hour:"2-digit",minute:"2-digit"});
-        author.innerHTML=m.userName+'<span class="timestamp">اليوم في '+timeStr+'</span>';
-        group.appendChild(author);
-      }
-      var text=document.createElement("div");
-      text.className="message-text";
-      text.innerText=m.text;
-      group.appendChild(text);
-      // actions
-      if(m.userId===currentUser.uid){
-        var actions=document.createElement("div");
-        actions.className="message-actions";
-        var delBtn=document.createElement("button");
-        delBtn.className="action-btn";
-        delBtn.innerText="🗑";
-        delBtn.title="حذف";
-        delBtn.onclick=function(){deleteMessage(doc.id)};
-        actions.appendChild(delBtn);
-        group.appendChild(actions);
-      }
-      container.appendChild(group);
-      lastUserId=m.userId;
-    });
-    container.scrollTop=container.scrollHeight;
-  });
-}
-
-function deleteMessage(id){
-  if(confirm("حذف الرسالة؟")){
-    db.collection("chat_messages").doc(id).delete();
+  }finally{
+    if(btn){btn.innerText='🚀 دخول بجوجل';btn.disabled=false}
   }
+};
+document.addEventListener('DOMContentLoaded',function(){
+  var b=document.getElementById('loginBtn');
+  if(b) b.addEventListener('click', window.login);
+});
+auth.onAuthStateChanged(function(user){
+ if(user){
+  currentUser=user;
+  if(user.email===OWNER_EMAIL){isAdmin=true;document.getElementById('admin-menu-btn').classList.add('show');loadCustomGamesForAdmin()}
+  document.getElementById('view-auth').style.display='none';
+  document.getElementById('view-main').style.display='block';
+  document.getElementById('user-summary').style.display='flex';
+  document.getElementById('coin-badge').style.display='flex';
+  document.getElementById('bottom-nav').style.display='flex';
+  document.getElementById('user-avatar').src=user.photoURL||"https://via.placeholder.com/36";
+  document.getElementById('user-displayname').innerText=(user.displayName||"لاعب").split(' ')[0];
+  db.collection("users_profile").doc(user.uid).set({fullName:user.displayName||"لاعب",photoURL:user.photoURL||"",status:"online",lastActive:firebase.firestore.FieldValue.serverTimestamp(),lastActiveNum:Date.now(),coins:firebase.firestore.FieldValue.increment(0)},{merge:true});
+  if(presenceInterval) clearInterval(presenceInterval);
+  presenceInterval=setInterval(function(){if(currentUser) db.collection("users_profile").doc(currentUser.uid).update({lastActive:firebase.firestore.FieldValue.serverTimestamp(),lastActiveNum:Date.now(),status:"online"})},20000);
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&currentUser){db.collection("users_profile").doc(currentUser.uid).update({lastActive:firebase.firestore.FieldValue.serverTimestamp(),lastActiveNum:Date.now(),status:"online"})}});
+  db.collection("users_profile").doc(user.uid).onSnapshot(function(doc){if(doc.exists){userProfile=doc.data();document.getElementById('user-coins').innerText=userProfile.coins||0}});
+  loadOnlineGames();loadOfflineCustomGames();listenToActivePlayers();listenToChallenges();
+ }else{
+  document.getElementById('view-auth').style.display='block';
+  document.getElementById('view-main').style.display='none';
+ }
+});
+window.addEventListener('pagehide',function(){if(currentUser){db.collection("users_profile").doc(currentUser.uid).update({status:"offline"})}});
+window.addEventListener('beforeunload',function(){if(currentUser) db.collection("users_profile").doc(currentUser.uid).update({status:"offline"})});
+window.addEventListener('message',function(e){if(e.data&&e.data.type==='gameResult'){var reward=Math.floor((e.data.score||0)/10);if(reward>0&&currentUser){var finalReward=Math.min(reward,currentCustomGamePrize||reward);db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(finalReward)});showToast('ربحت '+finalReward+' 🥕',"success","🏆") }}});
+function toggleAdminPanel(){document.getElementById('admin-panel').classList.toggle('show')}
+function addNewGame(){
+ var name=document.getElementById('admin-game-name').value,desc=document.getElementById('admin-game-desc').value,image=document.getElementById('admin-game-image').value,code=document.getElementById('admin-game-code').value,type=document.getElementById('admin-game-type').value,prize=parseInt(document.getElementById('admin-game-prize').value);
+ if(!name||!code){showToast("اكتب الاسم والكود","danger");return}
+ var data={name:name,desc:desc,image:image,code:code,type:type,prize:prize,createdBy:currentUser.uid,updatedAt:Date.now(),status:"active"};
+ if(editingGameId){db.collection("custom_games").doc(editingGameId).update(data).then(function(){showToast("تم التعديل","success");editingGameId=null;document.getElementById('admin-save-btn').innerText="إضافة";loadCustomGamesForAdmin();loadOnlineGames();loadOfflineCustomGames()})}
+ else{data.createdAt=Date.now();db.collection("custom_games").add(data).then(function(){showToast("تمت الإضافة","success");loadCustomGamesForAdmin();loadOnlineGames();loadOfflineCustomGames()})}
+ document.getElementById('admin-game-name').value='';document.getElementById('admin-game-code').value='';toggleAdminPanel();
 }
+function loadCustomGamesForAdmin(){
+ var list=document.getElementById('custom-games-list');list.innerHTML='تحميل...';
+ db.collection("custom_games").where("status","==","active").onSnapshot(function(snap){
+  if(snap.empty){list.innerHTML='لا يوجد';return}
+  var h='';snap.forEach(function(doc){var g=doc.data();h+='<div class="admin-game-item"><div><b>'+g.name+'</b><br><small>'+g.type+'</small></div><div><button onclick="editGame(''+doc.id+'')" style="background:#f59e0b;color:#fff;border:none;padding:4px 8px;border-radius:6px;margin-left:4px">تعديل</button><button onclick="deleteGame(''+doc.id+'')" style="background:#ef4444;color:#fff;border:none;padding:4px 8px;border-radius:6px">حذف</button></div></div>'});list.innerHTML=h
+ })
+}
+function editGame(id){db.collection("custom_games").doc(id).get().then(function(doc){if(doc.exists){var g=doc.data();editingGameId=id;document.getElementById('admin-game-name').value=g.name;document.getElementById('admin-game-desc').value=g.desc;document.getElementById('admin-game-image').value=g.image||'';document.getElementById('admin-game-type').value=g.type;document.getElementById('admin-game-prize').value=g.prize;document.getElementById('admin-game-code').value=g.code;document.getElementById('admin-save-btn').innerText='حفظ التعديل';document.getElementById('admin-panel').classList.add('show')}})}
+function deleteGame(id){if(confirm("حذف؟")) db.collection("custom_games").doc(id).delete().then(function(){showToast("تم الحذف","success");loadCustomGamesForAdmin();loadOnlineGames();loadOfflineCustomGames()})}
+function loadOnlineGames(){
+ var grid=document.getElementById('online-games-grid');grid.innerHTML='';
+ var defs=[{id:'xo',name:'إكس أو',desc:'كلاسيك',icon:'❌',type:'online',prize:20,cls:'thumb-xo'},{id:'tap',name:'حرب السرعة',desc:'اضغط أسرع',icon:'⚡',type:'online',prize:15,cls:'thumb-tap'},{id:'rps',name:'حجر ورقة مقص',desc:'سريعة',icon:'✊',type:'online',prize:10,cls:'thumb-rps'}];
+ defs.forEach(function(g){grid.appendChild(createGameCard(g.id,g.name,g.desc,g.icon,g.type,g.prize,g.cls))});
+ db.collection("custom_games").where("status","==","active").where("type","==","online").onSnapshot(function(snap){snap.forEach(function(doc){var g=doc.data();var icon=g.image?'<img src="'+g.image+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px">':'🎮';grid.appendChild(createGameCard(doc.id,g.name,g.desc,icon,g.type,g.prize,null,true))})})
+}
+function loadOfflineCustomGames(){
+ var grid=document.getElementById('offline-games-grid');
+ db.collection("custom_games").where("status","==","active").where("type","==","offline").onSnapshot(function(snap){
+  document.querySelectorAll('.custom-offline-card').forEach(function(el){el.remove()});
+  snap.forEach(function(doc){var g=doc.data();var icon=g.image?'<img src="'+g.image+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px">':'🎮';var card=createGameCard(doc.id,g.name,g.desc,icon,g.type,g.prize,null,true);card.classList.add('custom-offline-card');card.onclick=function(){openCustomGame(doc.id,g.name,g.desc,g.code,g.prize)};grid.appendChild(card)})
+ })
+}
+function createGameCard(id,name,desc,icon,type,prize,cls,isCustom){
+ var d=document.createElement('div');d.className='game-cover-card';d.dataset.game=id;d.dataset.type=type;
+ if(type==='online') d.onclick=function(){selectGame(id,type,name)};
+ var badge=type==='online'?'<span style="background:var(--green);color:#fff;padding:2px 6px;border-radius:6px;font-size:.6rem">أونلاين</span>':'<span style="background:var(--orange);color:#fff;padding:2px 6px;border-radius:6px;font-size:.6rem">أوفلاين</span>';
+ d.innerHTML='<div class="game-thumb '+(cls||'')+'">'+icon+'</div><div class="game-info"><h4>'+name+'</h4><p>'+desc+'</p><span class="game-prize">'+prize+' 🥕</span><br>'+badge+'</div>';
+ return d;
+}
+function selectGame(id,type,name){selectedGame={id:id,type:type,name:name};document.querySelectorAll('#online-games-grid .game-cover-card').forEach(function(c){c.classList.remove('selected')});var t=document.querySelector('#online-games-grid .game-cover-card[data-game="'+id+'"]');if(t) t.classList.add('selected');document.getElementById('selection-hint').classList.add('show');showToast('اخترت '+name,"success","✅")}
+function openOfflineGame(id){if(id==='space'){switchTab('space');initSpaceCanvas()}else if(id==='pvz'){switchTab('pvz');initPVZCanvas()}}
+function openCustomGame(id,name,desc,code,prize,roomId){currentCustomGameId=id;currentCustomGamePrize=prize;activeRoomId=roomId||null;document.getElementById('custom-game-title').innerText=name;document.getElementById('custom-game-desc').innerText=desc;var c=code;if(roomId) c='<script>window.ACTIVE_ROOM_ID="'+roomId+'";window.CURRENT_USER_ID="'+currentUser.uid+'";<\/script>'+code;document.getElementById('custom-game-iframe').srcdoc=c;switchTab('custom-game')}
+function exitCustomGame(){document.getElementById('custom-game-iframe').srcdoc='';currentCustomGameId=null;currentCustomGamePrize=0;if(activeRoomId){db.collection("rooms").doc(activeRoomId).delete();activeRoomId=null;switchTab('online')}else switchTab('games')}
+function exitOfflineGame(){switchTab('games')}
+function sendChallengeTo(tid,tname){if(!selectedGame){showToast("اختر لعبة أولاً!","danger");return}var gname=selectedGame.name||"لعبة";db.collection("challenges").add({fromId:currentUser.uid,fromName:currentUser.displayName||"لاعب",toId:tid,gameType:selectedGame.id,gameTypeName:gname,status:"pending",timestamp:Date.now()}).then(function(){showToast('أرسلت تحدي '+gname+' لـ '+tname,"success","⚔")})}
+function listenToActivePlayers(){db.collection("users_profile").where("status","==","online").onSnapshot(function(snap){var html="";snap.forEach(function(doc){if(doc.id!==currentUser.uid&&(Date.now()-doc.data().lastActiveNum<120000)){var p=doc.data();html+='<div class="player-item"><div class="player-info"><img src="'+p.photoURL+'" class="player-avatar-list"><div><div style="font-weight:900;font-size:.85rem">'+p.fullName+'</div><div style="font-size:.7rem;color:var(--green);font-weight:800"><span class="status-dot"></span>متصل</div></div></div><button class="btn-3d btn-games btn-sm-3d" onclick="sendChallengeTo(''+doc.id+'',''+p.fullName+'')">تحدي</button></div>'}});document.getElementById("active-players-list").innerHTML=html||'<p style="color:var(--muted);text-align:center;padding:10px;font-size:.8rem">لا أحد متصل</p>'})}
+function listenToChallenges(){
+ db.collection("challenges").where("toId","==",currentUser.uid).onSnapshot(function(snap){snap.docChanges().forEach(function(ch){if(ch.type==="added"){var d=ch.doc.data();if(d.status==="pending"&&(Date.now()-d.timestamp<60000)){currentChallengeId=ch.doc.id;document.getElementById("challenge-text").innerText=d.fromName+' يتحداك في '+(d.gameTypeName||"لعبة")+'!';document.getElementById("modal-overlay").style.display="block";document.getElementById("challenge-modal").classList.add("show")}}})});
+ db.collection("challenges").where("fromId","==",currentUser.uid).onSnapshot(function(snap){snap.docChanges().forEach(function(ch){var d=ch.doc.data();if(d&&d.status==="accepted"){ch.doc.ref.delete();activeRoomId=d.roomId;currentGameType=d.gameType;closeAllModals();enterGameRoom(currentGameType,d.toName)}else if(d&&d.status==="rejected"){ch.doc.ref.delete();showToast("تم الرفض","danger")}} )});
+}
+function acceptChallenge(){if(!currentChallengeId) return;var ref=db.collection("challenges").doc(currentChallengeId);ref.get().then(function(doc){if(doc.exists){var c=doc.data();var roomRef=db.collection("rooms").doc();activeRoomId=roomRef.id;currentGameType=c.gameType;var init={gameType:currentGameType,player1:c.fromId,p1Name:c.fromName,player2:currentUser.uid,p2Name:currentUser.displayName,status:"playing"};if(currentGameType==="xo"){init.turn=c.fromId;init.board=["","","","","","","","",""];init.winner=null}else if(currentGameType==="tap"){init.p1Clicks=50;init.p2Clicks=50}else if(currentGameType==="rps"){init.p1Move="";init.p2Move="";init.winner=""}else{init.customGame=true}roomRef.set(init).then(function(){ref.update({status:"accepted",roomId:activeRoomId,toName:currentUser.displayName});closeAllModals();enterGameRoom(currentGameType,c.fromName)})}})}
+function rejectChallenge(){if(currentChallengeId) db.collection("challenges").doc(currentChallengeId).update({status:"rejected"});closeAllModals()}
+function closeAllModals(){document.getElementById("modal-overlay").style.display="none";document.getElementById("challenge-modal").classList.remove("show")}
+function enterGameRoom(gt,opp){if(gt==="xo") enterXORoom(opp);else if(gt==="tap") enterTapRoom(opp);else if(gt==="rps") enterRPSRoom(opp);else{db.collection("custom_games").doc(gt).get().then(function(doc){if(doc.exists){var g=doc.data();openCustomGame(doc.id,g.name,'ضد '+opp,g.code,g.prize,activeRoomId)}else{showToast("اللعبة غير موجودة","danger");switchTab('online')}})}}
+function enterXORoom(opp){switchTab("xo");document.getElementById("xo-status-text").innerText='ضد '+opp;if(roomListener) roomListener();roomListener=db.collection("rooms").doc(activeRoomId).onSnapshot(function(doc){var d=doc.data();if(!d||d.gameType!=="xo")return;var myChar=(currentUser.uid===d.player1)?"X":"O",isMyTurn=(d.turn===currentUser.uid);document.getElementById('xo-status-text').innerText=d.winner?(d.winner===currentUser.uid?"🏆 فزت!":(d.winner==="draw"?"تعادل":"خسرت")):(isMyTurn?'دورك ('+myChar+')':"انتظر الخصم");var h="";d.board.forEach(function(cell,i){var cls=cell==="X"?"color:#6366f1":cell==="O"?"color:#ef4444":"";h+='<div class="xo-cell" style="'+cls+'" onclick="playXOMove('+i+','+isMyTurn+',\''+myChar+'\')">'+cell+'</div>'});document.getElementById('xo-board-div').innerHTML=h;if(d.winner){roomListener();if(d.winner===currentUser.uid) db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(20)});setTimeout(function(){switchTab('online')},3000)}})}
+function playXOMove(i,isMyTurn,myChar){if(!isMyTurn) return;db.collection("rooms").doc(activeRoomId).get().then(function(doc){var d=doc.data();if(d.board[i]===""&&!d.winner){d.board[i]=myChar;var nt=(currentUser.uid===d.player1)?d.player2:d.player1;var w=checkXOWinner(d.board);var up={board:d.board,turn:nt};if(w) up.winner=w==="X"?d.player1:(w==="O"?d.player2:"draw");db.collection("rooms").doc(activeRoomId).update(up)}})}
+function checkXOWinner(b){var L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];for(var k=0;k<L.length;k++){var x=L[k][0],y=L[k][1],z=L[k][2];if(b[x]&&b[x]===b[y]&&b[x]===b[z]) return b[x]}return !b.includes("")?"draw":null}
+function enterTapRoom(opp){switchTab("tap");document.getElementById("tap-status-text").innerText='ضد '+opp;document.getElementById("tap-arena").style.display="block";document.getElementById("tap-btn-action").disabled=false;if(roomListener) roomListener();roomListener=db.collection("rooms").doc(activeRoomId).onSnapshot(function(doc){var d=doc.data();if(!d||d.gameType!=="tap")return;var total=d.p1Clicks+d.p2Clicks,p1=(d.p1Clicks/total)*100,p2=(d.p2Clicks/total)*100;var amI=d.player1===currentUser.uid,my=amI?p1:p2,oppP=amI?p2:p1;document.getElementById("tap-my-bar").style.width=my+"%";document.getElementById("tap-my-bar").innerText=Math.round(my)+"%";document.getElementById("tap-opp-bar").style.width=oppP+"%";document.getElementById("tap-opp-bar").innerText=Math.round(oppP)+"%";if(d.p1Clicks>=100||d.p2Clicks>=100){roomListener();document.getElementById("tap-btn-action").disabled=true;var won=(amI&&d.p1Clicks>=100)||(!amI&&d.p2Clicks>=100);document.getElementById("tap-status-text").innerText=won?"فزت!":"خسرت";if(won) db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(15)});setTimeout(function(){db.collection("rooms").doc(activeRoomId).delete();switchTab('online')},3000)}})}
+function sendTapClick(){db.collection("rooms").doc(activeRoomId).get().then(function(doc){var d=doc.data();if(currentUser.uid===d.player1) db.collection("rooms").doc(activeRoomId).update({p1Clicks:d.p1Clicks+2,p2Clicks:Math.max(0,d.p2Clicks-1)});else db.collection("rooms").doc(activeRoomId).update({p2Clicks:d.p2Clicks+2,p1Clicks:Math.max(0,d.p1Clicks-1)})})}
+function enterRPSRoom(opp){switchTab("rps");document.getElementById("rps-status-text").innerText='ضد '+opp;document.getElementById("rps-arena").style.display="block";document.getElementById("rps-result").innerText="";enableRPS(true);if(roomListener) roomListener();roomListener=db.collection("rooms").doc(activeRoomId).onSnapshot(function(doc){var d=doc.data();if(!d||d.gameType!=="rps")return;var amI=d.player1===currentUser.uid,my=amI?d.p1Move:d.p2Move;if(my!==""){document.getElementById("rps-status-text").innerText="تم الإرسال، انتظر الخصم";enableRPS(false)}if(d.p1Move!==""&&d.p2Move!==""){var r=determineRPSWinner(d.p1Move,d.p2Move),txt="";enableRPS(false);if(r==="draw") txt="تعادل!";else if((r==="p1"&&amI)||(r==="p2"&&!amI)){txt="فزت! +10 🥕";db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(10)})}else txt="خسرت!";document.getElementById("rps-result").innerText=txt;roomListener();setTimeout(function(){if(amI) db.collection("rooms").doc(activeRoomId).delete();switchTab('online')},3000)}})}
+function sendRPSMove(m){db.collection("rooms").doc(activeRoomId).get().then(function(doc){var d=doc.data();if(currentUser.uid===d.player1) db.collection("rooms").doc(activeRoomId).update({p1Move:m});else db.collection("rooms").doc(activeRoomId).update({p2Move:m})})}
+function determineRPSWinner(a,b){if(a===b) return "draw";if((a==="rock"&&b==="scissors")||(a==="paper"&&b==="rock")||(a==="scissors"&&b==="paper")) return "p1";return "p2"}
+function enableRPS(s){document.getElementById("rps-rock").disabled=!s;document.getElementById("rps-paper").disabled=!s;document.getElementById("rps-scissors").disabled=!s}
+function exitRoom(){if(roomListener) roomListener();switchTab("online")}
+let spaceCanvas,spaceCtx,spaceInterval=null,playerX=160,bullets=[],enemies=[],spaceScore=0;
+function initSpaceCanvas(){spaceCanvas=document.getElementById('space-canvas');spaceCtx=spaceCanvas.getContext('2d')}
+function startSpaceGame(){if(spaceInterval) clearInterval(spaceInterval);bullets=[];enemies=[];spaceScore=0;document.getElementById('space-score').innerText='0';spaceInterval=setInterval(function(){spaceCtx.fillStyle="#0f172a";spaceCtx.fillRect(0,0,320,200);spaceCtx.fillStyle="#6366f1";spaceCtx.fillRect(playerX,170,26,16);if(Math.random()<0.1) bullets.push({x:playerX+10,y:170});spaceCtx.fillStyle="#22c55e";for(var i=bullets.length-1;i>=0;i--){var b=bullets[i];b.y-=5;spaceCtx.fillRect(b.x,b.y,3,6);if(b.y<0) bullets.splice(i,1)}if(Math.random()<0.04) enemies.push({x:Math.random()*300,y:-10});spaceCtx.fillStyle="#ef4444";for(var i=enemies.length-1;i>=0;i--){var e=enemies[i];e.y+=2;spaceCtx.beginPath();spaceCtx.arc(e.x,e.y,8,0,Math.PI*2);spaceCtx.fill();for(var j=bullets.length-1;j>=0;j--){var b2=bullets[j];if(Math.abs(b2.x-e.x)<10&&Math.abs(b2.y-e.y)<10){bullets.splice(j,1);enemies.splice(i,1);spaceScore+=10;document.getElementById('space-score').innerText=spaceScore;break}}if(e.y>200){enemies.splice(i,1);clearInterval(spaceInterval);spaceInterval=null;if(spaceScore>0) db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(Math.floor(spaceScore/20))});break}}},1000/30)}
+let pvzCanvas,pvzCtx,pvzInterval,pvzSun=150,pvzWave=1,pvzPlants=[],pvzZombies=[],pvzFrame=0;
+function initPVZCanvas(){pvzCanvas=document.getElementById('pvz-canvas');pvzCtx=pvzCanvas.getContext('2d')}
+function startPVZGame(){pvzSun=150;pvzWave=1;pvzPlants=[];pvzZombies=[];pvzFrame=0;if(pvzInterval) clearInterval(pvzInterval);pvzInterval=setInterval(function(){pvzFrame++;pvzCtx.fillStyle='#4a7c23';pvzCtx.fillRect(0,0,320,220);if(pvzFrame%100===0){var r=Math.floor(Math.random()*3);pvzZombies.push({x:320,y:r*60+10,row:r,speed:0.4})}
+pvzCtx.font='24px Arial';pvzZombies.forEach(function(z){pvzCtx.fillText('🧟',z.x,z.y+18);z.x-=z.speed});if(pvzFrame%700===0){pvzWave++;document.getElementById('pvz-wave').innerText=pvzWave;if(pvzWave>3){clearInterval(pvzInterval);db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(25)})}}},1000/30)}
+function buyUpgrade(t,c){if((userProfile.coins||0)>=c){db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(-c)}).then(function(){showToast("تم الشراء","success")})}else showToast("رصيدك لا يكفي","danger")}
 
-// SEND MESSAGE
-function sendMessage(){
-  var input=document.getElementById("messageInput");
+var chatListener=null;
+function listenToChat(){
+  if(chatListener) chatListener();
+  chatListener=db.collection("global_chat").orderBy("timestampNum","desc").limit(50).onSnapshot(function(snap){
+    var msgsDiv=document.getElementById("chat-messages");
+    if(!msgsDiv) return;
+    var messages=[];
+    snap.forEach(function(doc){messages.push(doc.data())});
+    messages.reverse();
+    if(messages.length===0){msgsDiv.innerHTML='<p style="color:#64748b;text-align:center;padding:20px;font-size:.8rem">لا توجد رسائل بعد، كن أول من يرسل!</p>';return}
+    msgsDiv.innerHTML="";
+    messages.forEach(function(m){
+      var isOwn=currentUser && m.userId===currentUser.uid;
+      var div=document.createElement("div");
+      div.className="chat-message"+(isOwn?" own":"");
+      var img=document.createElement("img");
+      img.src=m.photoURL||"https://via.placeholder.com/28";
+      var bubble=document.createElement("div");
+      bubble.className="chat-bubble";
+      var nameSpan=document.createElement("div");
+      nameSpan.style.cssText="font-size:.6rem;font-weight:800;color:#64748b;margin-bottom:2px";
+      nameSpan.innerText=m.userName||"مجهول";
+      var textSpan=document.createElement("div");
+      textSpan.innerText=m.text||"";
+      bubble.appendChild(nameSpan);
+      bubble.appendChild(textSpan);
+      div.appendChild(img);
+      div.appendChild(bubble);
+      msgsDiv.appendChild(div);
+    });
+    msgsDiv.scrollTop=msgsDiv.scrollHeight;
+  }, function(err){
+    console.error("chat error", err);
+    var msgsDiv=document.getElementById("chat-messages");
+    if(msgsDiv) msgsDiv.innerHTML='<p style="color:#ef4444;text-align:center;padding:20px;font-size:.8rem">خطأ في تحميل الشات: '+err.message+'</p>';
+  });
+}
+function sendChatMessage(){
+  var input=document.getElementById("chat-input");
+  if(!input) return;
   var text=input.value.trim();
-  if(!text) return;
-  if(!currentUser) return;
-  var btn=document.getElementById("sendBtn");
-  btn.disabled=true;
-  db.collection("chat_messages").add({
-    channelId:currentChannelId,
+  if(!text){return}
+  if(!currentUser){showToast("سجل دخول أولاً","danger");return}
+  if(text.length>200){showToast("الرسالة طويلة جداً","danger");return}
+  var btn=document.getElementById("chat-send-btn");
+  if(btn){btn.disabled=true;btn.innerText="..."}
+  db.collection("global_chat").add({
     text:text,
     userId:currentUser.uid,
-    userName:currentUser.displayName||"مستخدم",
+    userName:currentUser.displayName||"لاعب",
     photoURL:currentUser.photoURL||"",
     timestamp:firebase.firestore.FieldValue.serverTimestamp(),
     timestampNum:Date.now()
   }).then(function(){
     input.value="";
-    input.style.height="auto";
-    btn.disabled=false;
-    input.focus();
+    if(btn){btn.disabled=false;btn.innerText="إرسال"}
   }).catch(function(e){
-    showToast("فشل الإرسال: "+e.message);
-    btn.disabled=false;
+    console.error(e);
+    showToast("فشل الإرسال: "+e.message,"danger");
+    if(btn){btn.disabled=false;btn.innerText="إرسال"}
   });
 }
 
-document.getElementById("sendBtn").addEventListener("click",sendMessage);
-document.getElementById("messageInput").addEventListener("keydown",function(e){
-  if(e.key==="Enter" && !e.shiftKey){
-    e.preventDefault();
-    sendMessage();
-  }
-});
-document.getElementById("messageInput").addEventListener("input",function(){
-  this.style.height="auto";
-  this.style.height=Math.min(this.scrollHeight,120)+"px";
-});
-
-// ADD CHANNEL
-document.getElementById("addChannelBtn").addEventListener("click",function(){
-  var name=prompt("اسم القناة الجديدة:");
-  if(!name) return;
-  name=name.trim().replace("#","").toLowerCase();
-  if(!name) return;
-  var id=name.replace(/\s+/g,"-");
-  db.collection("chat_channels").doc(id).set({
-    name:name,
-    topic:"قناة جديدة",
-    createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-    createdBy:currentUser.uid
-  }).then(function(){
-    showToast("تم إنشاء قناة #"+name);
-  });
-});
-
-// MEMBERS
-function listenToMembers(){
-  db.collection("users_profile").where("status","==","online").onSnapshot(function(snap){
-    var onlineList=document.getElementById("onlineMembersList");
-    var offlineList=document.getElementById("offlineMembersList");
-    onlineList.innerHTML="";
-    var count=0;
-    snap.forEach(function(doc){
-      if(Date.now()-(doc.data().lastActiveNum||0)>180000) return;
-      count++;
-      var p=doc.data();
-      var item=document.createElement("div");
-      item.className="member-item online";
-      item.innerHTML='<div class="member-avatar"><img src="'+(p.photoURL||"https://via.placeholder.com/40")+'"><div class="member-status"></div></div><div class="member-info"><div class="member-name">'+(p.fullName||"مستخدم")+'</div><div class="member-role">متصل</div></div>';
-      onlineList.appendChild(item);
-    });
-    document.getElementById("onlineCount").innerText="متصل — "+count;
-  });
-}
-
-// Mobile menu
-document.getElementById("mobileMenuBtn").addEventListener("click",function(){
-  document.getElementById("channelsBar").classList.toggle("show");
-});
-document.getElementById("logoutBtn").addEventListener("click",function(){
-  if(confirm("تسجيل خروج؟")){
-    if(currentUser){
-      db.collection("users_profile").doc(currentUser.uid).update({status:"offline"}).then(function(){
-        auth.signOut();
-      });
-    }else{
-      auth.signOut();
-    }
-  }
-});
-
-// Firestore rules reminder
-console.log("Firestore rules needed: allow read, write if request.auth != null for chat_messages, chat_channels, users_profile");
+function switchTab(tab){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});document.querySelectorAll('.nav-item').forEach(function(i){i.classList.remove('active')});document.getElementById('page-'+tab).classList.add('active');var n=document.getElementById('nav-'+tab);if(n) n.classList.add('active')}
 </script>
 </body>
 </html>
