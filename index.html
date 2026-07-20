@@ -144,6 +144,17 @@ function showToast(m,t,ic){t=t||"info";ic=ic||"🔔";const toast=document.getEle
 function toggleProfileMenu(e){e.stopPropagation();document.getElementById('profile-dropdown').classList.toggle('show')}
 document.addEventListener('click',function(){var d=document.getElementById('profile-dropdown');if(d) d.classList.remove('show')});
 function logoutUser(){if(currentUser){db.collection("users_profile").doc(currentUser.uid).update({status:"offline"}).then(function(){auth.signOut().then(function(){location.reload()})})}else{auth.signOut().then(function(){location.reload()})}}
+
+auth.getRedirectResult().then(function(result){
+  if(result && result.user){
+    console.log("logged in via redirect", result.user);
+  }
+}).catch(function(e){
+  console.error("redirect error", e);
+  var err=document.getElementById('loginError');
+  if(err){err.innerText=e.message;err.style.display='block'}
+});
+
 window.login = async function(){
   var btn=document.getElementById('loginBtn');
   var err=document.getElementById('loginError');
@@ -207,7 +218,27 @@ function loadCustomGamesForAdmin(){
  var list=document.getElementById('custom-games-list');list.innerHTML='تحميل...';
  db.collection("custom_games").where("status","==","active").onSnapshot(function(snap){
   if(snap.empty){list.innerHTML='لا يوجد';return}
-  var h='';snap.forEach(function(doc){var g=doc.data();h+='<div class="admin-game-item"><div><b>'+g.name+'</b><br><small>'+g.type+'</small></div><div><button onclick="editGame(''+doc.id+'')" style="background:#f59e0b;color:#fff;border:none;padding:4px 8px;border-radius:6px;margin-left:4px">تعديل</button><button onclick="deleteGame(''+doc.id+'')" style="background:#ef4444;color:#fff;border:none;padding:4px 8px;border-radius:6px">حذف</button></div></div>'});list.innerHTML=h
+  var listEl=document.getElementById('custom-games-list');
+  listEl.innerHTML='';
+  snap.forEach(function(doc){
+    var g=doc.data();
+    var row=document.createElement('div');
+    row.className='admin-game-item';
+    row.innerHTML='<div><b>'+g.name+'</b><br><small>'+g.type+'</small></div>';
+    var btns=document.createElement('div');
+    var editBtn=document.createElement('button');
+    editBtn.innerText='تعديل';
+    editBtn.style.cssText='background:#f59e0b;color:#fff;border:none;padding:4px 8px;border-radius:6px;margin-left:4px';
+    editBtn.onclick=function(){editGame(doc.id)};
+    var delBtn=document.createElement('button');
+    delBtn.innerText='حذف';
+    delBtn.style.cssText='background:#ef4444;color:#fff;border:none;padding:4px 8px;border-radius:6px';
+    delBtn.onclick=function(){deleteGame(doc.id)};
+    btns.appendChild(editBtn);
+    btns.appendChild(delBtn);
+    row.appendChild(btns);
+    listEl.appendChild(row);
+  });
  })
 }
 function editGame(id){db.collection("custom_games").doc(id).get().then(function(doc){if(doc.exists){var g=doc.data();editingGameId=id;document.getElementById('admin-game-name').value=g.name;document.getElementById('admin-game-desc').value=g.desc;document.getElementById('admin-game-image').value=g.image||'';document.getElementById('admin-game-type').value=g.type;document.getElementById('admin-game-prize').value=g.prize;document.getElementById('admin-game-code').value=g.code;document.getElementById('admin-save-btn').innerText='حفظ التعديل';document.getElementById('admin-panel').classList.add('show')}})}
