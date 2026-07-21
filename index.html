@@ -4,288 +4,401 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>منصة GOHN PRO للألعاب والمكافآت 🎮</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient: linear-gradient(180deg, #b0e0f5 0%, #e2f6ff 100%);
-            --panel-bg: rgba(255, 255, 255, 0.45);
-            --panel-border: rgba(255, 255, 255, 0.6);
-            --text-dark: #2d3748;
-            --text-muted: #718096;
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: rgba(17, 24, 39, 0.85);
+            --bg-glass: rgba(255, 255, 255, 0.04);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(99, 102, 241, 0.3);
             
-            --btn-games-bg: #76db41; --btn-games-shadow: #5cae30;
-            --btn-chat-bg: #6366f1; --btn-chat-shadow: #4f46e5;
-            --btn-trade-bg: #f59e0b; --btn-trade-shadow: #d97706;
-            --btn-danger-bg: #ef4444; --btn-danger-shadow: #dc2626;
-            --nav-bg: #2d3748;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --accent-blue: #6366f1;
+            --accent-blue-glow: rgba(99, 102, 241, 0.4);
+            --accent-green: #22c55e;
+            --accent-green-glow: rgba(34, 197, 94, 0.4);
+            --accent-orange: #f59e0b;
+            --accent-orange-glow: rgba(245, 158, 11, 0.4);
+            --accent-red: #ef4444;
+            --accent-red-glow: rgba(239, 68, 68, 0.4);
+            --accent-purple: #a855f7;
+            --accent-cyan: #06b6d4;
+            
+            --btn-games-bg: linear-gradient(135deg, #22c55e, #16a34a);
+            --btn-games-shadow: #15803d;
+            --btn-chat-bg: linear-gradient(135deg, #6366f1, #4f46e5);
+            --btn-chat-shadow: #4338ca;
+            --btn-trade-bg: linear-gradient(135deg, #f59e0b, #d97706);
+            --btn-trade-shadow: #b45309;
+            --btn-danger-bg: linear-gradient(135deg, #ef4444, #dc2626);
+            --btn-danger-shadow: #b91c1c;
+            
+            --radius-sm: 12px;
+            --radius-md: 18px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
             font-family: 'Tajawal', sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text-dark);
+            background: var(--bg-primary);
+            background-image: 
+                radial-gradient(ellipse 80% 60% at 50% -10%, rgba(99, 102, 241, 0.12), transparent),
+                radial-gradient(ellipse 60% 50% at 80% 80%, rgba(168, 85, 247, 0.06), transparent),
+                radial-gradient(ellipse 50% 40% at 10% 90%, rgba(6, 182, 212, 0.06), transparent);
+            color: var(--text-primary);
             min-height: 100vh;
-            padding-bottom: 100px;
+            padding-bottom: 110px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow-x: hidden;
         }
 
+        /* ===== NAVBAR ===== */
         .navbar {
             width: 92%; max-width: 500px;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--panel-border);
-            border-radius: 20px;
-            padding: 10px 15px;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 12px 18px;
             display: flex; justify-content: space-between; align-items: center;
-            margin-top: 15px; z-index: 100;
+            margin-top: 16px; z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.05);
         }
         
-        .brand { font-weight: 900; font-size: 1.1rem; color: #4a5568; }
-        .user-info { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.8); padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); }
-        .user-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
-        .user-name { font-size: 0.8rem; font-weight: 700; color: var(--text-dark); }
+        .brand {
+            font-weight: 900; font-size: 1.15rem;
+            background: linear-gradient(135deg, #818cf8, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+        
+        .user-info {
+            display: flex; align-items: center; gap: 8px;
+            background: var(--bg-glass);
+            padding: 5px 12px 5px 6px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-glass);
+            transition: all 0.2s;
+        }
+        .user-info:hover { border-color: var(--border-glow); }
+        .user-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-blue); }
+        .user-name { font-size: 0.8rem; font-weight: 700; color: var(--text-primary); }
         
         .coin-badge {
-            background: #fff7ed; color: #ea580c; border: 1px solid #ffedd5;
-            padding: 5px 12px; border-radius: 12px; font-weight: 800;
-            display: flex; align-items: center; gap: 4px; font-size: 0.85rem;
-            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+            color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);
+            padding: 6px 14px; border-radius: var(--radius-md); font-weight: 800;
+            display: flex; align-items: center; gap: 5px; font-size: 0.85rem;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.1);
         }
 
+        /* ===== CONTAINER ===== */
         .container { width: 92%; max-width: 500px; margin-top: 20px; flex: 1; }
 
         .main-panel {
-            background: var(--panel-bg);
-            backdrop-filter: blur(20px);
-            border: 2px solid var(--panel-border);
-            border-radius: 35px;
-            padding: 30px 20px;
-            box-shadow: 0 15px 35px rgba(142, 194, 222, 0.3);
+            background: var(--bg-card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-xl);
+            padding: 28px 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
             text-align: center;
             position: relative;
+            overflow: hidden;
+        }
+        .main-panel::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.4), transparent);
         }
 
-        .panel-title { font-size: 1.6rem; font-weight: 900; color: #3182ce; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(255,255,255,0.8); }
+        .panel-title {
+            font-size: 1.6rem; font-weight: 900; margin-bottom: 12px;
+            background: linear-gradient(135deg, #818cf8, #c084fc, #f472b6);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
+        /* ===== BUTTONS ===== */
         .btn-3d {
-            width: 100%; padding: 16px 20px; border: none; border-radius: 18px;
-            font-family: 'Tajawal', sans-serif; font-weight: 800; font-size: 1.05rem;
-            color: white; cursor: pointer; position: relative; transition: all 0.1s ease;
+            width: 100%; padding: 15px 20px; border: none; border-radius: var(--radius-md);
+            font-family: 'Tajawal', sans-serif; font-weight: 800; font-size: 1rem;
+            color: white; cursor: pointer; position: relative; transition: all 0.15s ease;
             display: flex; justify-content: center; align-items: center; gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 14px; letter-spacing: 0.2px;
         }
-        .btn-3d:active { transform: translateY(4px); box-shadow: none; }
-        .btn-games { background: var(--btn-games-bg); box-shadow: 0 5px 0 var(--btn-games-shadow); }
-        .btn-chat { background: var(--btn-chat-bg); box-shadow: 0 5px 0 var(--btn-chat-shadow); }
-        .btn-trade { background: var(--btn-trade-bg); box-shadow: 0 5px 0 var(--btn-trade-shadow); }
-        .btn-danger-3d { background: var(--btn-danger-bg); box-shadow: 0 5px 0 var(--btn-danger-shadow); }
+        .btn-3d:active { transform: translateY(3px); filter: brightness(0.9); }
+        .btn-games { background: var(--btn-games-bg); box-shadow: 0 5px 0 var(--btn-games-shadow), 0 8px 25px var(--accent-green-glow); }
+        .btn-chat { background: var(--btn-chat-bg); box-shadow: 0 5px 0 var(--btn-chat-shadow), 0 8px 25px var(--accent-blue-glow); }
+        .btn-trade { background: var(--btn-trade-bg); box-shadow: 0 5px 0 var(--btn-trade-shadow), 0 8px 25px var(--accent-orange-glow); }
+        .btn-danger-3d { background: var(--btn-danger-bg); box-shadow: 0 5px 0 var(--btn-danger-shadow), 0 8px 25px var(--accent-red-glow); }
         
-        .btn-sm-3d { width: auto; padding: 8px 16px; font-size: 0.85rem; border-radius: 12px; margin-bottom: 0; }
-        .btn-sm-3d.btn-games { box-shadow: 0 3px 0 var(--btn-games-shadow); }
-        .btn-sm-3d.btn-chat { box-shadow: 0 3px 0 var(--btn-chat-shadow); }
-        .btn-sm-3d.btn-danger-3d { box-shadow: 0 3px 0 var(--btn-danger-shadow); }
+        .btn-sm-3d { width: auto; padding: 9px 18px; font-size: 0.82rem; border-radius: var(--radius-sm); margin-bottom: 0; }
+        .btn-sm-3d.btn-games { box-shadow: 0 3px 0 var(--btn-games-shadow), 0 4px 15px var(--accent-green-glow); }
+        .btn-sm-3d.btn-chat { box-shadow: 0 3px 0 var(--btn-chat-shadow), 0 4px 15px var(--accent-blue-glow); }
+        .btn-sm-3d.btn-danger-3d { box-shadow: 0 3px 0 var(--btn-danger-shadow), 0 4px 15px var(--accent-red-glow); }
 
-        .page { display: none; animation: popUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.15); }
+        /* ===== PAGES ===== */
+        .page { display: none; animation: pageIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .page.active { display: block; }
-        @keyframes popUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes pageIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
+        /* ===== BOTTOM NAV ===== */
         .bottom-nav {
-            position: fixed; bottom: 20px; width: 92%; max-width: 450px;
-            background: var(--nav-bg); border-radius: 25px; display: flex;
-            justify-content: space-around; padding: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 90;
+            position: fixed; bottom: 18px; width: 92%; max-width: 420px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg); display: flex;
+            justify-content: space-around; padding: 10px 8px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+            z-index: 90;
         }
         .nav-item {
             display: flex; flex-direction: column; align-items: center;
-            color: #a0aec0; font-size: 0.7rem; font-weight: 700; cursor: pointer;
-            padding: 8px 12px; border-radius: 16px; transition: 0.2s;
+            color: var(--text-muted); font-size: 0.68rem; font-weight: 700; cursor: pointer;
+            padding: 8px 16px; border-radius: var(--radius-md); transition: all 0.25s;
         }
-        .nav-item.active { color: white; background: rgba(255,255,255,0.15); }
+        .nav-item.active { color: white; background: rgba(99, 102, 241, 0.2); box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); }
         .nav-icon { font-size: 1.3rem; margin-bottom: 3px; }
 
-        /* --- النوافذ المنبثقة (مصلحة تماماً في منتصف الشاشة) --- */
+        /* ===== MODALS ===== */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
-            z-index: 299; display: none;
-            animation: fadeIn 0.2s ease;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+            z-index: 299; display: none; animation: fadeIn 0.25s ease;
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         #game-select-modal, #challenge-modal {
-            position: fixed; 
-            top: 50%; 
-            left: 50%; 
+            position: fixed; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 88%; max-width: 380px; 
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(15px); 
-            border-radius: 24px; 
-            padding: 25px 20px; 
-            text-align: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.35); 
-            z-index: 300; 
-            display: none;
-            border: 3px solid var(--btn-games-bg);
+            width: 88%; max-width: 380px;
+            background: var(--bg-secondary);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl); padding: 28px 22px; text-align: center;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px var(--border-glass);
+            z-index: 300; display: none;
+            border: 1px solid var(--border-glow);
         }
         #game-select-modal.show, #challenge-modal.show {
             display: block;
-            animation: modalBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: modalPop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        @keyframes modalBounce { 
-            from { opacity: 0; transform: translate(-50%, -50%) scale(0.7); } 
-            to { opacity: 1; transform: translate(-50%, -50%) scale(1); } 
+        @keyframes modalPop {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
 
+        /* ===== TOAST ===== */
         .toast-notification {
-            position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
-            width: 85%; max-width: 380px; background: white; border-radius: 20px;
-            padding: 15px 20px; display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 350;
-            border-left: 6px solid var(--btn-chat-bg);
-            transform: translate(-50%, -150px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+            position: fixed; top: 24px; left: 50%;
+            transform: translate(-50%, -150px);
+            width: 88%; max-width: 380px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 14px 18px; display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            z-index: 350; opacity: 0;
+            transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+            border-right: 4px solid var(--accent-blue);
         }
         .toast-notification.active { transform: translate(-50%, 0); opacity: 1; }
-        .toast-notification.success { border-left-color: var(--btn-games-bg); }
-        .toast-notification.danger { border-left-color: var(--btn-danger-bg); }
+        .toast-notification.success { border-right-color: var(--accent-green); }
+        .toast-notification.danger { border-right-color: var(--accent-red); }
 
-        /* --- بطاقات الألعاب الأفقية مع الهالة الخضراء --- */
+        /* ===== GAME CARDS ===== */
         .online-games-grid {
-            display: flex;
-            overflow-x: auto;
-            gap: 15px;
-            padding: 10px 5px 20px 5px;
+            display: flex; overflow-x: auto; gap: 14px;
+            padding: 12px 4px 18px 4px;
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
         }
-        .online-games-grid::-webkit-scrollbar { height: 6px; }
-        .online-games-grid::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .online-games-grid::-webkit-scrollbar { height: 4px; }
+        .online-games-grid::-webkit-scrollbar-track { background: transparent; }
+        .online-games-grid::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.3); border-radius: 10px; }
 
         .game-cover-card {
-            min-width: 220px;
-            flex-shrink: 0;
-            scroll-snap-align: center;
-            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.6));
-            border: 3px solid rgba(255,255,255,0.8);
-            border-radius: 20px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 0 rgba(0,0,0,0.05);
-            position: relative;
+            min-width: 200px; flex-shrink: 0; scroll-snap-align: center;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg); padding: 18px 14px;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative; overflow: hidden;
         }
-        .game-cover-card:active { transform: translateY(2px); }
+        .game-cover-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.5), transparent);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .game-cover-card:hover::before { opacity: 1; }
+        .game-cover-card:active { transform: scale(0.97); }
         
-        /* الهالة الخضراء عند اختيار اللعبة */
         .game-cover-card.selected {
-            border-color: var(--btn-games-bg);
-            background: linear-gradient(135deg, rgba(255,255,255,1), rgba(220, 252, 231, 0.8));
-            box-shadow: 
-                0 0 0 3px var(--btn-games-bg),
-                0 0 25px rgba(118, 219, 65, 0.6),
-                0 6px 0 var(--btn-games-shadow);
+            border-color: var(--accent-green);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.03));
+            box-shadow: 0 0 0 2px var(--accent-green), 0 0 30px var(--accent-green-glow), 0 10px 30px rgba(0,0,0,0.3);
             transform: translateY(-4px);
         }
         .game-cover-card.selected::before {
             content: "✓ مختارة";
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background: var(--btn-games-bg);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            font-weight: 900;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            position: absolute; top: 10px; left: 10px;
+            background: var(--accent-green); color: white;
+            padding: 3px 10px; border-radius: 8px;
+            font-size: 0.65rem; font-weight: 900;
+            box-shadow: 0 2px 10px var(--accent-green-glow);
+            height: auto; opacity: 1;
         }
         
         .game-thumb {
-            width: 80px; height: 80px;
-            border-radius: 20px;
+            width: 72px; height: 72px; border-radius: var(--radius-md);
             display: flex; align-items: center; justify-content: center;
-            font-size: 2.5rem;
-            margin-bottom: 12px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            font-size: 2rem; margin-bottom: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            position: relative;
         }
-        .thumb-xo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
-        .thumb-tap { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .thumb-rps { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .thumb-xo { background: linear-gradient(135deg, #6366f1, #4f46e5); box-shadow: 0 8px 20px var(--accent-blue-glow); }
+        .thumb-tap { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 20px var(--accent-orange-glow); }
+        .thumb-rps { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 8px 20px var(--accent-red-glow); }
 
-        .game-info h4 { font-size: 1.05rem; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; }
-        .game-info p { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; }
-        .game-prize { 
-            display: inline-block; background: #fff7ed; color: #ea580c; 
-            padding: 4px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 800;
-            border: 1px solid #ffedd5;
+        .game-info h4 { font-size: 0.95rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; }
+        .game-info p { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 8px; }
+        .game-prize {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+            color: #fbbf24; padding: 4px 12px; border-radius: 8px;
+            font-size: 0.7rem; font-weight: 800;
+            border: 1px solid rgba(245, 158, 11, 0.25);
         }
 
-        /* --- ستايل لعبة إكس أو --- */
+        /* ===== XO GAME ===== */
         .xo-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 280px; margin: 0 auto 20px auto; }
         .xo-cell {
-            background: rgba(255, 255, 255, 0.7); border: 2px solid rgba(255,255,255,0.8);
-            height: 80px; border-radius: 16px; display: flex; justify-content: center; align-items: center;
-            font-size: 2.5rem; font-weight: 900; cursor: pointer; transition: 0.2s;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            height: 82px; border-radius: var(--radius-md);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2.2rem; font-weight: 900; cursor: pointer;
+            transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
-        .xo-cell:active { transform: translateY(3px); box-shadow: none; }
-        .xo-x { color: #6366f1; }
-        .xo-o { color: #ef4444; }
+        .xo-cell:hover { border-color: var(--border-glow); background: rgba(99, 102, 241, 0.08); }
+        .xo-cell:active { transform: scale(0.93); }
+        .xo-x { color: #818cf8; text-shadow: 0 0 15px var(--accent-blue-glow); }
+        .xo-o { color: #f87171; text-shadow: 0 0 15px var(--accent-red-glow); }
 
-        /* --- ستايل لعبة حرب السرعة --- */
+        /* ===== TAP GAME ===== */
         .tap-arena { text-align: center; margin-top: 20px; }
-        .tap-bar-container { width: 100%; height: 30px; background: #e2e8f0; border-radius: 15px; overflow: hidden; margin: 20px 0; display: flex; border: 2px solid white; }
-        .tap-progress { height: 100%; transition: width 0.1s ease; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 0.8rem; }
-        .tap-btn { font-size: 1.5rem; padding: 20px; border-radius: 50%; width: 120px; height: 120px; margin: 0 auto; }
-
-        /* --- ستايل لعبة حجر ورقة مقص --- */
-        .rps-arena { text-align: center; margin-top: 20px; }
-        .rps-choices { display: flex; justify-content: center; gap: 15px; margin: 25px 0; }
-        .rps-btn {
-            font-size: 2.5rem; background: white; border: 3px solid rgba(0,0,0,0.08);
-            width: 85px; height: 85px; border-radius: 50%; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 5px 0 rgba(0,0,0,0.1);
+        .tap-bar-container {
+            width: 100%; height: 34px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 17px; overflow: hidden; margin: 20px 0;
+            display: flex; border: 1px solid var(--border-glass);
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
         }
-        .rps-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 rgba(0,0,0,0.1); }
-        .rps-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .rps-result { font-size: 1.2rem; font-weight: 900; min-height: 40px; margin-top: 15px; }
+        .tap-progress {
+            height: 100%; transition: width 0.15s ease;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 800; font-size: 0.75rem;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        .tap-btn { font-size: 1.3rem; padding: 20px; border-radius: 50%; width: 110px; height: 110px; margin: 0 auto; }
 
+        /* ===== RPS GAME ===== */
+        .rps-arena { text-align: center; margin-top: 20px; }
+        .rps-choices { display: flex; justify-content: center; gap: 14px; margin: 22px 0; }
+        .rps-btn {
+            font-size: 2.2rem;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            width: 80px; height: 80px; border-radius: 50%; cursor: pointer;
+            transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .rps-btn:hover { border-color: var(--border-glow); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+        .rps-btn:active { transform: translateY(2px) scale(0.95); }
+        .rps-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+        .rps-result { font-size: 1.15rem; font-weight: 900; min-height: 40px; margin-top: 15px; color: var(--text-primary); }
+
+        /* ===== PLAYERS LIST ===== */
         .player-item {
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255,255,255,0.6); padding: 12px; border-radius: 18px; margin-bottom: 10px;
-            border: 1px solid rgba(255,255,255,0.5);
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            padding: 12px 14px; border-radius: var(--radius-md); margin-bottom: 10px;
+            transition: all 0.2s;
         }
+        .player-item:hover { border-color: var(--border-glow); background: rgba(99, 102, 241, 0.05); }
         .player-info { display: flex; align-items: center; gap: 10px; }
-        .player-avatar-list { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
-        .status-dot { width: 8px; height: 8px; background: var(--btn-games-bg); border-radius: 50%; display: inline-block; margin-left: 5px; }
+        .player-avatar-list { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-blue); }
+        .status-dot { width: 7px; height: 7px; background: var(--accent-green); border-radius: 50%; display: inline-block; margin-left: 5px; box-shadow: 0 0 8px var(--accent-green-glow); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
+        /* ===== REWARDS ===== */
         .reward-item {
-            background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.6);
-            border-radius: 18px; padding: 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
-            text-align: right;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md); padding: 16px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px; text-align: right; transition: all 0.2s;
         }
+        .reward-item:hover { border-color: var(--border-glow); }
 
+        /* ===== SELECTION HINT ===== */
         .selection-hint {
-            background: rgba(118, 219, 65, 0.15);
-            border: 2px dashed var(--btn-games-bg);
-            color: var(--btn-games-shadow);
-            padding: 10px;
-            border-radius: 14px;
-            margin-bottom: 15px;
-            font-size: 0.85rem;
-            font-weight: 700;
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px dashed rgba(34, 197, 94, 0.4);
+            color: var(--accent-green);
+            padding: 12px; border-radius: var(--radius-md);
+            margin-bottom: 15px; font-size: 0.82rem; font-weight: 700;
             display: none;
         }
-        .selection-hint.show { display: block; animation: popUp 0.3s ease; }
+        .selection-hint.show { display: block; animation: pageIn 0.3s ease; }
+
+        /* ===== SECTION TITLES ===== */
+        .section-title {
+            color: var(--text-primary); margin-bottom: 6px; font-weight: 800;
+            font-size: 1rem; display: flex; align-items: center; gap: 8px;
+        }
+        .section-subtitle { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 16px; }
+
+        /* ===== SPACE CANVAS ===== */
+        #space-canvas {
+            background: linear-gradient(180deg, #0a0e1a, #1a1a2e);
+            border-radius: var(--radius-lg);
+            max-width: 100%;
+            border: 1px solid var(--border-glass);
+            margin-bottom: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 0 60px rgba(99, 102, 241, 0.03);
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.3); border-radius: 10px; }
+
+        /* ===== MISC ===== */
+        .glass-divider {
+            height: 1px; border: none;
+            background: linear-gradient(90deg, transparent, var(--border-glass), transparent);
+            margin: 18px 0;
+        }
     </style>
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -295,19 +408,18 @@
 <body>
 
     <div id="custom-toast" class="toast-notification">
-        <span id="toast-icon" style="font-size: 1.5rem;">🔔</span>
-        <div style="flex: 1;"><p id="toast-message" style="font-size: 0.9rem; font-weight: 700; color: var(--text-dark);"></p></div>
+        <span id="toast-icon" style="font-size: 1.4rem;">🔔</span>
+        <div style="flex: 1;"><p id="toast-message" style="font-size: 0.88rem; font-weight: 700; color: var(--text-primary);"></p></div>
     </div>
 
     <div id="modal-overlay" class="modal-overlay" onclick="closeAllModals()"></div>
 
-    <!-- نافذة استقبال التحدي -->
     <div id="challenge-modal">
-        <div style="font-size: 2.5rem; margin-bottom: 10px;">🔥</div>
-        <h3 style="margin-bottom: 6px; font-weight:800;">تحدي مواجهة حية!</h3>
-        <p id="challenge-text" style="color: var(--text-muted); margin-bottom: 18px; font-size: 0.95rem; font-weight: 700;">...</p>
+        <div style="font-size: 2.8rem; margin-bottom: 12px;">⚔️</div>
+        <h3 style="margin-bottom: 8px; font-weight: 900; color: var(--text-primary); font-size: 1.2rem;">تحدي مواجهة حية!</h3>
+        <p id="challenge-text" style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.92rem; font-weight: 700;">...</p>
         <div style="display: flex; gap: 10px;">
-            <button class="btn-3d btn-games btn-sm-3d" style="flex:1" onclick="acceptChallenge()">قبول التحدي</button>
+            <button class="btn-3d btn-games btn-sm-3d" style="flex:1" onclick="acceptChallenge()">قبول ⚡</button>
             <button class="btn-3d btn-danger-3d btn-sm-3d" style="flex:1" onclick="rejectChallenge()">رفض</button>
         </div>
     </div>
@@ -323,28 +435,31 @@
 
     <div class="container">
         <div class="main-panel" id="view-auth">
-            <h2 class="panel-title">🪴 مرحباً بك في المنصة</h2>
-            <p style="color:var(--text-muted); margin-bottom:25px; font-size:0.95rem; line-height:1.6;">سجل دخولك، نافس أصدقائك، واجمع الجزر 🥕 لترقية حسابك!</p>
-            <button class="btn-3d btn-chat" onclick="login()">تسجيل الدخول السريع بجوجل 🚀</button>
+            <div style="font-size: 3rem; margin-bottom: 12px;">🎮</div>
+            <h2 class="panel-title">مرحباً بك في المنصة</h2>
+            <p style="color:var(--text-secondary); margin-bottom:28px; font-size:0.92rem; line-height:1.7;">سجل دخولك، نافس أصدقائك، واجمع الجزر 🥕 لترقية حسابك!</p>
+            <button class="btn-3d btn-chat" onclick="login()">تسجيل الدخول بجوجل 🚀</button>
         </div>
 
         <div id="view-main" style="display:none;">
             <div class="main-panel">
                 
                 <div id="page-games" class="page active">
-                    <h3 style="color:#2b6cb0; margin-bottom:5px; font-weight:800;">🌌 معركة الفضاء</h3>
-                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">دمر الكويكبات واجمع الجزر!</p>
-                    <canvas id="space-canvas" width="400" height="280" style="background: #0f172a; border-radius: 20px; max-width: 100%; border: 2px solid rgba(255,255,255,0.5); margin-bottom: 15px;"></canvas>
+                    <h3 class="section-title" style="justify-content:center;">🌌 معركة الفضاء</h3>
+                    <p class="section-subtitle">دمر الكويكبات واجمع الجزر!</p>
+                    <canvas id="space-canvas" width="400" height="280"></canvas>
                     <button class="btn-3d btn-games" onclick="startSpaceGame()">ابدأ المعركة 🕹️</button>
                 </div>
 
                 <div id="page-online" class="page">
-                    <h3 style="color:#2b6cb0; margin-bottom:5px; font-weight:800; text-align:right;">🟢 الأبطال المتصلين</h3>
-                    <div id="active-players-list" style="max-height: 150px; overflow-y: auto; padding: 5px; margin-bottom: 20px;">
+                    <h3 class="section-title" style="text-align:right;">🟢 الأبطال المتصلين</h3>
+                    <div id="active-players-list" style="max-height: 160px; overflow-y: auto; padding: 5px 0; margin-bottom: 20px;">
                         <p style="color:var(--text-muted); font-size:0.85rem;">جاري البحث...</p>
                     </div>
 
-                    <h3 style="color:#2b6cb0; margin-bottom:10px; font-weight:800; text-align: right;">🎮 1️⃣ اختر لعبة للتحدي</h3>
+                    <hr class="glass-divider">
+
+                    <h3 class="section-title" style="text-align: right; margin-top: 16px;">🎮 اختر لعبة للتحدي</h3>
                     
                     <div class="online-games-grid">
                         <div class="game-cover-card" data-game="xo" onclick="selectGame('xo')">
@@ -352,7 +467,7 @@
                             <div class="game-info">
                                 <h4>إكس أو كلاسيك</h4>
                                 <p>اللعبة الأيقونية</p>
-                                <span class="game-prize">جائزة: 20 🥕</span>
+                                <span class="game-prize">20 🥕</span>
                             </div>
                         </div>
 
@@ -361,7 +476,7 @@
                             <div class="game-info">
                                 <h4>حرب السرعة</h4>
                                 <p>اضغط أسرع!</p>
-                                <span class="game-prize">جائزة: 15 🥕</span>
+                                <span class="game-prize">15 🥕</span>
                             </div>
                         </div>
 
@@ -370,29 +485,26 @@
                             <div class="game-info">
                                 <h4>حجر ورقة مقص</h4>
                                 <p>استراتيجية سريعة</p>
-                                <span class="game-prize">جائزة: 10 🥕</span>
+                                <span class="game-prize">10 🥕</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- تلميح يظهر بعد اختيار اللعبة -->
                     <div id="selection-hint" class="selection-hint">
-                        ✅ تم اختيار اللعبة! الآن اضغط "تحدي ⚔️" بجانب اسم لاعب في القائمة في الأعلى.
+                        ✅ تم اختيار اللعبة! الآن اضغط "تحدي ⚔️" بجانب اسم لاعب في القائمة بالأعلى.
                     </div>
                 </div>
 
-                <!-- صفحة إكس أو -->
                 <div id="page-xo" class="page">
-                    <h3 style="color:var(--btn-chat-bg); margin-bottom:5px; font-weight:900;">❌ إكس أو أونلاين ⭕</h3>
-                    <p id="xo-status-text" style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">جاري التجهيز...</p>
+                    <h3 class="section-title" style="justify-content:center; color: #818cf8;">❌ إكس أو أونلاين ⭕</h3>
+                    <p id="xo-status-text" style="color:var(--text-secondary); margin-bottom:18px; font-weight:700; font-size: 0.9rem;">جاري التجهيز...</p>
                     <div class="xo-board" id="xo-board-div"></div>
-                    <button class="btn-3d btn-danger-3d" onclick="exitRoom()">انسحاب</button>
+                    <button class="btn-3d btn-danger-3d" onclick="exitRoom()">انسحاب 🚪</button>
                 </div>
 
-                <!-- صفحة حرب السرعة -->
                 <div id="page-tap" class="page">
-                    <h3 style="color:var(--btn-trade-bg); margin-bottom:5px; font-weight:900;">⚡ حرب السرعة ⚡</h3>
-                    <p id="tap-status-text" style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">جاري التجهيز...</p>
+                    <h3 class="section-title" style="justify-content:center; color: #fbbf24;">⚡ حرب السرعة ⚡</h3>
+                    <p id="tap-status-text" style="color:var(--text-secondary); margin-bottom:15px; font-weight:700; font-size: 0.9rem;">جاري التجهيز...</p>
                     <div class="tap-arena" id="tap-arena" style="display:none;">
                         <div class="tap-bar-container">
                             <div id="tap-my-bar" class="tap-progress" style="background: var(--btn-games-bg); width: 50%;">أنت 50%</div>
@@ -400,13 +512,12 @@
                         </div>
                         <button class="btn-3d btn-trade tap-btn" id="tap-btn-action" onclick="sendTapClick()" disabled>اضغط!</button>
                     </div>
-                    <button class="btn-3d btn-danger-3d" style="margin-top:20px;" onclick="exitRoom()">انسحاب</button>
+                    <button class="btn-3d btn-danger-3d" style="margin-top:20px;" onclick="exitRoom()">انسحاب 🚪</button>
                 </div>
 
-                <!-- صفحة حجر ورقة مقص -->
                 <div id="page-rps" class="page">
-                    <h3 style="color:var(--btn-danger-bg); margin-bottom:5px; font-weight:900;">✊ حجر ورقة مقص ✌️</h3>
-                    <p id="rps-status-text" style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">جاري التجهيز...</p>
+                    <h3 class="section-title" style="justify-content:center; color: #f87171;">✊ حجر ورقة مقص ✌️</h3>
+                    <p id="rps-status-text" style="color:var(--text-secondary); margin-bottom:15px; font-weight:700; font-size: 0.9rem;">جاري التجهيز...</p>
                     <div class="rps-arena" id="rps-arena" style="display:none;">
                         <div class="rps-choices">
                             <button class="rps-btn" id="rps-rock" onclick="sendRPSMove('rock')">✊</button>
@@ -415,23 +526,23 @@
                         </div>
                         <div id="rps-result" class="rps-result"></div>
                     </div>
-                    <button class="btn-3d btn-danger-3d" style="margin-top:20px;" onclick="exitRoom()">انسحاب</button>
+                    <button class="btn-3d btn-danger-3d" style="margin-top:20px;" onclick="exitRoom()">انسحاب 🚪</button>
                 </div>
 
                 <div id="page-rewards" class="page">
-                    <h3 style="color:#2b6cb0; margin-bottom:15px; font-weight:800;">🛒 متجر ترقيات الألعاب</h3>
-                    <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:15px;">استخدم جزرك 🥕 للحصول على مزايا حصرية!</p>
+                    <h3 class="section-title" style="justify-content:center;">🛒 متجر الترقيات</h3>
+                    <p class="section-subtitle">استخدم جزرك 🥕 للحصول على مزايا حصرية!</p>
                     
                     <div class="reward-item">
-                        <div><strong>👑 لقب "أسطورة" في البروفايل</strong><br><small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 500 🥕</small></div>
+                        <div><strong style="color: var(--text-primary);">👑 لقب "أسطورة"</strong><br><small style="color:#fbbf24; font-weight:700;">500 🥕</small></div>
                         <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('legend_title', 500)">شراء</button>
                     </div>
                     <div class="reward-item">
-                        <div><strong>🖼️ إطار صورة ذهبي مميز</strong><br><small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 300 🥕</small></div>
+                        <div><strong style="color: var(--text-primary);">🖼️ إطار ذهبي مميز</strong><br><small style="color:#fbbf24; font-weight:700;">300 🥕</small></div>
                         <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('gold_frame', 300)">شراء</button>
                     </div>
                     <div class="reward-item">
-                        <div><strong>🍀 حظ أوفر (مضاعف جزر x2)</strong><br><small style="color:var(--btn-trade-bg); font-weight:700;">التكلفة: 200 🥕</small></div>
+                        <div><strong style="color: var(--text-primary);">🍀 مضاعف جزر x2</strong><br><small style="color:#fbbf24; font-weight:700;">200 🥕</small></div>
                         <button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('luck_boost', 200)">شراء</button>
                     </div>
                 </div>
@@ -461,7 +572,7 @@
         let currentUser = null, userProfile = { coins: 0 };
         let activeRoomId = null, currentGameType = "";
         let roomListener = null, currentChallengeId = null;
-        let selectedGame = null; // اللعبة المختارة حالياً
+        let selectedGame = null;
 
         function showToast(message, type = "info", icon = "🔔") {
             const toast = document.getElementById("custom-toast");
@@ -518,18 +629,17 @@
                         html += `<div class="player-item">
                             <div class="player-info">
                                 <img src="${pData.photoURL}" class="player-avatar-list">
-                                <div><div style="font-weight:800; font-size:0.9rem;">${pData.fullName}</div>
-                                <div style="font-size:0.75rem; color:var(--btn-games-bg);"><span class="status-dot"></span>متصل</div></div>
+                                <div><div style="font-weight:800; font-size:0.88rem; color: var(--text-primary);">${pData.fullName}</div>
+                                <div style="font-size:0.72rem; color:var(--accent-green);"><span class="status-dot"></span>متصل</div></div>
                             </div>
                             <button class="btn-3d btn-games btn-sm-3d" onclick="sendChallengeTo('${doc.id}', '${pData.fullName}')">تحدي ⚔️</button>
                         </div>`;
                     }
                 });
-                document.getElementById("active-players-list").innerHTML = html || '<p style="color:var(--text-muted); font-size:0.85rem; padding:15px;">لا يوجد متصلين حالياً</p>';
+                document.getElementById("active-players-list").innerHTML = html || '<p style="color:var(--text-muted); font-size:0.85rem; padding:15px; text-align:center;">لا يوجد متصلين حالياً 😴</p>';
             });
         }
 
-        // --- اختيار اللعبة (الهالة الخضراء) ---
         function selectGame(gameType) {
             selectedGame = gameType;
             document.querySelectorAll('.game-cover-card').forEach(card => {
@@ -542,7 +652,6 @@
             showToast(`تم اختيار: ${gameName}. الآن اضغط "تحدي" بجانب اسم لاعب!`, "success", "✅");
         }
 
-        // --- إرسال التحدي باللعبة المختارة ---
         function sendChallengeTo(targetId, targetName) {
             if(!selectedGame) {
                 showToast("⚠️ يجب اختيار لعبة أولاً من البطاقات في الأسفل!", "danger", "❌");
@@ -563,7 +672,6 @@
             });
         }
 
-        // --- استقبال التحديات ---
         function listenToChallenges() {
             db.collection("challenges").where("toId", "==", currentUser.uid).onSnapshot(snapshot => {
                 snapshot.docChanges().forEach(change => {
@@ -646,14 +754,12 @@
             document.getElementById("challenge-modal").classList.remove("show");
         }
 
-        // --- توجيه اللاعب للغرفة الصحيحة ---
         function enterGameRoom(gameType, oppName) {
             if(gameType === "xo") enterXORoom(oppName);
             else if(gameType === "tap") enterTapRoom(oppName);
             else if(gameType === "rps") enterRPSRoom(oppName);
         }
 
-        // --- لعبة إكس أو ---
         function enterXORoom(oppName) {
             switchTab("xo");
             document.getElementById("xo-status-text").innerText = `ضد: ${oppName}`;
@@ -704,7 +810,6 @@
             return !b.includes("") ? "draw" : null;
         }
 
-        // --- لعبة حرب السرعة ---
         function enterTapRoom(oppName) {
             switchTab("tap");
             document.getElementById("tap-status-text").innerText = `ضد: ${oppName}`;
@@ -750,7 +855,6 @@
             });
         }
 
-        // --- لعبة حجر ورقة مقص (مفعل بالكامل) ---
         function enterRPSRoom(oppName) {
             switchTab("rps");
             document.getElementById("rps-status-text").innerText = `ضد: ${oppName}`;
@@ -826,7 +930,6 @@
             switchTab("online"); 
         }
 
-        // --- متجر الترقيات ---
         function buyUpgrade(upgradeType, cost) {
             if((userProfile.coins || 0) >= cost) {
                 let updateData = { coins: firebase.firestore.FieldValue.increment(-cost) };
@@ -843,7 +946,6 @@
             }
         }
 
-        // --- لعبة الفضاء ---
         let canvas = document.getElementById('space-canvas'), ctx = canvas.getContext('2d');
         let spaceInterval = null, playerX = 185, bullets = [], enemies = [], spaceScore = 0, stars = [];
         for(let i=0; i<30; i++) stars.push({x: Math.random()*400, y: Math.random()*280, size: Math.random()*2, speed: Math.random()*1+0.5});
@@ -854,13 +956,14 @@
             if(spaceInterval) clearInterval(spaceInterval);
             bullets = []; enemies = []; spaceScore = 0;
             spaceInterval = setInterval(() => {
-                ctx.fillStyle = "#0f172a"; ctx.fillRect(0,0,400,280);
-                ctx.fillStyle = "white"; stars.forEach(s => { s.y += s.speed; if(s.y > 280) s.y = 0; ctx.fillRect(s.x, s.y, s.size, s.size); });
-                ctx.fillStyle = "#6366f1"; ctx.beginPath(); ctx.moveTo(playerX + 15, 230); ctx.lineTo(playerX + 30, 260); ctx.lineTo(playerX, 260); ctx.fill();
+                ctx.fillStyle = "#0a0e1a"; ctx.fillRect(0,0,400,280);
+                ctx.fillStyle = "rgba(255,255,255,0.7)"; stars.forEach(s => { s.y += s.speed; if(s.y > 280) s.y = 0; ctx.fillRect(s.x, s.y, s.size, s.size); });
+                ctx.fillStyle = "#818cf8"; ctx.beginPath(); ctx.moveTo(playerX + 15, 230); ctx.lineTo(playerX + 30, 260); ctx.lineTo(playerX, 260); ctx.fill();
+                ctx.shadowBlur = 10; ctx.shadowColor = "#818cf8"; ctx.fill(); ctx.shadowBlur = 0;
                 if(Math.random() < 0.08) bullets.push({x: playerX + 13, y: 230});
-                ctx.fillStyle = "#76db41"; bullets.forEach((b, bi) => { b.y -= 6; ctx.fillRect(b.x, b.y, 4, 10); if(b.y < 0) bullets.splice(bi, 1); });
+                ctx.fillStyle = "#22c55e"; ctx.shadowBlur = 6; ctx.shadowColor = "#22c55e"; bullets.forEach((b, bi) => { b.y -= 6; ctx.fillRect(b.x, b.y, 4, 10); if(b.y < 0) bullets.splice(bi, 1); }); ctx.shadowBlur = 0;
                 if(Math.random() < 0.04) enemies.push({x: Math.random()*380, y: -10, size: 16});
-                ctx.fillStyle = "#ef4444"; enemies.forEach((en, ei) => {
+                ctx.fillStyle = "#ef4444"; ctx.shadowBlur = 8; ctx.shadowColor = "#ef4444"; enemies.forEach((en, ei) => {
                     en.y += 2.2; ctx.beginPath(); ctx.arc(en.x, en.y, en.size/2, 0, Math.PI*2); ctx.fill();
                     bullets.forEach((b, bi) => { if(b.x > en.x - 10 && b.x < en.x + 10 && b.y > en.y - 10 && b.y < en.y + 10) { enemies.splice(ei, 1); bullets.splice(bi, 1); spaceScore += 10; } });
                     if(en.y > 280 || (Math.abs(en.x - (playerX+15)) < 15 && en.y > 230)) {
@@ -873,8 +976,8 @@
                             showToast(`💥 انتهت المعركة! ربحت ${reward} 🥕`, "success", "🥕");
                         }
                     }
-                });
-                ctx.fillStyle = "#fff"; ctx.font = "bold 13px Tajawal"; ctx.fillText("النقاط: " + spaceScore, 15, 25);
+                }); ctx.shadowBlur = 0;
+                ctx.fillStyle = "#f1f5f9"; ctx.font = "bold 13px Tajawal"; ctx.fillText("النقاط: " + spaceScore, 15, 25);
             }, 1000/35);
         }
 
