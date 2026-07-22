@@ -1,838 +1,695 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة GOHN PRO للألعاب والمكافآت 🎮</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-gradient: linear-gradient(180deg, #b0e0f5 0%, #e2f6ff 100%);
-            --panel-bg: rgba(255, 255, 255, 0.45);
-            --panel-border: rgba(255, 255, 255, 0.6);
-            --text-dark: #2d3748;
-            --text-muted: #718096;
-            --btn-games-bg: #76db41; --btn-games-shadow: #5cae30;
-            --btn-chat-bg: #6366f1; --btn-chat-shadow: #4f46e5;
-            --btn-trade-bg: #f59e0b; --btn-trade-shadow: #d97706;
-            --btn-danger-bg: #ef4444; --btn-danger-shadow: #dc2626;
-            --nav-bg: #2d3748;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text-dark);
-            min-height: 100vh;
-            padding-bottom: 100px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .navbar {
-            width: 92%; max-width: 500px;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--panel-border);
-            border-radius: 20px;
-            padding: 10px 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 15px; z-index: 100;
-        }
-        .brand { font-weight: 900; font-size: 1.1rem; color: #4a5568; }
-        .user-info { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.8); padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); }
-        .user-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
-        .user-name { font-size: 0.8rem; font-weight: 700; color: var(--text-dark); }
-        .coin-badge {
-            background: #fff7ed; color: #ea580c; border: 1px solid #ffedd5;
-            padding: 5px 12px; border-radius: 12px; font-weight: 800;
-            display: flex; align-items: center; gap: 4px; font-size: 0.85rem;
-            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1); transition: all 0.3s;
-        }
-        .coin-badge.multiplier-active { animation: multGlow 1s infinite alternate; border-color: #f59e0b; }
-        @keyframes multGlow { from { box-shadow: 0 0 5px #f59e0b, inset 0 -2px 0 rgba(0,0,0,0.1); } to { box-shadow: 0 0 22px #f59e0b, 0 0 32px #f59e0b, inset 0 -2px 0 rgba(0,0,0,0.1); } }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connect 4 - لعبة الأربعة</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+    font-family: 'Tajawal', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    color: white;
+    overflow-x: hidden;
+}
+.header {
+    text-align: center;
+    margin-bottom: 15px;
+    width: 100%;
+    max-width: 500px;
+}
+.header h1 {
+    font-size: 1.8rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 5px;
+}
+.header p { font-size: 0.85rem; opacity: 0.8; }
 
-        /* شريط الأدمن متصل */
-        .admin-online-badge {
-            width: 92%; max-width: 500px; margin-top: 8px;
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: #fff; border-radius: 14px; padding: 7px 14px;
-            font-weight: 800; font-size: 0.8rem;
-            display: none; align-items: center; justify-content: center; gap: 6px;
-            box-shadow: 0 6px 16px rgba(245,158,11,0.4);
-            animation: pulseBadge 1.6s infinite;
-        }
-        @keyframes pulseBadge { 0%,100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+.controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 500px;
+}
+.mode-btn, .diff-btn {
+    padding: 8px 14px;
+    border: 2px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+.mode-btn.active, .diff-btn.active {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    border-color: #fbbf24;
+    color: #1e3c72;
+}
+.mode-btn:hover, .diff-btn:hover { transform: translateY(-2px); }
 
-        .admin-menu-btn {
-            position: absolute; top: 14px; left: 10px; font-size: 1.3rem; cursor: pointer;
-            padding: 6px 10px; border-radius: 10px; background: rgba(99,102,241,0.1);
-            display: none; color: var(--btn-chat-bg);
-        }
-        .admin-menu-btn.show { display: block; }
-        .admin-panel {
-            position: fixed; top: 0; right: -360px; width: 340px; max-width: 90%; height: 100vh;
-            background: #fff; box-shadow: -10px 0 30px rgba(0,0,0,0.15); z-index: 1000;
-            transition: right 0.3s; padding: 16px; overflow-y: auto;
-        }
-        .admin-panel.show { right: 0; }
-        .admin-panel h3 { margin-bottom: 16px; color: var(--btn-chat-bg); font-weight: 900; }
-        .admin-section-title { font-size: 0.85rem; font-weight: 900; color: var(--btn-trade-bg); margin: 16px 0 8px; padding-top: 12px; border-top: 2px dashed #e2e8f0; }
-        .admin-section-title:first-of-type { border-top: none; padding-top: 0; }
-        .admin-form-group { margin-bottom: 10px; }
-        .admin-form-group label { display: block; margin-bottom: 4px; font-weight: 800; font-size: 0.8rem; }
-        .admin-form-group input, .admin-form-group select, .admin-form-group textarea {
-            width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 8px;
-            font-family: 'Tajawal'; font-size: 0.85rem;
-        }
-        .admin-form-group textarea { resize: vertical; min-height: 90px; }
-        .admin-btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-        .admin-mini-btn {
-            padding: 9px 6px; border: none; border-radius: 10px; cursor: pointer;
-            font-family: 'Tajawal'; font-weight: 800; font-size: 0.78rem; color: #fff;
-            box-shadow: 0 3px 0 rgba(0,0,0,0.15); transition: all 0.1s;
-        }
-        .admin-mini-btn:active { transform: translateY(3px); box-shadow: none; }
-        .amb-rain { background: linear-gradient(135deg,#f59e0b,#d97706); }
-        .amb-mult { background: linear-gradient(135deg,#a855f7,#7c3aed); }
-        .amb-announce { background: linear-gradient(135deg,#3b82f6,#1d4ed8); }
-        .amb-random { background: linear-gradient(135deg,#ec4899,#be185d); }
-        .amb-give { background: linear-gradient(135deg,#22c55e,#16a34a); }
-        .amb-take { background: linear-gradient(135deg,#ef4444,#b91c1c); }
-        .amb-set { background: linear-gradient(135deg,#06b6d4,#0891b2); }
-        .amb-grant { background: linear-gradient(135deg,#f59e0b,#b45309); }
-        .amb-whisper { background: linear-gradient(135deg,#6366f1,#4338ca); }
-        .amb-kick { background: linear-gradient(135deg,#64748b,#334155); }
-        .admin-game-list { margin-top: 16px; border-top: 2px dashed #e2e8f0; padding-top: 14px; }
-        .admin-game-item {
-            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px;
-            margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem;
-        }
-        .admin-game-item .game-name { font-weight: 800; }
-        .admin-game-item .game-type { font-size: 0.72rem; color: var(--text-muted); }
-        .delete-btn { background: var(--btn-danger-bg); color: #fff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 0.8rem; box-shadow: 0 3px 0 var(--btn-danger-shadow); }
+.scoreboard {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+    max-width: 500px;
+}
+.score-box {
+    flex: 1;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    border: 2px solid transparent;
+    transition: all 0.3s;
+}
+.score-box.active-red { border-color: #ef4444; box-shadow: 0 0 20px rgba(239,68,68,0.5); }
+.score-box.active-yellow { border-color: #fbbf24; box-shadow: 0 0 20px rgba(251,191,36,0.5); }
+.score-label { font-size: 0.75rem; opacity: 0.8; margin-bottom: 4px; }
+.score-value { font-size: 1.5rem; font-weight: 900; }
+.red-dot, .yellow-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    display: inline-block; margin-left: 5px; vertical-align: middle;
+}
+.red-dot { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+.yellow-dot { background: #fbbf24; box-shadow: 0 0 8px #fbbf24; }
 
-        .container { width: 92%; max-width: 500px; margin-top: 12px; flex: 1; }
-        .main-panel {
-            background: var(--panel-bg); backdrop-filter: blur(20px);
-            border: 2px solid var(--panel-border); border-radius: 35px;
-            padding: 30px 20px; box-shadow: 0 15px 35px rgba(142, 194, 222, 0.3);
-            text-align: center; position: relative;
-        }
-        .panel-title { font-size: 1.6rem; font-weight: 900; color: #3182ce; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(255,255,255,0.8); }
-        .btn-3d {
-            width: 100%; padding: 16px 20px; border: none; border-radius: 18px;
-            font-family: 'Tajawal', sans-serif; font-weight: 800; font-size: 1.05rem;
-            color: white; cursor: pointer; transition: all 0.1s ease;
-            display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 15px;
-        }
-        .btn-3d:active { transform: translateY(4px); box-shadow: none; }
-        .btn-games { background: var(--btn-games-bg); box-shadow: 0 5px 0 var(--btn-games-shadow); }
-        .btn-chat { background: var(--btn-chat-bg); box-shadow: 0 5px 0 var(--btn-chat-shadow); }
-        .btn-trade { background: var(--btn-trade-bg); box-shadow: 0 5px 0 var(--btn-trade-shadow); }
-        .btn-danger-3d { background: var(--btn-danger-bg); box-shadow: 0 5px 0 var(--btn-danger-shadow); }
-        .btn-sm-3d { width: auto; padding: 8px 16px; font-size: 0.85rem; border-radius: 12px; margin-bottom: 0; }
-        .btn-sm-3d.btn-games { box-shadow: 0 3px 0 var(--btn-games-shadow); }
-        .btn-sm-3d.btn-chat { box-shadow: 0 3px 0 var(--btn-chat-shadow); }
-        .btn-sm-3d.btn-danger-3d { box-shadow: 0 3px 0 var(--btn-danger-shadow); }
-        .page { display: none; animation: popUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.15); }
-        .page.active { display: block; }
-        @keyframes popUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        .bottom-nav {
-            position: fixed; bottom: 20px; width: 92%; max-width: 450px;
-            background: var(--nav-bg); border-radius: 25px; display: flex;
-            justify-content: space-around; padding: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 90;
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            color: #a0aec0; font-size: 0.7rem; font-weight: 700; cursor: pointer;
-            padding: 8px 12px; border-radius: 16px; transition: 0.2s;
-        }
-        .nav-item.active { color: white; background: rgba(255,255,255,0.15); }
-        .nav-icon { font-size: 1.3rem; margin-bottom: 3px; }
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
-            z-index: 299; display: none; animation: fadeIn 0.2s ease;
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        #challenge-modal {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 88%; max-width: 380px; background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(15px); border-radius: 24px; padding: 25px 20px; text-align: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.35); z-index: 300; display: none;
-            border: 3px solid var(--btn-games-bg);
-        }
-        #challenge-modal.show { display: block; animation: modalBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes modalBounce { from { opacity: 0; transform: translate(-50%, -50%) scale(0.7); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
-        .toast-notification {
-            position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
-            width: 85%; max-width: 380px; background: white; border-radius: 20px;
-            padding: 15px 20px; display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 350;
-            border-left: 6px solid var(--btn-chat-bg);
-            transform: translate(-50%, -150px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2);
-        }
-        .toast-notification.active { transform: translate(-50%, 0); opacity: 1; }
-        .toast-notification.success { border-left-color: var(--btn-games-bg); }
-        .toast-notification.danger { border-left-color: var(--btn-danger-bg); }
-        .online-games-grid {
-            display: flex; overflow-x: auto; gap: 15px; padding: 10px 5px 20px 5px;
-            scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-        }
-        .online-games-grid::-webkit-scrollbar { height: 6px; }
-        .online-games-grid::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .game-cover-card {
-            min-width: 220px; flex-shrink: 0; scroll-snap-align: center;
-            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.6));
-            border: 3px solid rgba(255,255,255,0.8); border-radius: 20px; padding: 15px;
-            display: flex; flex-direction: column; align-items: center; text-align: center;
-            cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 0 rgba(0,0,0,0.05); position: relative;
-        }
-        .game-cover-card:active { transform: translateY(2px); }
-        .game-cover-card.selected {
-            border-color: var(--btn-games-bg);
-            background: linear-gradient(135deg, rgba(255,255,255,1), rgba(220, 252, 231, 0.8));
-            box-shadow: 0 0 0 3px var(--btn-games-bg), 0 0 25px rgba(118, 219, 65, 0.6), 0 6px 0 var(--btn-games-shadow);
-            transform: translateY(-4px);
-        }
-        .game-cover-card.selected::before {
-            content: "✓ مختارة"; position: absolute; top: -10px; right: -10px;
-            background: var(--btn-games-bg); color: white; padding: 4px 10px; border-radius: 10px;
-            font-size: 0.7rem; font-weight: 900; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
-        .game-thumb {
-            width: 80px; height: 80px; border-radius: 20px;
-            display: flex; align-items: center; justify-content: center; font-size: 2.5rem;
-            margin-bottom: 12px; box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
-        .thumb-xo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
-        .thumb-tap { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .thumb-rps { background: linear-gradient(135deg, #ef4444, #dc2626); }
-        .game-info h4 { font-size: 1.05rem; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; }
-        .game-info p { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; }
-        .game-prize {
-            display: inline-block; background: #fff7ed; color: #ea580c;
-            padding: 4px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 800; border: 1px solid #ffedd5;
-        }
-        .xo-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 280px; margin: 0 auto 20px auto; }
-        .xo-cell {
-            background: rgba(255, 255, 255, 0.7); border: 2px solid rgba(255,255,255,0.8);
-            height: 80px; border-radius: 16px; display: flex; justify-content: center; align-items: center;
-            font-size: 2.5rem; font-weight: 900; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.05);
-        }
-        .xo-cell:active { transform: translateY(3px); box-shadow: none; }
-        .xo-x { color: #6366f1; }
-        .xo-o { color: #ef4444; }
-        .tap-arena { text-align: center; margin-top: 20px; }
-        .tap-bar-container { width: 100%; height: 30px; background: #e2e8f0; border-radius: 15px; overflow: hidden; margin: 20px 0; display: flex; border: 2px solid white; }
-        .tap-progress { height: 100%; transition: width 0.1s ease; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 0.8rem; }
-        .tap-btn { font-size: 1.5rem; padding: 20px; border-radius: 50%; width: 120px; height: 120px; margin: 0 auto; }
-        .rps-arena { text-align: center; margin-top: 20px; }
-        .rps-choices { display: flex; justify-content: center; gap: 15px; margin: 25px 0; }
-        .rps-btn {
-            font-size: 2.5rem; background: white; border: 3px solid rgba(0,0,0,0.08);
-            width: 85px; height: 85px; border-radius: 50%; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 0 rgba(0,0,0,0.1);
-        }
-        .rps-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 rgba(0,0,0,0.1); }
-        .rps-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .rps-result { font-size: 1.2rem; font-weight: 900; min-height: 40px; margin-top: 15px; }
-        .player-item {
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255,255,255,0.6); padding: 12px; border-radius: 18px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.5);
-        }
-        .player-item.admin-player { border: 2px solid #f59e0b; background: linear-gradient(135deg, rgba(255,247,237,0.95), rgba(255,237,213,0.75)); box-shadow: 0 0 14px rgba(245,158,11,0.35); }
-        .admin-crown { margin-left: 4px; filter: drop-shadow(0 0 4px #f59e0b); }
-        .player-info { display: flex; align-items: center; gap: 10px; }
-        .player-avatar-list { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
-        .status-dot { width: 8px; height: 8px; background: var(--btn-games-bg); border-radius: 50%; display: inline-block; margin-left: 5px; }
-        .reward-item {
-            background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.6);
-            border-radius: 18px; padding: 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; text-align: right;
-        }
-        .selection-hint {
-            background: rgba(118, 219, 65, 0.15); border: 2px dashed var(--btn-games-bg);
-            color: var(--btn-games-shadow); padding: 10px; border-radius: 14px;
-            margin-bottom: 15px; font-size: 0.85rem; font-weight: 700; display: none;
-        }
-        .selection-hint.show { display: block; animation: popUp 0.3s ease; }
+.status-bar {
+    background: rgba(0,0,0,0.3);
+    padding: 10px 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    font-weight: 800;
+    font-size: 1rem;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 500px;
+}
 
-        /* ===== مطر الجزر ===== */
-        .carrot-rain-layer { position: fixed; inset: 0; pointer-events: none; z-index: 9999; overflow: hidden; }
-        .carrot-drop { position: absolute; top: -60px; animation-name: carrotFall; animation-timing-function: linear; animation-fill-mode: forwards; will-change: transform; }
-        @keyframes carrotFall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
-            8% { opacity: 1; }
-            100% { transform: translateY(115vh) rotate(720deg); opacity: 0.9; }
-        }
-        /* ===== إعلان عام ===== */
-        .announce-overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 9998; pointer-events: none; animation: fadeIn 0.3s; padding: 20px; }
-        .announce-box { background: linear-gradient(135deg, #fff7ed, #fff); border: 3px solid #f59e0b; border-radius: 24px; padding: 25px 30px; max-width: 90%; box-shadow: 0 20px 60px rgba(245,158,11,0.5); text-align: center; animation: announcePop 0.5s cubic-bezier(0.34,1.56,0.64,1); }
-        .announce-from { font-size: 0.85rem; color: #d97706; font-weight: 800; margin-bottom: 8px; }
-        .announce-msg { font-size: 1.3rem; font-weight: 900; color: #2d3748; line-height: 1.5; }
-        .announce-overlay.hide { opacity: 0; transition: opacity 0.5s; }
-        @keyframes announcePop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    </style>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+.board-container {
+    position: relative;
+    background: linear-gradient(135deg, #1e40af, #1e3a8a);
+    padding: 12px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.1);
+    width: 100%;
+    max-width: 420px;
+}
+.board {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+.cell {
+    aspect-ratio: 1;
+    background: #0f172a;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s;
+    box-shadow: inset 0 4px 8px rgba(0,0,0,0.6);
+    overflow: hidden;
+}
+.cell:hover { background: #1e293b; }
+.cell.red {
+    background: radial-gradient(circle at 35% 35%, #ff6b6b, #dc2626);
+    box-shadow: inset 0 -3px 6px rgba(0,0,0,0.4), 0 0 15px rgba(239,68,68,0.6);
+    animation: dropIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cell.yellow {
+    background: radial-gradient(circle at 35% 35%, #fde047, #eab308);
+    box-shadow: inset 0 -3px 6px rgba(0,0,0,0.4), 0 0 15px rgba(251,191,36,0.6);
+    animation: dropIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cell.winning {
+    animation: winPulse 0.8s infinite alternate;
+}
+@keyframes dropIn {
+    0% { transform: translateY(-300px); opacity: 0; }
+    60% { transform: translateY(10px); }
+    100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes winPulse {
+    from { transform: scale(1); filter: brightness(1); }
+    to { transform: scale(1.15); filter: brightness(1.4); }
+}
+
+.preview {
+    position: absolute;
+    top: -40px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    padding: 0 12px;
+    pointer-events: none;
+}
+.preview-dot {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    transform: translateY(10px);
+}
+.preview-dot.show {
+    opacity: 0.6;
+    transform: translateY(0);
+}
+.preview-dot.red { background: radial-gradient(circle at 35% 35%, #ff6b6b, #dc2626); }
+.preview-dot.yellow { background: radial-gradient(circle at 35% 35%, #fde047, #eab308); }
+
+.action-btns {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    width: 100%;
+    max-width: 500px;
+}
+.action-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+.action-btn:hover { transform: translateY(-2px); }
+.action-btn:active { transform: translateY(2px); }
+.btn-undo { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); }
+.btn-reset { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+.btn-new { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e3c72; }
+
+.game-over-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: fadeIn 0.3s;
+}
+.game-over-overlay.show { display: flex; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.game-over-box {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    padding: 30px 40px;
+    border-radius: 24px;
+    text-align: center;
+    border: 3px solid rgba(255,255,255,0.2);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes popIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+.game-over-box h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.game-over-box p { margin-bottom: 20px; opacity: 0.9; }
+.game-over-box button {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #1e3c72;
+    border: none;
+    border-radius: 12px;
+    font-weight: 900;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: inherit;
+}
+</style>
 </head>
 <body>
-    <div id="custom-toast" class="toast-notification">
-        <span id="toast-icon" style="font-size: 1.5rem;">🔔</span>
-        <div style="flex: 1;"><p id="toast-message" style="font-size: 0.9rem; font-weight: 700; color: var(--text-dark);"></p></div>
+
+<div class="header">
+    <h1> Connect 4</h1>
+    <p>وصّل 4 قطع عشان تكسب!</p>
+</div>
+
+<div class="controls">
+    <button class="mode-btn active" data-mode="pvp">👥 لاعبين</button>
+    <button class="mode-btn" data-mode="pvc">🤖 ضد الكمبيوتر</button>
+</div>
+
+<div class="controls" id="diffControls" style="display:none;">
+    <button class="diff-btn" data-diff="easy">😊 سهل</button>
+    <button class="diff-btn active" data-diff="medium"> متوسط</button>
+    <button class="diff-btn" data-diff="hard"> صعب</button>
+</div>
+
+<div class="scoreboard">
+    <div class="score-box active-red" id="redBox">
+        <div class="score-label">الأحمر <span class="red-dot"></span></div>
+        <div class="score-value" id="redScore">0</div>
     </div>
-    <div id="modal-overlay" class="modal-overlay" onclick="closeAllModals()"></div>
-    <div id="admin-menu-btn" class="admin-menu-btn" onclick="toggleAdminPanel()">⚙️</div>
-
-    <div id="admin-panel" class="admin-panel">
-        <h3> لوحة تحكم المالك</h3>
-
-        <div class="admin-section-title">⚡ أوامر مباشرة لكل اللاعبين</div>
-        <div class="admin-btn-row">
-            <button class="admin-mini-btn amb-rain" onclick="adminCarrotRain()">🌧️ مطر جزر</button>
-            <button class="admin-mini-btn amb-mult" onclick="adminMultiplier()">✖️ مضاعف x2</button>
-            <button class="admin-mini-btn amb-announce" onclick="adminAnnounce()">📢 إعلان عام</button>
-            <button class="admin-mini-btn amb-random" onclick="adminRandomEvent()">🎲 حدث عشوائي</button>
-        </div>
-
-        <div class="admin-section-title">🎯 أمر للاعب معيّن</div>
-        <div class="admin-form-group">
-            <label>اختر اللاعب المتصل:</label>
-            <select id="admin-target-player"><option value="">-- لا يوجد لاعبين --</option></select>
-        </div>
-        <div class="admin-btn-row">
-            <button class="admin-mini-btn amb-give" onclick="adminGive()">💰 إعطاء جزر</button>
-            <button class="admin-mini-btn amb-take" onclick="adminTake()">📉 سحب جزر</button>
-            <button class="admin-mini-btn amb-set" onclick="adminSetCoins()">🔢 ضبط رصيد</button>
-            <button class="admin-mini-btn amb-grant" onclick="adminGrant()">🏆 إعطاء ترقية</button>
-            <button class="admin-mini-btn amb-whisper" onclick="adminWhisper()">💬 رسالة خاصة</button>
-            <button class="admin-mini-btn amb-kick" onclick="adminKick()">🚫 طرد</button>
-        </div>
-
-        <div class="admin-section-title">➕ إضافة لعبة جديدة</div>
-        <div class="admin-form-group"><label>اسم اللعبة</label><input id="admin-game-name"></div>
-        <div class="admin-form-group"><label>الوصف</label><textarea id="admin-game-desc"></textarea></div>
-        <div class="admin-form-group"><label>رابط الصورة</label><input id="admin-game-image"></div>
-        <div class="admin-form-group"><label>النوع</label><select id="admin-game-type"><option value="online">أونلاين</option><option value="offline">أوفلاين</option></select></div>
-        <div class="admin-form-group"><label>الجائزة</label><input type="number" id="admin-game-prize" value="25"></div>
-        <div class="admin-form-group"><label>كود HTML</label><textarea id="admin-game-code" style="min-height:120px;font-family:monospace;font-size:0.7rem"></textarea></div>
-        <button class="btn-3d btn-chat" onclick="addNewGame()">➕ إضافة</button>
-        <button class="btn-3d btn-danger-3d" onclick="toggleAdminPanel()">❌ إغلاق</button>
-        <div class="admin-game-list"><h4 style="color:var(--btn-danger-bg);font-weight:900;margin-bottom:10px">🗑️ الألعاب المضافة</h4><div id="custom-games-list"></div></div>
+    <div class="score-box" id="drawBox">
+        <div class="score-label">تعادل</div>
+        <div class="score-value" id="drawScore">0</div>
     </div>
-
-    <div id="challenge-modal">
-        <div style="font-size: 2.5rem; margin-bottom: 10px;">🔥</div>
-        <h3 style="margin-bottom: 6px; font-weight:800;">تحدي مواجهة حية!</h3>
-        <p id="challenge-text" style="color: var(--text-muted); margin-bottom: 18px; font-size: 0.95rem; font-weight: 700;">...</p>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn-3d btn-games btn-sm-3d" style="flex:1" onclick="acceptChallenge()">قبول التحدي</button>
-            <button class="btn-3d btn-danger-3d btn-sm-3d" style="flex:1" onclick="rejectChallenge()">رفض</button>
-        </div>
+    <div class="score-box" id="yellowBox">
+        <div class="score-label">الأصفر <span class="yellow-dot"></span></div>
+        <div class="score-value" id="yellowScore">0</div>
     </div>
+</div>
 
-    <div class="navbar">
-        <div id="user-summary" class="user-info" style="display:none;">
-            <img id="user-avatar" class="user-avatar" src="">
-            <span id="user-displayname" class="user-name">..</span>
-        </div>
-        <div class="brand">GOHN PRO</div>
-        <div id="coin-badge" class="coin-badge" style="display:none;">🥕 <span id="user-coins">0</span></div>
+<div class="status-bar" id="status">دور الأحمر 🔴</div>
+
+<div class="board-container">
+    <div class="preview" id="preview"></div>
+    <div class="board" id="board"></div>
+</div>
+
+<div class="action-btns">
+    <button class="action-btn btn-undo" id="undoBtn" onclick="undoMove()">↩ تراجع</button>
+    <button class="action-btn btn-reset" onclick="resetBoard()">🔄 جولة جديدة</button>
+    <button class="action-btn btn-new" onclick="newGame()">✨ لعبة جديدة</button>
+</div>
+
+<div class="game-over-overlay" id="gameOver">
+    <div class="game-over-box">
+        <h2 id="winnerText">كسب!</h2>
+        <p id="winnerSub">مبروك </p>
+        <button onclick="closeGameOver()">يلّا نكمل!</button>
     </div>
+</div>
 
-    <div id="admin-online-badge" class="admin-online-badge">👑 الأدمن متصل الآن — استعد للمفاجآت! 🎉</div>
+<script>
+const ROWS = 6, COLS = 7;
+let board = [];
+let currentPlayer = 1; // 1 = red, 2 = yellow
+let gameMode = 'pvp'; // 'pvp' or 'pvc'
+let difficulty = 'medium';
+let gameOver = false;
+let moveHistory = [];
+let scores = { 1: 0, 2: 0, draw: 0 };
 
-    <div class="container">
-        <div class="main-panel" id="view-auth">
-            <h2 class="panel-title">🪴 مرحباً بك في المنصة</h2>
-            <p style="color:var(--text-muted); margin-bottom:25px; font-size:0.95rem; line-height:1.6;">سجل دخولك، نافس أصدقائك، واجمع الجزر 🥕 لترقية حسابك!</p>
-            <button class="btn-3d btn-chat" onclick="login()">تسجيل الدخول السريع بجوجل 🚀</button>
-        </div>
-        <div id="view-main" style="display:none;">
-            <div class="main-panel">
-                <div id="page-games" class="page active">
-                    <h3 style="color:#2b6cb0; margin-bottom:5px; font-weight:800;">🌌 معركة الفضاء</h3>
-                    <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">دمر الكويكبات واجمع الجزر!</p>
-                    <canvas id="space-canvas" width="400" height="280" style="background: #0f172a; border-radius: 20px; max-width: 100%; border: 2px solid rgba(255,255,255,0.5); margin-bottom: 15px;"></canvas>
-                    <button class="btn-3d btn-games" onclick="startSpaceGame()">ابدأ المعركة 🕹️</button>
-                </div>
-                <div id="page-online" class="page">
-                    <h3 style="color:#2b6cb0; margin-bottom:5px; font-weight:800; text-align:right;">🟢 الأبطال المتصلين</h3>
-                    <div id="active-players-list" style="max-height: 150px; overflow-y: auto; padding: 5px; margin-bottom: 20px;">
-                        <p style="color:var(--text-muted); font-size:0.85rem;">جاري البحث...</p>
-                    </div>
-                    <h3 style="color:#2b6cb0; margin-bottom:10px; font-weight:800; text-align: right;">🎮 1️⃣ اختر لعبة للتحدي</h3>
-                    <div class="online-games-grid">
-                        <div class="game-cover-card" data-game="xo" onclick="selectGame('xo')">
-                            <div class="game-thumb thumb-xo">❌⭕</div>
-                            <div class="game-info"><h4>إكس أو كلاسيك</h4><p>اللعبة الأيقونية</p><span class="game-prize">جائزة: 20 🥕</span></div>
-                        </div>
-                        <div class="game-cover-card" data-game="tap" onclick="selectGame('tap')">
-                            <div class="game-thumb thumb-tap">⚡👆</div>
-                            <div class="game-info"><h4>حرب السرعة</h4><p>اضغط أسرع!</p><span class="game-prize">جائزة: 15 🥕</span></div>
-                        </div>
-                        <div class="game-cover-card" data-game="rps" onclick="selectGame('rps')">
-                            <div class="game-thumb thumb-rps">✊✋️</div>
-                            <div class="game-info"><h4>حجر ورقة مقص</h4><p>استراتيجية سريعة</p><span class="game-prize">جائزة: 10 🥕</span></div>
-                        </div>
-                    </div>
-                    <div id="selection-hint" class="selection-hint">✅ تم اختيار اللعبة! الآن اضغط "تحدي ⚔️" بجانب اسم لاعب في الأعلى.</div>
-                </div>
-                <div id="page-xo" class="page">
-                    <h3 style="color:var(--btn-chat-bg); margin-bottom:5px; font-weight:900;">❌ إكس أو أونلاين ⭕</h3>
-                    <p id="xo-status-text" style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">جاري التجهيز...</p>
-                    <div class="xo-board" id="xo-board-div"></div>
-                    <button class="btn-3d btn-danger-3d" onclick="exitRoom()">انسحاب</button>
-                </div>
-                <div id="page-tap" class="page">
-                    <h3 style="color:var(--btn-trade-bg); margin-bottom:5px; font-weight:900;">⚡ حرب السرعة ⚡</h3>
-                    <p id="tap-status-text" style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">جاري التجهيز...</p>
-                    <div class="tap-arena" id="tap-arena" style="display:none;">
-                        <div class="tap-bar-container">
-                            <div id="tap-my-bar" class="tap-progress" style="background: var(--btn-games-bg); width: 50%;">أنت 50%</div>
-                            <div id="tap-opp-bar" class="tap-progress" style="background: var(--btn-danger-bg); width: 50%;">الخصم 50%</div>
-                        </div>
-                        <button class="btn-3d btn-trade tap-btn" id="tap-btn-action" onclick="sendTapClick()" disabled>اضغط!</button>
-                    </div>
-                    <button class="btn-3d btn-danger-3d" style="margin-top:20px;" onclick="exitRoom()">انسحاب</button>
-                </div>
-                <div id="page-rps" class="page">
-                    <h3 style="color:var(--btn-danger-bg); margin-bottom:5px; font-weight:900;">✊ حجر ورقة مقص ✌️</h3>
-                    <p id="rps-status-text" style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">جاري التجهيز...</p>
-                    <div class="rps-arena" id="rps-arena" style="display:none;">
-                        <div class="rps-choices">
-                            <button class="rps-btn" id="rps-rock" onclick="sendRPSMove('rock')">✊</button>
-                            <button class="rps-btn" id="rps-paper" onclick="sendRPSMove('paper')">✋</button>
-                            <button class="rps-btn" id="rps-scissors" onclick="sendRPSMove('scissors')">✌️</button>
-                        </div>
-                        <div id="rps-result" class="rps-result"></div>
-                    </div>
-                    <button class="btn-3d btn-danger-3d" style="margin-top:20px;" onclick="exitRoom()">انسحاب</button>
-                </div>
-                <div id="page-custom-game" class="page">
-                    <h3 id="custom-game-title" style="color:var(--btn-chat-bg); margin-bottom:5px; font-weight:900;">لعبة مخصصة</h3>
-                    <p id="custom-game-desc" style="color:var(--text-muted); margin-bottom:10px; font-size:0.85rem;">وصف اللعبة</p>
-                    <div style="border-radius:14px; overflow:hidden; border:2px solid #fff;"><iframe id="custom-game-iframe" style="width:100%; height:500px; border:none; display:block;"></iframe></div>
-                    <button class="btn-3d btn-danger-3d" style="margin-top:15px;" onclick="exitCustomGame()">خروج</button>
-                </div>
-                <div id="page-rewards" class="page">
-                    <h3 style="color:#2b6cb0; margin-bottom:15px; font-weight:800;">🛒 متجر الترقيات</h3>
-                    <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:15px;">استخدم جزرك 🥕 للحصول على مزايا حصرية!</p>
-                    <div class="reward-item"><div><strong>👑 لقب "أسطورة"</strong><br><small style="color:var(--btn-trade-bg); font-weight:700;">500 🥕</small></div><button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('legend_title', 500)">شراء</button></div>
-                    <div class="reward-item"><div><strong>🖼️ إطار ذهبي</strong><br><small style="color:var(--btn-trade-bg); font-weight:700;">300 🥕</small></div><button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('gold_frame', 300)">شراء</button></div>
-                    <div class="reward-item"><div><strong>🍀 مضاعف جزر x2</strong><br><small style="color:var(--btn-trade-bg); font-weight:700;">200 🥕</small></div><button class="btn-3d btn-chat btn-sm-3d" onclick="buyUpgrade('luck_boost', 200)">شراء</button></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="bottom-nav" id="bottom-nav" style="display:none;">
-        <div class="nav-item active" id="nav-games" onclick="switchTab('games')"><div class="nav-icon">🕹️</div><div>الألعاب</div></div>
-        <div class="nav-item" id="nav-online" onclick="switchTab('online')"><div class="nav-icon">⚔️</div><div>أونلاين</div></div>
-        <div class="nav-item" id="nav-rewards" onclick="switchTab('rewards')"><div class="nav-icon">🎁</div><div>المتجر</div></div>
-    </div>
+// DOM
+const boardEl = document.getElementById('board');
+const previewEl = document.getElementById('preview');
+const statusEl = document.getElementById('status');
+const redBox = document.getElementById('redBox');
+const yellowBox = document.getElementById('yellowBox');
+const drawBox = document.getElementById('drawBox');
+const gameOverEl = document.getElementById('gameOver');
+const winnerText = document.getElementById('winnerText');
+const winnerSub = document.getElementById('winnerSub');
 
-    <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyA5LlGHl9djJsx_Rs3evjd8Xzpn0e25IHI",
-        authDomain: "gohn-games.firebaseapp.com", projectId: "gohn-games",
-        storageBucket: "gohn-games.firebasestorage.app", messagingSenderId: "837388013481",
-        appId: "1:837388013481:web:3d1c87fd31442284653eb8", measurementId: "G-8PBX8E8D15"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth(), db = firebase.firestore();
-    let currentUser = null, userProfile = { coins: 0 };
-    let activeRoomId = null, currentGameType = "";
-    let roomListener = null, currentChallengeId = null, selectedGame = null;
-    let isAdmin = false, currentCustomGameId = null, currentCustomGamePrize = 0;
-    let onlinePlayersCache = [];
-    const PAGE_LOAD_TIME = Date.now();
-    const OWNER_EMAIL = "gohngohn099@gmail.com";
-
-    function showToast(message, type = "info", icon = "🔔") {
-        const toast = document.getElementById("custom-toast");
-        document.getElementById("toast-message").innerText = message;
-        document.getElementById("toast-icon").innerText = icon;
-        toast.className = "toast-notification " + type;
-        toast.classList.add("active");
-        setTimeout(() => toast.classList.remove("active"), 4000);
+function init() {
+    // Create preview dots
+    previewEl.innerHTML = '';
+    for (let c = 0; c < COLS; c++) {
+        const dot = document.createElement('div');
+        dot.className = 'preview-dot';
+        dot.dataset.col = c;
+        previewEl.appendChild(dot);
     }
-    function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+    resetBoard();
+}
 
-    auth.onAuthStateChanged(user => {
-        if(user) {
-            currentUser = user;
-            const isOwner = (user.email === OWNER_EMAIL);
-            if(isOwner) { isAdmin = true; document.getElementById('admin-menu-btn').classList.add('show'); loadCustomGamesForAdmin(); }
-            document.getElementById('view-auth').style.display = 'none';
-            document.getElementById('view-main').style.display = 'block';
-            document.getElementById('user-summary').style.display = 'flex';
-            document.getElementById('coin-badge').style.display = 'flex';
-            document.getElementById('bottom-nav').style.display = 'flex';
-            let defaultPhoto = user.photoURL || "https://via.placeholder.com/36";
-            let defaultName = user.displayName || "لاعب مجهول";
-            document.getElementById('user-avatar').src = defaultPhoto;
-            document.getElementById('user-displayname').innerText = defaultName.split(' ')[0];
-            db.collection("users_profile").doc(user.uid).set({
-                fullName: defaultName, photoURL: defaultPhoto, status: "online",
-                lastActive: Date.now(), isAdmin: isOwner,
-                coins: firebase.firestore.FieldValue.increment(0)
-            }, { merge: true });
-            db.collection("users_profile").doc(user.uid).onSnapshot(doc => {
-                if(doc.exists) {
-                    userProfile = doc.data();
-                    document.getElementById('user-coins').innerText = userProfile.coins || 0;
-                    const now = Date.now();
-                    const cb = document.getElementById('coin-badge');
-                    if (cb) {
-                        if (userProfile.multiplierUntil && now < userProfile.multiplierUntil) cb.classList.add('multiplier-active');
-                        else cb.classList.remove('multiplier-active');
-                    }
-                }
-            });
-            loadOnlineGames();
-            listenToActivePlayers();
-            listenToChallenges();
-            listenToAdminCommands();
+function resetBoard() {
+    board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+    currentPlayer = 1;
+    gameOver = false;
+    moveHistory = [];
+    renderBoard();
+    updateStatus();
+    gameOverEl.classList.remove('show');
+}
+
+function newGame() {
+    scores = { 1: 0, 2: 0, draw: 0 };
+    updateScores();
+    resetBoard();
+}
+
+function renderBoard() {
+    boardEl.innerHTML = '';
+    for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.dataset.row = r;
+            cell.dataset.col = c;
+            if (board[r][c] === 1) cell.classList.add('red');
+            else if (board[r][c] === 2) cell.classList.add('yellow');
+            cell.addEventListener('click', () => handleCellClick(c));
+            cell.addEventListener('mouseenter', () => showPreview(c));
+            cell.addEventListener('mouseleave', hidePreview);
+            boardEl.appendChild(cell);
         }
+    }
+}
+
+function showPreview(col) {
+    if (gameOver) return;
+    if (gameMode === 'pvc' && currentPlayer === 2) return;
+    const dots = previewEl.children;
+    for (let i = 0; i < dots.length; i++) {
+        dots[i].classList.remove('show', 'red', 'yellow');
+    }
+    const dot = dots[col];
+    dot.classList.add('show');
+    dot.classList.add(currentPlayer === 1 ? 'red' : 'yellow');
+}
+
+function hidePreview() {
+    const dots = previewEl.children;
+    for (let i = 0; i < dots.length; i++) {
+        dots[i].classList.remove('show', 'red', 'yellow');
+    }
+}
+
+function handleCellClick(col) {
+    if (gameOver) return;
+    if (gameMode === 'pvc' && currentPlayer === 2) return;
+    makeMove(col);
+}
+
+function makeMove(col) {
+    const row = getAvailableRow(col);
+    if (row === -1) return;
+    
+    board[row][col] = currentPlayer;
+    moveHistory.push({ row, col, player: currentPlayer });
+    
+    renderBoard();
+    
+    // Animate the dropped piece
+    const cell = boardEl.children[row * COLS + col];
+    cell.style.animation = 'none';
+    setTimeout(() => { cell.style.animation = ''; }, 10);
+    
+    const winResult = checkWin(row, col);
+    if (winResult) {
+        gameOver = true;
+        highlightWin(winResult);
+        scores[currentPlayer]++;
+        updateScores();
+        setTimeout(() => showGameOver(currentPlayer), 600);
+        return;
+    }
+    
+    if (checkDraw()) {
+        gameOver = true;
+        scores.draw++;
+        updateScores();
+        setTimeout(() => showGameOver(0), 400);
+        return;
+    }
+    
+    currentPlayer = currentPlayer === 1 ? 2 : 1;
+    updateStatus();
+    
+    // AI move
+    if (gameMode === 'pvc' && currentPlayer === 2 && !gameOver) {
+        setTimeout(aiMove, 500);
+    }
+}
+
+function getAvailableRow(col) {
+    for (let r = ROWS - 1; r >= 0; r--) {
+        if (board[r][col] === 0) return r;
+    }
+    return -1;
+}
+
+function checkWin(row, col) {
+    const player = board[row][col];
+    const directions = [[0,1],[1,0],[1,1],[1,-1]];
+    
+    for (const [dr, dc] of directions) {
+        const cells = [[row, col]];
+        for (let i = 1; i < 4; i++) {
+            const r = row + dr * i, c = col + dc * i;
+            if (r >= 0 && r < ROWS && c >= 0 && c < COLS && board[r][c] === player) {
+                cells.push([r, c]);
+            } else break;
+        }
+        for (let i = 1; i < 4; i++) {
+            const r = row - dr * i, c = col - dc * i;
+            if (r >= 0 && r < ROWS && c >= 0 && c < COLS && board[r][c] === player) {
+                cells.push([r, c]);
+            } else break;
+        }
+        if (cells.length >= 4) return cells;
+    }
+    return null;
+}
+
+function checkDraw() {
+    return board[0].every(c => c !== 0);
+}
+
+function highlightWin(cells) {
+    cells.forEach(([r, c]) => {
+        const cell = boardEl.children[r * COLS + c];
+        cell.classList.add('winning');
     });
-    window.addEventListener('beforeunload', () => { if(currentUser) db.collection("users_profile").doc(currentUser.uid).update({ status: "offline" }).catch(()=>{}); });
+}
 
-    /* ============ نظام أوامر الأدمن ============ */
-    function sendAdminCommand(type, payload) {
-        db.collection("admin_commands").add({
-            type: type, payload: payload || {},
-            fromName: currentUser.displayName || "الأدمن",
-            timestamp: Date.now()
-        }).then(() => {
-            // تنظيف الأوامر القديمة بعد 90 ثانية
-            setTimeout(() => {
-                const cutoff = Date.now() - 120000;
-                db.collection("admin_commands").where("timestamp", "<", cutoff).get().then(snap => {
-                    snap.forEach(d => d.ref.delete().catch(()=>{}));
-                }).catch(()=>{});
-            }, 90000);
-        }).catch(e => showToast("خطأ في إرسال الأمر: " + e.message, "danger", "❌"));
+function updateStatus() {
+    if (currentPlayer === 1) {
+        statusEl.innerHTML = 'دور الأحمر 🔴';
+        redBox.classList.add('active-red');
+        yellowBox.classList.remove('active-yellow');
+    } else {
+        statusEl.innerHTML = gameMode === 'pvc' ? 'الكمبيوتر بيفكر... 🤔' : 'دور الأصفر 🟡';
+        yellowBox.classList.add('active-yellow');
+        redBox.classList.remove('active-red');
     }
-    function listenToAdminCommands() {
-        db.collection("admin_commands").onSnapshot(snap => {
-            snap.docChanges().forEach(ch => {
-                if (ch.type === "added") {
-                    const d = ch.doc.data();
-                    if (d && d.timestamp > PAGE_LOAD_TIME - 3000) handleAdminCommand(d);
-                }
-            });
-        });
+}
+
+function updateScores() {
+    document.getElementById('redScore').textContent = scores[1];
+    document.getElementById('yellowScore').textContent = scores[2];
+    document.getElementById('drawScore').textContent = scores.draw;
+}
+
+function showGameOver(winner) {
+    if (winner === 0) {
+        winnerText.textContent = 'تعادل! 🤝';
+        winnerSub.textContent = 'مفيش فايز الجولة دي';
+    } else if (winner === 1) {
+        winnerText.textContent = 'الأحمر كسب! ';
+        winnerSub.textContent = 'مبروك 🎉';
+    } else {
+        winnerText.textContent = gameMode === 'pvc' ? 'الكمبيوتر كسب! 🤖' : 'الأصفر كسب! 🏆';
+        winnerSub.textContent = gameMode === 'pvc' ? 'حاول تاني 💪' : 'مبروك ';
     }
-    function handleAdminCommand(d) {
-        const t = d.type, p = d.payload || {}, myUid = currentUser.uid;
-        switch(t) {
-            case 'carrot_rain':
-                triggerCarrotRain();
-                if (p.amount) addCoinsLocal(p.amount, "🌧️ مطر الجزر من الأدمن! +" + p.amount + " 🥕");
-                break;
-            case 'give':
-                if (p.targetUid === myUid && p.amount) addCoinsLocal(p.amount, "🎁 الأدمن إدالك " + p.amount + " 🥕");
-                break;
-            case 'take':
-                if (p.targetUid === myUid && p.amount) addCoinsLocal(-p.amount, "📉 الأدمن خصم " + p.amount + " 🥕");
-                break;
-            case 'set_coins':
-                if (p.targetUid === myUid && p.amount != null) setCoinsLocal(p.amount);
-                break;
-            case 'multiplier':
-                const fac = p.factor || 2, dur = p.duration || 60;
-                db.collection("users_profile").doc(myUid).update({ multiplierUntil: Date.now() + dur*1000, multiplierFactor: fac }).catch(()=>{});
-                showToast("✖️ مضاعف x" + fac + " مفعّل من الأدمن لمدة " + dur + " ثانية!", "success", "✖️");
-                break;
-            case 'grant_upgrade':
-                if (p.targetUid === myUid && p.upgrade) grantUpgradeLocal(p.upgrade);
-                break;
-            case 'announce':
-                if (p.message) showBigAnnouncement(p.message, d.fromName);
-                break;
-            case 'whisper':
-                if (p.targetUid === myUid && p.message) showToast("💬 رسالة من الأدمن: " + p.message, "info", "💬");
-                break;
-            case 'kick':
-                if (p.targetUid === myUid) { showToast("🚫 الأدمن طردك من المنصة", "danger", "🚫"); setTimeout(()=>auth.signOut(), 1500); }
-                break;
+    gameOverEl.classList.add('show');
+}
+
+function closeGameOver() {
+    gameOverEl.classList.remove('show');
+    resetBoard();
+}
+
+function undoMove() {
+    if (moveHistory.length === 0 || gameOver) return;
+    const last = moveHistory.pop();
+    board[last.row][last.col] = 0;
+    currentPlayer = last.player;
+    renderBoard();
+    updateStatus();
+}
+
+// ===== AI =====
+function aiMove() {
+    if (gameOver) return;
+    let col;
+    if (difficulty === 'easy') {
+        col = getRandomMove();
+    } else if (difficulty === 'medium') {
+        col = Math.random() < 0.6 ? getBestMove(2) : getRandomMove();
+    } else {
+        col = getBestMove(4);
+    }
+    if (col !== -1) makeMove(col);
+}
+
+function getRandomMove() {
+    const available = [];
+    for (let c = 0; c < COLS; c++) {
+        if (board[0][c] === 0) available.push(c);
+    }
+    return available.length > 0 ? available[Math.floor(Math.random() * available.length)] : -1;
+}
+
+function getBestMove(depth) {
+    let bestScore = -Infinity;
+    let bestCol = -1;
+    const available = getAvailableCols();
+    
+    // Prefer center
+    available.sort((a, b) => Math.abs(a - 3) - Math.abs(b - 3));
+    
+    for (const col of available) {
+        const row = getAvailableRow(col);
+        board[row][col] = 2;
+        const score = minimax(board, depth - 1, -Infinity, Infinity, false);
+        board[row][col] = 0;
+        if (score > bestScore) {
+            bestScore = score;
+            bestCol = col;
         }
     }
-    function addCoinsLocal(amount, msg) {
-        if (!currentUser) return;
-        db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(amount) }).catch(()=>{});
-        if (msg) showToast(msg, amount > 0 ? "success" : "danger", amount > 0 ? "🎁" : "📉");
-    }
-    function setCoinsLocal(amount) {
-        if (!currentUser) return;
-        db.collection("users_profile").doc(currentUser.uid).update({ coins: amount }).catch(()=>{});
-        showToast("💰 الأدمن ضبط رصيدك على " + amount + " 🥕", "info", "💰");
-    }
-    function grantUpgradeLocal(upgrade) {
-        if (!currentUser) return;
-        const up = {}; let msg = "";
-        if (upgrade === 'legend_title') { up.title = "أسطورة 🏆"; msg = "🏆 الأدمن إدالك لقب أسطورة!"; }
-        else if (upgrade === 'gold_frame') { up.frame = "gold"; msg = "🖼️ الأدمن إدالك الإطار الذهبي!"; }
-        else if (upgrade === 'luck_boost') { up.luckBoost = true; msg = "🍀 الأدمن فعّلك مضاعف الحظ!"; }
-        else { up[upgrade] = true; msg = "🎁 الأدمن إدالك ترقية!"; }
-        db.collection("users_profile").doc(currentUser.uid).update(up).catch(()=>{});
-        showToast(msg, "success", "🎁");
-    }
-    function triggerCarrotRain() {
-        const layer = document.createElement('div');
-        layer.className = 'carrot-rain-layer';
-        const emojis = ['🥕','🥕','🥕','','🍀','🥕'];
-        const count = 55;
-        for (let i = 0; i < count; i++) {
-            const d = document.createElement('div');
-            d.className = 'carrot-drop';
-            d.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-            d.style.left = (Math.random()*100) + 'vw';
-            d.style.fontSize = (1.3 + Math.random()*1.8) + 'rem';
-            d.style.animationDuration = (2.5 + Math.random()*2.5) + 's';
-            d.style.animationDelay = (Math.random()*1.6) + 's';
-            layer.appendChild(d);
+    return bestCol;
+}
+
+function minimax(board, depth, alpha, beta, isMaximizing) {
+    const winner = getWinner();
+    if (winner === 2) return 100000 + depth;
+    if (winner === 1) return -100000 - depth;
+    if (checkDraw()) return 0;
+    if (depth === 0) return evaluateBoard();
+    
+    const available = getAvailableCols();
+    
+    if (isMaximizing) {
+        let maxEval = -Infinity;
+        for (const col of available) {
+            const row = getAvailableRow(col);
+            board[row][col] = 2;
+            const eval_ = minimax(board, depth - 1, alpha, beta, false);
+            board[row][col] = 0;
+            maxEval = Math.max(maxEval, eval_);
+            alpha = Math.max(alpha, eval_);
+            if (beta <= alpha) break;
         }
-        document.body.appendChild(layer);
-        setTimeout(() => layer.remove(), 6500);
+        return maxEval;
+    } else {
+        let minEval = Infinity;
+        for (const col of available) {
+            const row = getAvailableRow(col);
+            board[row][col] = 1;
+            const eval_ = minimax(board, depth - 1, alpha, beta, true);
+            board[row][col] = 0;
+            minEval = Math.min(minEval, eval_);
+            beta = Math.min(beta, eval_);
+            if (beta <= alpha) break;
+        }
+        return minEval;
     }
-    function showBigAnnouncement(msg, from) {
-        const ov = document.createElement('div');
-        ov.className = 'announce-overlay';
-        ov.innerHTML = '<div class="announce-box"><div class="announce-from">📢 إعلان من ' + (from || 'الأدمن') + '</div><div class="announce-msg"></div></div>';
-        ov.querySelector('.announce-msg').textContent = msg;
-        document.body.appendChild(ov);
-        setTimeout(() => { ov.classList.add('hide'); setTimeout(() => ov.remove(), 500); }, 4500);
-    }
+}
 
-    /* ============ أزرار لوحة الأدمن ============ */
-    function getTargetUid() {
-        const sel = document.getElementById('admin-target-player');
-        const uid = sel ? sel.value : '';
-        if (!uid) { showToast("⚠️ اختر لاعب من القائمة أولاً", "danger", "⚠️"); return null; }
-        return uid;
+function getWinner() {
+    for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+            if (board[r][c] !== 0 && checkWin(r, c)) return board[r][c];
+        }
     }
-    function adminCarrotRain() {
-        const amt = parseInt(prompt("كمية الجزر في المطر لكل لاعب:", "50"));
-        if (!isNaN(amt) && amt > 0) { sendAdminCommand('carrot_rain', { amount: amt }); showToast("🌧️ تم إطلاق مطر الجزر!", "success", "🌧️"); }
-    }
-    function adminMultiplier() {
-        const dur = parseInt(prompt("مدة المضاعف بالثواني:", "60")) || 60;
-        sendAdminCommand('multiplier', { factor: 2, duration: dur });
-        showToast("✖️ تم تفعيل المضاعف x2!", "success", "✖️");
-    }
-    function adminAnnounce() {
-        const m = prompt("نص الإعلان العام لكل اللاعبين:");
-        if (m && m.trim()) { sendAdminCommand('announce', { message: m.trim() }); showToast("📢 تم إرسال الإعلان!", "success", "📢"); }
-    }
-    function adminRandomEvent() {
-        const events = [
-            () => sendAdminCommand('carrot_rain', { amount: 100 }),
-            () => sendAdminCommand('multiplier', { factor: 2, duration: 60 }),
-            () => sendAdminCommand('announce', { message: '🎉 حدث عشوائي! استمتعوا بالمضاعف والمفاجآت!' }),
-            () => sendAdminCommand('carrot_rain', { amount: 200 })
-        ];
-        events[Math.floor(Math.random()*events.length)]();
-        showToast("🎲 تم تشغيل حدث عشوائي!", "success", "🎲");
-    }
-    function adminGive() { const uid = getTargetUid(); if (!uid) return; const amt = parseInt(prompt("كمية الجزر:", "50")); if (!isNaN(amt) && amt > 0) { sendAdminCommand('give', { targetUid: uid, amount: amt }); showToast("💰 تم إرسال الجزر!", "success", "💰"); } }
-    function adminTake() { const uid = getTargetUid(); if (!uid) return; const amt = parseInt(prompt("كمية الجزر المسحوبة:", "50")); if (!isNaN(amt) && amt > 0) { sendAdminCommand('take', { targetUid: uid, amount: amt }); showToast("📉 تم السحب!", "success", "📉"); } }
-    function adminSetCoins() { const uid = getTargetUid(); if (!uid) return; const amt = parseInt(prompt("الرصيد الجديد للاعب:")); if (!isNaN(amt) && amt >= 0) { sendAdminCommand('set_coins', { targetUid: uid, amount: amt }); showToast("🔢 تم ضبط الرصيد!", "success", "🔢"); } }
-    function adminGrant() { const uid = getTargetUid(); if (!uid) return; const up = prompt("نوع الترقية (legend_title / gold_frame / luck_boost):", "legend_title"); if (up && up.trim()) { sendAdminCommand('grant_upgrade', { targetUid: uid, upgrade: up.trim() }); showToast("🏆 تم إرسال الترقية!", "success", "🏆"); } }
-    function adminWhisper() { const uid = getTargetUid(); if (!uid) return; const m = prompt("رسالتك الخاصة للاعب:"); if (m && m.trim()) { sendAdminCommand('whisper', { targetUid: uid, message: m.trim() }); showToast("💬 تم إرسال الرسالة!", "success", "💬"); } }
-    function adminKick() { const uid = getTargetUid(); if (!uid) return; if (confirm("طرد اللاعب ده من المنصة؟")) { sendAdminCommand('kick', { targetUid: uid }); showToast("🚫 تم الطرد!", "success", "🚫"); } }
+    return 0;
+}
 
-    function toggleAdminPanel() { document.getElementById('admin-panel').classList.toggle('show'); }
-    function addNewGame() {
-        const name = document.getElementById('admin-game-name').value, desc = document.getElementById('admin-game-desc').value,
-              image = document.getElementById('admin-game-image').value, code = document.getElementById('admin-game-code').value,
-              type = document.getElementById('admin-game-type').value, prize = parseInt(document.getElementById('admin-game-prize').value);
-        if(!name || !code) { showToast("⚠️ اكتب الاسم والكود!", "danger"); return; }
-        db.collection("custom_games").add({ name, desc, image, code, type, prize, createdBy: currentUser.uid, createdAt: Date.now(), status: "active" }).then(() => {
-            showToast("✅ تمت الإضافة!", "success"); loadCustomGamesForAdmin(); loadOnlineGames(); toggleAdminPanel();
-            document.getElementById('admin-game-name').value = ''; document.getElementById('admin-game-code').value = '';
-        }).catch(e => showToast("❌ " + e.message, "danger"));
+function getAvailableCols() {
+    const cols = [];
+    for (let c = 0; c < COLS; c++) {
+        if (board[0][c] === 0) cols.push(c);
     }
-    function deleteGame(id) { if(confirm("حذف اللعبة؟")) db.collection("custom_games").doc(id).delete().then(() => { showToast("✅ تم الحذف!", "success"); loadCustomGamesForAdmin(); loadOnlineGames(); }); }
-    function loadCustomGamesForAdmin() {
-        const list = document.getElementById('custom-games-list'); list.innerHTML = 'تحميل...';
-        db.collection("custom_games").where("status","==","active").onSnapshot(snap => {
-            if(snap.empty) { list.innerHTML = '<p style="color:var(--text-muted);font-size:0.8rem">لا توجد ألعاب مضافة</p>'; return; }
-            let h = ''; snap.forEach(doc => { const g = doc.data(); h += '<div class="admin-game-item"><div><div class="game-name">'+g.name+'</div><div class="game-type">'+(g.type==='online'?'👥 أونلاين':'🎮 أوفلاين')+' - '+g.prize+'🥕</div></div><button class="delete-btn" onclick="deleteGame(\''+doc.id+'\')">🗑️</button></div>'; });
-            list.innerHTML = h;
-        });
-    }
-    function loadOnlineGames() {
-        const grid = document.getElementById('online-games-grid');
-        grid.querySelectorAll('.custom-online-card').forEach(c => c.remove());
-        db.collection("custom_games").where("status","==","active").where("type","==","online").onSnapshot(snap => {
-            grid.querySelectorAll('.custom-online-card').forEach(c => c.remove());
-            snap.forEach(doc => { const g = doc.data(); const icon = g.image ? '<img src="'+g.image+'" style="width:100%;height:100%;object-fit:cover;border-radius:16px">' : '🎮'; const card = makeCard(doc.id, g.name, g.desc, icon, g.type, g.prize, null, true); card.classList.add('custom-online-card'); grid.appendChild(card); });
-        });
-    }
-    function makeCard(id, name, desc, icon, type, prize, cls, isCustom) {
-        const d = document.createElement('div'); d.className = 'game-cover-card'; d.dataset.game = id; d.dataset.type = type;
-        if(type === 'online') d.onclick = function(){ selectGame(id, type, name); };
-        else d.onclick = function(){ openCustomGame(id, name, desc, (isCustom ? (function(){ let c=null; db.collection("custom_games").doc(id).get().then(x=>{ if(x.exists) openCustomGame(id, name, desc, x.data().code, prize); }); })() : ''), prize); };
-        d.innerHTML = '<div class="game-thumb '+(cls||'')+'" style="'+(cls?'':'background:linear-gradient(135deg,#6366f1,#4338ca)')+'">'+icon+'</div><div class="game-info"><h4>'+name+'</h4><p>'+desc+'</p><span class="game-prize">'+prize+' 🥕</span></div>';
-        return d;
-    }
-    function selectGame(id, type, name) {
-        selectedGame = { id: id, type: type, name: name };
-        document.querySelectorAll('#online-games-grid .game-cover-card').forEach(c => c.classList.remove('selected'));
-        const t = document.querySelector('#online-games-grid .game-cover-card[data-game="'+id+'"]'); if(t) t.classList.add('selected');
-        document.getElementById('selection-hint').classList.add('show');
-        showToast("تم اختيار: " + name, "success", "✅");
-    }
-    function openCustomGame(id, name, desc, code, prize) {
-        currentCustomGameId = id; currentCustomGamePrize = prize;
-        document.getElementById('custom-game-title').innerText = name;
-        document.getElementById('custom-game-desc').innerText = desc;
-        document.getElementById('custom-game-iframe').srcdoc = code;
-        switchTab('custom-game');
-    }
-    function exitCustomGame() { document.getElementById('custom-game-iframe').srcdoc = ''; currentCustomGameId = null; currentCustomGamePrize = 0; switchTab('games'); }
+    return cols;
+}
 
-    function listenToActivePlayers() {
-        db.collection("users_profile").where("status","==","online").onSnapshot(snap => {
-            let html = "", adminOnline = false; onlinePlayersCache = [];
-            snap.forEach(doc => {
-                const d = doc.data();
-                if (d.isAdmin) adminOnline = true;
-                if(doc.id !== currentUser.uid && (Date.now() - (d.lastActive||0) < 300000)) {
-                    onlinePlayersCache.push({ uid: doc.id, name: d.fullName });
-                    const crown = d.isAdmin ? '<span class="admin-crown">👑</span>' : '';
-                    const itemCls = d.isAdmin ? 'player-item admin-player' : 'player-item';
-                    html += '<div class="'+itemCls+'"><div class="player-info"><img src="'+(d.photoURL||'https://via.placeholder.com/34')+'" class="player-avatar-list"><div><div style="font-weight:800;font-size:0.9rem;">'+crown+(d.fullName||'لاعب')+'</div><div style="font-size:0.75rem;color:var(--btn-games-bg);"><span class="status-dot"></span>'+(d.isAdmin?'الأدمن متصل':'متصل')+'</div></div></div><button class="btn-3d btn-games btn-sm-3d" onclick="sendChallengeTo(\''+doc.id+'\', \''+(d.fullName||'لاعب').replace(/'/g,"")+'\')">تحدي ⚔️</button></div>';
-                }
-            });
-            document.getElementById("active-players-list").innerHTML = html || '<p style="color:var(--text-muted);font-size:0.85rem;padding:15px">لا يوجد متصلين حالياً</p>';
-            const badge = document.getElementById('admin-online-badge');
-            if (badge) badge.style.display = adminOnline ? 'flex' : 'none';
-            populatePlayerSelect();
-        });
+function evaluateBoard() {
+    let score = 0;
+    // Center column preference
+    const centerCol = 3;
+    for (let r = 0; r < ROWS; r++) {
+        if (board[r][centerCol] === 2) score += 3;
+        else if (board[r][centerCol] === 1) score -= 3;
     }
-    function populatePlayerSelect() {
-        const sel = document.getElementById('admin-target-player'); if (!sel) return;
-        const cur = sel.value;
-        sel.innerHTML = '<option value="">-- اختر لاعب --</option>' + onlinePlayersCache.map(p => '<option value="'+p.uid+'">'+p.name+'</option>').join('');
-        if (cur) sel.value = cur;
-    }
-    function sendChallengeTo(tid, tname) {
-        if(!selectedGame) { showToast("⚠️ اختر لعبة أولاً!", "danger", "❌"); return; }
-        db.collection("challenges").add({ fromId: currentUser.uid, fromName: currentUser.displayName || "لاعب", toId: tid, gameType: selectedGame.id, gameTypeName: selectedGame.name, status: "pending", timestamp: Date.now() }).then(() => showToast("✅ تم إرسال تحدي " + selectedGame.name + " إلى " + tname + "!", "success", "⚔️"));
-    }
-    function listenToChallenges() {
-        db.collection("challenges").where("toId","==",currentUser.uid).onSnapshot(snap => {
-            snap.docChanges().forEach(ch => {
-                if (ch.type === "added") { const d = ch.doc.data(); if(d.status === "pending" && (Date.now() - d.timestamp < 60000)) { currentChallengeId = ch.doc.id; document.getElementById("challenge-text").innerText = "[ " + d.fromName + " ] يتحداك في " + (d.gameTypeName||"لعبة") + "!"; document.getElementById("modal-overlay").style.display = "block"; document.getElementById("challenge-modal").classList.add("show"); } }
-            });
-        });
-        db.collection("challenges").where("fromId","==",currentUser.uid).onSnapshot(snap => {
-            snap.docChanges().forEach(ch => { const d = ch.doc.data(); if(d && d.status === "accepted") { ch.doc.ref.delete(); activeRoomId = d.roomId; currentGameType = d.gameType; closeAllModals(); enterGameRoom(currentGameType, d.toName); } else if(d && d.status === "rejected") { ch.doc.ref.delete(); showToast("رفض الخصم التحدي.", "danger", "❌"); } });
-        });
-    }
-    function acceptChallenge() {
-        if(!currentChallengeId) return;
-        const ref = db.collection("challenges").doc(currentChallengeId);
-        ref.get().then(doc => {
-            if(doc.exists) {
-                const c = doc.data(); const roomRef = db.collection("rooms").doc(); activeRoomId = roomRef.id; currentGameType = c.gameType;
-                let init = { gameType: currentGameType, player1: c.fromId, p1Name: c.fromName, player2: currentUser.uid, p2Name: currentUser.displayName, status: "playing" };
-                if(currentGameType === "xo") { init.turn = c.fromId; init.board = ["","","","","","","","",""]; init.winner = null; }
-                else if(currentGameType === "tap") { init.p1Clicks = 50; init.p2Clicks = 50; }
-                else if(currentGameType === "rps") { init.p1Move = ""; init.p2Move = ""; init.winner = ""; }
-                roomRef.set(init).then(() => { ref.update({ status: "accepted", roomId: activeRoomId, toName: currentUser.displayName }); closeAllModals(); enterGameRoom(currentGameType, c.fromName); });
+    // Evaluate windows
+    for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+            if (c + 3 < COLS) {
+                const window = [board[r][c], board[r][c+1], board[r][c+2], board[r][c+3]];
+                score += evaluateWindow(window);
             }
-        });
-    }
-    function rejectChallenge() { if(currentChallengeId) db.collection("challenges").doc(currentChallengeId).update({ status: "rejected" }); closeAllModals(); }
-    function closeAllModals() { document.getElementById("modal-overlay").style.display = "none"; document.getElementById("challenge-modal").classList.remove("show"); }
-    function enterGameRoom(gt, opp) {
-        if(gt === "xo") enterXORoom(opp); else if(gt === "tap") enterTapRoom(opp); else if(gt === "rps") enterRPSRoom(opp);
-        else db.collection("custom_games").doc(gt).get().then(doc => { if(doc.exists) { const g = doc.data(); openCustomGame(doc.id, g.name, 'ضد ' + opp, g.code, g.prize); } else { showToast("اللعبة غير موجودة", "danger"); switchTab('online'); } });
-    }
-    function enterXORoom(opp) {
-        switchTab("xo"); document.getElementById("xo-status-text").innerText = "ضد: " + opp;
-        if(roomListener) roomListener();
-        roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => {
-            const d = doc.data(); if(!d || d.gameType !== "xo") return;
-            const myChar = (currentUser.uid === d.player1) ? "X" : "O", isMyTurn = (d.turn === currentUser.uid);
-            document.getElementById('xo-status-text').innerText = d.winner ? (d.winner === currentUser.uid ? "🏆 فزت بـ 20 🥕!" : (d.winner === "draw" ? "تعادل!" : "😢 خسرت!")) : (isMyTurn ? "دورك (" + myChar + ")" : "انتظر دور الخصم...");
-            let h = ""; d.board.forEach((cell, i) => { const cls = cell === "X" ? "xo-x" : (cell === "O" ? "xo-o" : ""); h += '<div class="xo-cell ' + cls + '" onclick="playXOMove(' + i + ', ' + isMyTurn + ', \'' + myChar + '\')">' + cell + '</div>'; });
-            document.getElementById('xo-board-div').innerHTML = h;
-            if(d.winner) { roomListener(); if(d.winner === currentUser.uid) db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(20) }); setTimeout(() => switchTab('online'), 3500); }
-        });
-    }
-    function playXOMove(i, isMyTurn, myChar) {
-        if(!isMyTurn) return;
-        db.collection("rooms").doc(activeRoomId).get().then(doc => { const d = doc.data(); if(d.board[i] === "" && !d.winner) { d.board[i] = myChar; const nt = (currentUser.uid === d.player1) ? d.player2 : d.player1; const w = checkXOWinner(d.board); const up = { board: d.board, turn: nt }; if(w) up.winner = w === "X" ? d.player1 : (w === "O" ? d.player2 : "draw"); db.collection("rooms").doc(activeRoomId).update(up); } });
-    }
-    function checkXOWinner(b) { const L = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; for(let l of L) { if(b[l[0]] && b[l[0]] === b[l[1]] && b[l[0]] === b[l[2]]) return b[l[0]]; } return !b.includes("") ? "draw" : null; }
-    function enterTapRoom(opp) {
-        switchTab("tap"); document.getElementById("tap-status-text").innerText = "ضد: " + opp; document.getElementById("tap-arena").style.display = "block"; document.getElementById("tap-btn-action").disabled = false;
-        if(roomListener) roomListener();
-        roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => { const d = doc.data(); if(!d || d.gameType !== "tap") return; const total = d.p1Clicks + d.p2Clicks, p1 = Math.max(0,(d.p1Clicks/total)*100), p2 = Math.max(0,(d.p2Clicks/total)*100), amI = d.player1 === currentUser.uid, my = amI?p1:p2, op = amI?p2:p1; document.getElementById("tap-my-bar").style.width = my+"%"; document.getElementById("tap-my-bar").innerText = Math.round(my)+"%"; document.getElementById("tap-opp-bar").style.width = op+"%"; document.getElementById("tap-opp-bar").innerText = Math.round(op)+"%"; if(d.p1Clicks >= 100 || d.p2Clicks >= 100) { roomListener(); document.getElementById("tap-btn-action").disabled = true; const won = (amI&&d.p1Clicks>=100)||(!amI&&d.p2Clicks>=100); document.getElementById("tap-status-text").innerText = won ? "🏆 فزت بـ 15 🥕!" : "😢 خسرت!"; if(won) db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(15) }); setTimeout(() => { db.collection("rooms").doc(activeRoomId).delete(); switchTab('online'); }, 3500); } });
-    }
-    function sendTapClick() { db.collection("rooms").doc(activeRoomId).get().then(doc => { const d = doc.data(); if(currentUser.uid === d.player1) db.collection("rooms").doc(activeRoomId).update({ p1Clicks: d.p1Clicks + 2, p2Clicks: Math.max(0, d.p2Clicks - 1) }); else db.collection("rooms").doc(activeRoomId).update({ p2Clicks: d.p2Clicks + 2, p1Clicks: Math.max(0, d.p1Clicks - 1) }); }); }
-    function enterRPSRoom(opp) {
-        switchTab("rps"); document.getElementById("rps-status-text").innerText = "ضد: " + opp; document.getElementById("rps-arena").style.display = "block"; document.getElementById("rps-result").innerText = ""; enableRPS(true);
-        if(roomListener) roomListener();
-        roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => { const d = doc.data(); if(!d || d.gameType !== "rps") return; const amI = d.player1 === currentUser.uid, my = amI ? d.p1Move : d.p2Move; if(my !== "") { document.getElementById("rps-status-text").innerText = "تم الإرسال، انتظر الخصم..."; enableRPS(false); } if(d.p1Move !== "" && d.p2Move !== "") { const r = rpsWin(d.p1Move, d.p2Move); let txt = ""; enableRPS(false); if(r === "draw") txt = "🤝 تعادل!"; else if((r === "p1" && amI)||(r === "p2" && !amI)) { txt = "🏆 فزت بـ 10 🥕!"; db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(10) }); } else txt = "😢 خسرت!"; document.getElementById("rps-result").innerText = txt; roomListener(); setTimeout(() => { if(amI) db.collection("rooms").doc(activeRoomId).delete(); switchTab("online"); }, 3500); } });
-    }
-    function sendRPSMove(m) { db.collection("rooms").doc(activeRoomId).get().then(doc => { if(!doc.exists) return; const d = doc.data(); if(currentUser.uid === d.player1) db.collection("rooms").doc(activeRoomId).update({ p1Move: m }); else db.collection("rooms").doc(activeRoomId).update({ p2Move: m }); }); }
-    function rpsWin(a, b) { if(a === b) return "draw"; if((a === "rock" && b === "scissors")||(a === "paper" && b === "rock")||(a === "scissors" && b === "paper")) return "p1"; return "p2"; }
-    function enableRPS(s) { document.getElementById("rps-rock").disabled = !s; document.getElementById("rps-paper").disabled = !s; document.getElementById("rps-scissors").disabled = !s; }
-    function exitRoom() { if(roomListener) roomListener(); switchTab("online"); }
-    function buyUpgrade(t, c) {
-        if((userProfile.coins || 0) >= c) { const up = { coins: firebase.firestore.FieldValue.increment(-c) }; let msg = ""; if(t === 'legend_title') { up.title = "أسطورة 🏆"; msg = "تم تفعيل لقب أسطورة!"; } else if(t === 'gold_frame') { up.frame = "gold"; msg = "تم إضافة الإطار الذهبي!"; } else if(t === 'luck_boost') { up.luckBoost = true; msg = "مضاعف الجزر مفعل!"; } db.collection("users_profile").doc(currentUser.uid).update(up).then(() => showToast(msg + " ✅", "success", "🎉")); } else showToast("رصيدك غير كافٍ!", "danger", "❌");
-    }
-
-    /* ============ لعبة الفضاء ============ */
-    let spaceCanvas, spaceCtx, spaceInterval = null, playerX = 185, bullets = [], enemies = [], spaceScore = 0, stars = [];
-    function initSpaceStars() { stars = []; for(let i = 0; i < 30; i++) stars.push({ x: Math.random()*400, y: Math.random()*280, size: Math.random()*2, speed: Math.random()*1+0.5 }); }
-    function startSpaceGame() {
-        spaceCanvas = document.getElementById('space-canvas'); spaceCtx = spaceCanvas.getContext('2d');
-        if(spaceInterval) clearInterval(spaceInterval); bullets = []; enemies = []; spaceScore = 0; initSpaceStars();
-        spaceCanvas.onmousemove = e => { const r = spaceCanvas.getBoundingClientRect(); playerX = (e.clientX - r.left)*(400/r.width) - 15; };
-        spaceCanvas.ontouchmove = e => { const r = spaceCanvas.getBoundingClientRect(); if(e.touches[0]) playerX = (e.touches[0].clientX - r.left)*(400/r.width) - 15; };
-        spaceInterval = setInterval(() => {
-            spaceCtx.fillStyle = "#0f172a"; spaceCtx.fillRect(0,0,400,280);
-            spaceCtx.fillStyle = "white"; stars.forEach(s => { s.y += s.speed; if(s.y > 280) s.y = 0; spaceCtx.fillRect(s.x, s.y, s.size, s.size); });
-            spaceCtx.fillStyle = "#6366f1"; spaceCtx.beginPath(); spaceCtx.moveTo(playerX+15,230); spaceCtx.lineTo(playerX+30,260); spaceCtx.lineTo(playerX,260); spaceCtx.fill();
-            if(Math.random() < 0.08) bullets.push({ x: playerX+13, y: 230 });
-            spaceCtx.fillStyle = "#76db41"; for(let i = bullets.length-1; i >= 0; i--) { const b = bullets[i]; b.y -= 6; spaceCtx.fillRect(b.x, b.y, 4, 10); if(b.y < 0) bullets.splice(i,1); }
-            if(Math.random() < 0.04) enemies.push({ x: Math.random()*380, y: -10, size: 16 });
-            spaceCtx.fillStyle = "#ef4444";
-            for(let i = enemies.length-1; i >= 0; i--) {
-                const en = enemies[i]; en.y += 2.2; spaceCtx.beginPath(); spaceCtx.arc(en.x, en.y, en.size/2, 0, Math.PI*2); spaceCtx.fill();
-                let hit = false;
-                for(let j = bullets.length-1; j >= 0; j--) { const b = bullets[j]; if(b.x > en.x-10 && b.x < en.x+10 && b.y > en.y-10 && b.y < en.y+10) { bullets.splice(j,1); hit = true; break; } }
-                if(hit) { enemies.splice(i,1); spaceScore += 10; continue; }
-                if(en.y > 280 || (Math.abs(en.x - (playerX+15)) < 15 && en.y > 230)) {
-                    clearInterval(spaceInterval); spaceInterval = null;
-                    const nowMs = Date.now();
-                    const mult = (userProfile.multiplierUntil && nowMs < userProfile.multiplierUntil) ? (userProfile.multiplierFactor || 2) : 1;
-                    const luck = userProfile.luckBoost ? 2 : 1;
-                    const finalCarrots = Math.floor(spaceScore / 20) * mult * luck;
-                    if(finalCarrots > 0 && currentUser) { db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(finalCarrots), luckBoost: false }); showToast("💥 ربحت " + finalCarrots + " 🥕", "success", "🥕"); }
-                    else showToast("💥 تحطمت! حاول تاني", "danger", "🛸");
-                    return;
-                }
+            if (r + 3 < ROWS) {
+                const window = [board[r][c], board[r+1][c], board[r+2][c], board[r+3][c]];
+                score += evaluateWindow(window);
             }
-            spaceCtx.fillStyle = "#fff"; spaceCtx.font = "bold 13px Tajawal"; spaceCtx.fillText("النقاط: " + spaceScore, 15, 25);
-        }, 1000/35);
+            if (r + 3 < ROWS && c + 3 < COLS) {
+                const window = [board[r][c], board[r+1][c+1], board[r+2][c+2], board[r+3][c+3]];
+                score += evaluateWindow(window);
+            }
+            if (r + 3 < ROWS && c - 3 >= 0) {
+                const window = [board[r][c], board[r+1][c-1], board[r+2][c-2], board[r+3][c-3]];
+                score += evaluateWindow(window);
+            }
+        }
     }
-    function switchTab(tab) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        const pg = document.getElementById('page-' + tab); if(pg) pg.classList.add('active');
-        const nv = document.getElementById('nav-' + tab); if(nv) nv.classList.add('active');
-        if(tab !== 'games' && spaceInterval) { clearInterval(spaceInterval); spaceInterval = null; }
-    }
-    </script>
+    return score;
+}
+
+function evaluateWindow(window) {
+    let score = 0;
+    const aiCount = window.filter(x => x === 2).length;
+    const humanCount = window.filter(x => x === 1).length;
+    const emptyCount = window.filter(x => x === 0).length;
+    
+    if (aiCount === 3 && emptyCount === 1) score += 50;
+    else if (aiCount === 2 && emptyCount === 2) score += 10;
+    
+    if (humanCount === 3 && emptyCount === 1) score -= 80;
+    else if (humanCount === 2 && emptyCount === 2) score -= 10;
+    
+    return score;
+}
+
+// ===== Mode & Difficulty =====
+document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        gameMode = btn.dataset.mode;
+        document.getElementById('diffControls').style.display = gameMode === 'pvc' ? 'flex' : 'none';
+        newGame();
+    });
+});
+
+document.querySelectorAll('.diff-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        difficulty = btn.dataset.diff;
+        newGame();
+    });
+});
+
+// Start
+init();
+</script>
+
 </body>
 </html>
