@@ -340,627 +340,866 @@ body{font-family:'Tajawal',sans-serif;background:linear-gradient(135deg,#b0e0f5,
 </div>
 
 <script>
-const firebaseConfig={apiKey:"AIzaSyA5LlGHl9djJsx_Rs3evjd8Xzpn0e25IHI",authDomain:"gohn-games.firebaseapp.com",projectId:"gohn-games",storageBucket:"gohn-games.firebasestorage.app",messagingSenderId:"837388013481",appId:"1:837388013481:web:3d1c87fd31442284653eb8",measurementId:"G-8PBX8E8D15"};
+const firebaseConfig = {
+    apiKey: "AIzaSyA5LlGHl9djJsx_Rs3evjd8Xzpn0e25IHI",
+    authDomain: "gohn-games.firebaseapp.com",
+    projectId: "gohn-games",
+    storageBucket: "gohn-games.firebasestorage.app",
+    messagingSenderId: "837388013481",
+    appId: "1:837388013481:web:3d1c87fd31442284653eb8",
+    measurementId: "G-8PBX8E8D15"
+};
 firebase.initializeApp(firebaseConfig);
-const auth=firebase.auth(),db=firebase.firestore();
-let currentUser=null,userProfile={coins:0};
-let activeRoomId=null,currentGameType="",roomListener=null,currentChallengeId=null,selectedGame=null;
-let isAdmin=false;
-const OWNER_EMAIL="gohngohn099@gmail.com";
-const PAGE_LOAD=Date.now();
+const auth = firebase.auth(), db = firebase.firestore();
+let currentUser = null, userProfile = { coins: 0 };
+let activeRoomId = null, currentGameType = "";
+let roomListener = null, currentChallengeId = null, selectedGame = null;
+let isAdmin = false;
+const OWNER_EMAIL = "gohngohn099@gmail.com";
 
-function showToast(msg,type="info",icon="🔔"){
-  const t=document.getElementById("toast");
-  document.getElementById("toast-msg").innerText=msg;
-  document.getElementById("toast-icon").innerText=icon;
-  t.className="toast "+type;
-  t.classList.add("active");
-  setTimeout(()=>t.classList.remove("active"),3500);
+function showToast(message, type = "info", icon = "") {
+    const toast = document.getElementById("custom-toast");
+    document.getElementById("toast-message").innerText = message;
+    document.getElementById("toast-icon").innerText = icon;
+    toast.className = "toast-notification " + type;
+    toast.classList.add("active");
+    setTimeout(() => toast.classList.remove("active"), 3500);
 }
 
-function login(){auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>showToast("خطأ: "+e.message,"danger"))}
+function login() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
 
-auth.onAuthStateChanged(user=>{
-  if(user){
-    currentUser=user;
-    if(user.email===OWNER_EMAIL){
-      isAdmin=true;
-      document.getElementById('admin-btn').classList.add('show');
-      loadAdminGames();
+auth.onAuthStateChanged(user => {
+    if(user) {
+        currentUser = user;
+        
+        // التحقق من الأدمن
+        if(user.email === OWNER_EMAIL) {
+            isAdmin = true;
+            document.getElementById('admin-menu-btn').classList.add('show');
+        }
+        
+        document.getElementById('view-auth').style.display = 'none';
+        document.getElementById('view-main').style.display = 'block';
+        document.getElementById('user-summary').style.display = 'flex';
+        document.getElementById('coin-badge').style.display = 'flex';
+        document.getElementById('bottom-nav').style.display = 'flex';
+        
+        let defaultPhoto = user.photoURL || "https://via.placeholder.com/36";
+        let defaultName = user.displayName || "لاعب مجهول";
+        
+        document.getElementById('user-avatar').src = defaultPhoto;
+        document.getElementById('user-displayname').innerText = defaultName.split(' ')[0];
+        
+        // حفظ بيانات اللاعب مع isAdmin
+        db.collection("users_profile").doc(user.uid).set({
+            fullName: defaultName, 
+            photoURL: defaultPhoto, 
+            status: "online",
+            lastActive: Date.now(), 
+            coins: firebase.firestore.FieldValue.increment(0),
+            isAdmin: isAdmin // ← مهم جداً: حفظ حالة الأدمن
+        }, { merge: true });
+
+        db.collection("users_profile").doc(user.uid).onSnapshot(doc => {
+            if(doc.exists) { 
+                userProfile = doc.data(); 
+                document.getElementById('user-coins').innerText = userProfile.coins || 0; 
+            }
+        });
+        
+        // استدعاء الدوال الأساسية دائماً (للأدمن والعاديين)
+        loadOnlineGames();
+        loadOfflineCustomGames();
+        listenToActivePlayers(); // ← تُستدعى دائماً
+        listenToChallenges();
+        listenToAdminCommands(); // ← تُستدعى للأدمن فقط داخل الدالة
+        
+        if(isAdmin) loadCustomGamesForAdmin();
     }
-    document.getElementById('view-auth').style.display='none';
-    document.getElementById('view-main').style.display='block';
-    document.getElementById('user-info').style.display='flex';
-    document.getElementById('coin-badge').style.display='flex';
-    document.getElementById('bottom-nav').style.display='flex';
-    let photo=user.photoURL||"https://via.placeholder.com/36";
-    let name=user.displayName||"لاعب";
-    document.getElementById('user-avatar').src=photo;
-    document.getElementById('user-name').innerText=name.split(' ')[0];
-    db.collection("users_profile").doc(user.uid).set({
-      fullName:name,photoURL:photo,status:"online",lastActive:Date.now(),
-      coins:firebase.firestore.FieldValue.increment(0)
-    },{merge:true});
-    db.collection("users_profile").doc(user.uid).onSnapshot(doc=>{
-      if(doc.exists){
-        userProfile=doc.data();
-        document.getElementById('user-coins').innerText=userProfile.coins||0;
-        const cb=document.getElementById('coin-badge');
-        if(userProfile.multiplierUntil&&Date.now()<userProfile.multiplierUntil)cb.classList.add('multiplier-active');
-        else cb.classList.remove('multiplier-active');
-      }
-    });
-    loadOnlineGames();
-    listenToPlayers();
-    listenToChallenges();
-    listenToAdminCommands();
-  }
 });
 
-window.addEventListener('beforeunload',()=>{if(currentUser)db.collection("users_profile").doc(currentUser.uid).update({status:"offline"}).catch(()=>{})});
+window.addEventListener('beforeunload', () => { 
+    if(currentUser) db.collection("users_profile").doc(currentUser.uid).update({ status: "offline" }).catch(()=>{}); 
+});
 
 // ===== نظام الأدمن أبيوز =====
-function toggleAdmin(){document.getElementById('admin-panel').classList.toggle('show')}
 
-function listenToAdminCommands(){
-  db.collection("admin_commands").orderBy("timestamp","desc").limit(50).onSnapshot(snap=>{
-    snap.docChanges().forEach(ch=>{
-      if(ch.type==="added"){
-        const d=ch.doc.data();
-        if(d.timestamp<PAGE_LOAD-3000)return;
-        if(d.type==='rain'&&d.amount)triggerRain(d.amount);
-        else if(d.type==='multiplier'){
-          db.collection("users_profile").doc(currentUser.uid).update({
-            multiplierUntil:Date.now()+d.duration*1000,multiplierFactor:d.factor||2
-          }).catch(()=>{});
-          showToast("✖️ مضاعف x"+(d.factor||2)+" مفعل!","success","✖️");
+// 1. الاستماع للأوامر (للأدمن فقط)
+function listenToAdminCommands() {
+    if(!isAdmin) return; // الأدمن فقط
+    
+    db.collection("admin_commands").orderBy("timestamp", "desc").limit(50).onSnapshot(snap => {
+        snap.docChanges().forEach(ch => {
+            if(ch.type === "added") {
+                const d = ch.doc.data();
+                
+                // تجاهل الأوامر القديمة
+                if(Date.now() - d.timestamp > 60000) return;
+                
+                switch(d.type) {
+                    case 'rain':
+                        if(d.amount) {
+                            triggerCarrotRain();
+                            db.collection("users_profile").doc(currentUser.uid).update({
+                                coins: firebase.firestore.FieldValue.increment(d.amount)
+                            });
+                            showToast(`🌧️ مطر الجزر! ربحت ${d.amount} `, "success", "🌧️");
+                        }
+                        break;
+                        
+                    case 'multiplier':
+                        if(d.factor && d.duration) {
+                            db.collection("users_profile").doc(currentUser.uid).update({
+                                multiplierUntil: Date.now() + d.duration * 1000,
+                                multiplierFactor: d.factor
+                            });
+                            showToast(`✖️ مضاعف x${d.factor} مفعل لمدة ${d.duration} ثانية!`, "success", "✖️");
+                        }
+                        break;
+                        
+                    case 'give':
+                        if(d.targetUid === currentUser.uid && d.amount) {
+                            db.collection("users_profile").doc(currentUser.uid).update({
+                                coins: firebase.firestore.FieldValue.increment(d.amount)
+                            });
+                            showToast(` الأدمن إدالك ${d.amount} 🥕!`, "success", "💰");
+                        }
+                        break;
+                        
+                    case 'take':
+                        if(d.targetUid === currentUser.uid && d.amount) {
+                            db.collection("users_profile").doc(currentUser.uid).update({
+                                coins: firebase.firestore.FieldValue.increment(-d.amount)
+                            });
+                            showToast(`📉 الأدمن سحب ${d.amount} `, "danger", "📉");
+                        }
+                        break;
+                        
+                    case 'kick':
+                        if(d.targetUid === currentUser.uid) {
+                            showToast("🚫 تم طردك من المنصة!", "danger", "🚫");
+                            setTimeout(() => auth.signOut(), 1500);
+                        }
+                        break;
+                }
+            }
+        });
+    });
+    
+    // الاستماع للإعلانات
+    db.collection("announcements").orderBy("timestamp", "desc").limit(5).onSnapshot(snap => {
+        snap.docChanges().forEach(ch => {
+            if(ch.type === "added") {
+                const d = ch.doc.data();
+                if(Date.now() - d.timestamp < 60000) { // آخر دقيقة فقط
+                    showAnnouncement(d.message, d.fromName || "الأدمن");
+                }
+            }
+        });
+    });
+}
+
+// 2. عرض اللاعبين المتصلين (للجميع) مع تمييز الأدمن
+function listenToActivePlayers() {
+    db.collection("users_profile").where("status", "==", "online").onSnapshot(snap => {
+        let html = "", options = '<option value="">-- اختر لاعب --</option>';
+        
+        snap.forEach(doc => {
+            if(doc.id !== currentUser.uid && (Date.now() - (doc.data().lastActive || 0) < 300000)) {
+                const d = doc.data();
+                const safeName = (d.fullName || 'لاعب').replace(/'/g, "");
+                const isAdminPlayer = d.isAdmin === true;
+                const crown = isAdminPlayer ? ' 👑' : '';
+                const adminBadge = isAdminPlayer ? '<span style="color:#f59e0b;font-size:0.7rem;font-weight:900">أدمن</span>' : '';
+                
+                // عرض اللاعب في القائمة
+                html += `<div class="player-item" style="${isAdminPlayer ? 'border:2px solid #f59e0b;background:linear-gradient(135deg,rgba(255,247,237,0.95),rgba(255,237,213,0.75))' : ''}">
+                    <div class="player-info">
+                        <img src="${d.photoURL}" class="player-avatar-list">
+                        <div>
+                            <div style="font-weight:800;font-size:0.9rem">${crown}${safeName}</div>
+                            <div style="font-size:0.75rem;color:var(--btn-games-bg)">
+                                <span class="status-dot"></span>${isAdminPlayer ? 'الأدمن متصل' : 'متصل'}
+                            </div>
+                            ${adminBadge}
+                        </div>
+                    </div>
+                    <button class="btn-3d btn-games btn-sm-3d" onclick="sendChallengeTo('${doc.id}', '${safeName}')">تحدي ️</button>
+                </div>`;
+                
+                // إضافة للاختيار في أوامر الأدمن
+                options += `<option value="${doc.id}">${crown}${safeName} ${isAdminPlayer ? '(أدمن)' : ''}</option>`;
+            }
+        });
+        
+        document.getElementById("active-players-list").innerHTML = html || '<p style="color:var(--text-muted);font-size:0.85rem;padding:15px;text-align:center">لا يوجد متصلين حالياً</p>';
+        
+        // تحديث قائمة الاختيار للأدمن
+        if(isAdmin) {
+            const targetSelect = document.getElementById('admin-target');
+            if(targetSelect) targetSelect.innerHTML = options;
         }
-        else if(d.type==='announce')showAnnounce(d.message,d.fromName||"الأدمن");
-        else if(d.type==='give'&&d.targetUid===currentUser.uid){
-          db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(d.amount)}).catch(()=>{});
-          showToast("💰 الأدمن إدالك "+d.amount+" 🥕!","success","💰");
+    });
+}
+
+// 3. عرض الإعلان مع حذف تلقائي بعد 20 ثانية
+function showAnnouncement(message, from) {
+    // إنشاء عنصر الإعلان
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:9998;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.3s';
+    
+    const box = document.createElement('div');
+    box.style.cssText = 'background:#fff;border-radius:24px;padding:30px;max-width:90%;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,0.4);border:4px solid var(--btn-trade-bg);animation:modalBounce 0.5s';
+    
+    box.innerHTML = `
+        <div style="font-size:2rem;margin-bottom:10px"></div>
+        <h2 style="color:var(--btn-trade-bg);margin-bottom:10px;font-size:1.3rem">إعلان من ${from}</h2>
+        <p style="font-size:1.1rem;color:var(--text-dark);font-weight:700;line-height:1.6">${message}</p>
+        <div style="margin-top:15px;font-size:0.85rem;color:var(--text-muted)">يُغلق تلقائياً خلال <span id="countdown">20</span> ثانية</div>
+        <button onclick="this.parentElement.parentElement.remove()" style="margin-top:15px;padding:10px 25px;background:var(--btn-trade-bg);color:#fff;border:none;border-radius:12px;font-weight:800;cursor:pointer;font-family:inherit">إغلاق</button>
+    `;
+    
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    
+    // عد تنازلي وإغلاق تلقائي
+    let countdown = 20;
+    const countdownEl = document.getElementById('countdown');
+    const timer = setInterval(() => {
+        countdown--;
+        if(countdownEl) countdownEl.innerText = countdown;
+        if(countdown <= 0) {
+            clearInterval(timer);
+            overlay.remove();
         }
-        else if(d.type==='take'&&d.targetUid===currentUser.uid){
-          db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(-d.amount)}).catch(()=>{});
-          showToast(" الأدمن سحب "+d.amount+" 🥕","danger","📉");
+    }, 1000);
+    
+    // إغلاق عند الضغط خارج الصندوق
+    overlay.addEventListener('click', (e) => {
+        if(e.target === overlay) overlay.remove();
+    });
+}
+
+// 4. إرسال أمر أدمن مع حذف تلقائي بعد 20 ثانية
+function sendAdminCommand(type, payload) {
+    if(!isAdmin) return;
+    
+    const command = {
+        type: type,
+        payload: payload || {},
+        fromName: currentUser.displayName || "الأدمن",
+        timestamp: Date.now()
+    };
+    
+    db.collection("admin_commands").add(command).then(docRef => {
+        // حذف تلقائي بعد 20 ثانية
+        setTimeout(() => {
+            docRef.delete().catch(err => console.log("فشل الحذف:", err));
+        }, 20000);
+    }).catch(err => {
+        showToast("❌ خطأ: " + err.message, "danger");
+    });
+}
+
+// 5. إرسال إعلان عام مع حذف تلقائي
+function sendAnnouncement(message) {
+    if(!isAdmin) return;
+    
+    const announcement = {
+        message: message,
+        fromName: currentUser.displayName || "الأدمن",
+        timestamp: Date.now()
+    };
+    
+    db.collection("announcements").add(announcement).then(docRef => {
+        // حذف تلقائي بعد 20 ثانية
+        setTimeout(() => {
+            docRef.delete().catch(err => console.log("فشل حذف الإعلان:", err));
+        }, 20000);
+        
+        showToast(" تم إرسال الإعلان!", "success", "📢");
+    }).catch(err => {
+        showToast("❌ خطأ: " + err.message, "danger");
+    });
+}
+
+// ===== دوال لوحة تحكم الأدمن =====
+
+function toggleAdminPanel() {
+    document.getElementById('admin-panel').classList.toggle('show');
+}
+
+function addNewGame() {
+    const name = document.getElementById('admin-game-name').value;
+    const desc = document.getElementById('admin-game-desc').value;
+    const image = document.getElementById('admin-game-image').value;
+    const code = document.getElementById('admin-game-code').value;
+    const type = document.getElementById('admin-game-type').value;
+    const prize = parseInt(document.getElementById('admin-game-prize').value);
+
+    if(!name || !code) {
+        showToast("⚠️ يجب إدخال اسم اللعبة والكود!", "danger");
+        return;
+    }
+
+    db.collection("custom_games").add({
+        name, desc, image, code, type, prize,
+        createdBy: currentUser.uid,
+        createdAt: Date.now(),
+        status: "active"
+    }).then(() => {
+        showToast("✅ تم إضافة اللعبة!", "success");
+        loadCustomGamesForAdmin();
+        loadOnlineGames();
+        loadOfflineCustomGames();
+        toggleAdminPanel();
+        document.getElementById('admin-game-name').value = '';
+        document.getElementById('admin-game-code').value = '';
+    }).catch(err => showToast("❌ " + err.message, "danger"));
+}
+
+function deleteGame(gameId) {
+    if(!confirm("حذف اللعبة؟")) return;
+    db.collection("custom_games").doc(gameId).delete().then(() => {
+        showToast("✅ تم الحذف!", "success");
+        loadCustomGamesForAdmin();
+        loadOnlineGames();
+        loadOfflineCustomGames();
+    });
+}
+
+function loadCustomGamesForAdmin() {
+    if(!isAdmin) return;
+    const list = document.getElementById('custom-games-list');
+    list.innerHTML = '<p style="color:var(--text-muted);font-size:0.8rem">جاري...</p>';
+    
+    db.collection("custom_games").where("status", "==", "active").onSnapshot(snap => {
+        if(snap.empty) {
+            list.innerHTML = '<p style="color:var(--text-muted);font-size:0.8rem;text-align:center">لا توجد ألعاب</p>';
+            return;
         }
-        else if(d.type==='kick'&&d.targetUid===currentUser.uid){
-          showToast(" تم طردك!","danger","🚫");
-          setTimeout(()=>auth.signOut(),1500);
+        let html = '';
+        snap.forEach(doc => {
+            const g = doc.data();
+            html += `<div class="admin-game-item">
+                <div>
+                    <div class="game-name">${g.name}</div>
+                    <div class="game-type">${g.type === 'online' ? '👥 أونلاين' : ' أوفلاين'} - ${g.prize}🥕</div>
+                </div>
+                <button class="delete-btn" onclick="deleteGame('${doc.id}')">🗑️</button>
+            </div>`;
+        });
+        list.innerHTML = html;
+    });
+}
+
+// ===== دوال الأوامر (تُستدعى من أزرار لوحة التحكم) =====
+
+function adminRain() {
+    const amt = parseInt(prompt("كمية الجزر لكل لاعب؟", "50"));
+    if(!isNaN(amt) && amt > 0) {
+        sendAdminCommand('rain', { amount: amt });
+        showToast("️ تم إطلاق مطر الجزر!", "success", "🌧️");
+    }
+}
+
+function adminMultiplier() {
+    const dur = parseInt(prompt("مدة المضاعف بالثواني؟", "60")) || 60;
+    sendAdminCommand('multiplier', { factor: 2, duration: dur });
+    showToast("️ مضاعف x2 مفعل!", "success", "✖️");
+}
+
+function adminAnnounce() {
+    const msg = prompt("نص الإعلان:");
+    if(msg && msg.trim()) {
+        sendAnnouncement(msg.trim());
+    }
+}
+
+function adminGive() {
+    const uid = document.getElementById('admin-target').value;
+    if(!uid) { showToast("⚠️ اختر لاعب أولاً!", "danger"); return; }
+    const amt = parseInt(prompt("كمية الجزر؟", "50"));
+    if(!isNaN(amt) && amt > 0) {
+        sendAdminCommand('give', { targetUid: uid, amount: amt });
+        showToast("💰 تم إرسال الجزر!", "success", "💰");
+    }
+}
+
+function adminTake() {
+    const uid = document.getElementById('admin-target').value;
+    if(!uid) { showToast("⚠️ اختر لاعب أولاً!", "danger"); return; }
+    const amt = parseInt(prompt("كمية السحب؟", "50"));
+    if(!isNaN(amt) && amt > 0) {
+        sendAdminCommand('take', { targetUid: uid, amount: amt });
+        showToast(" تم السحب!", "success", "📉");
+    }
+}
+
+function adminKick() {
+    const uid = document.getElementById('admin-target').value;
+    if(!uid) { showToast("️ اختر لاعب أولاً!", "danger"); return; }
+    if(confirm("طرد هذا اللاعب؟")) {
+        sendAdminCommand('kick', { targetUid: uid });
+        showToast(" تم الطرد!", "success", "");
+    }
+}
+
+// ===== تأثير مطر الجزر =====
+function triggerCarrotRain() {
+    const emojis = ['🥕', '🥕', '🥕', '', '💫'];
+    for(let i = 0; i < 60; i++) {
+        setTimeout(() => {
+            const el = document.createElement('div');
+            el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            el.style.cssText = `
+                position: fixed;
+                top: -60px;
+                left: ${Math.random() * 100}vw;
+                font-size: ${1.5 + Math.random() * 1.5}rem;
+                pointer-events: none;
+                z-index: 9999;
+                animation: carrotFall ${2 + Math.random() * 2}s linear forwards;
+            `;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 4000);
+        }, i * 50);
+    }
+}
+
+// إضافة animation للـ CSS
+if(!document.getElementById('rain-style')) {
+    const style = document.createElement('style');
+    style.id = 'rain-style';
+    style.textContent = `
+        @keyframes carrotFall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0.9; }
         }
-      }
-    });
-  });
-}
-
-function adminRain(){
-  const amt=parseInt(prompt("كمية الجزر لكل لاعب؟","50"));
-  if(!isNaN(amt)&&amt>0){
-    db.collection("admin_commands").add({type:'rain',amount:amt,timestamp:Date.now(),fromName:currentUser.displayName});
-    showToast("🌧️ تم إطلاق مطر الجزر!","success","🌧️");
-  }
-}
-
-function adminMultiplier(){
-  const dur=parseInt(prompt("مدة المضاعف بالثواني؟","60"))||60;
-  db.collection("admin_commands").add({type:'multiplier',factor:2,duration:dur,timestamp:Date.now(),fromName:currentUser.displayName});
-  showToast("️ مضاعف x2 مفعل!","success","✖️");
-}
-
-function adminAnnounce(){
-  const msg=prompt("نص الإعلان:");
-  if(msg&&msg.trim()){
-    db.collection("admin_commands").add({type:'announce',message:msg.trim(),timestamp:Date.now(),fromName:currentUser.displayName});
-    showToast("📢 تم إرسال الإعلان!","success","📢");
-  }
-}
-
-function adminRandom(){
-  const events=[
-    ()=>db.collection("admin_commands").add({type:'rain',amount:100,timestamp:Date.now(),fromName:currentUser.displayName}),
-    ()=>db.collection("admin_commands").add({type:'multiplier',factor:2,duration:60,timestamp:Date.now(),fromName:currentUser.displayName}),
-    ()=>db.collection("admin_commands").add({type:'announce',message:'🎉 حدث عشوائي! استمتعوا بالمضاعف والمفاجآت!',timestamp:Date.now(),fromName:currentUser.displayName})
-  ];
-  events[Math.floor(Math.random()*events.length)]();
-  showToast(" حدث عشوائي!","success","🎲");
-}
-
-function adminGive(){
-  const uid=document.getElementById('admin-target').value;
-  if(!uid){showToast("اختر لاعب!","danger");return}
-  const amt=parseInt(prompt("كمية الجزر؟","50"));
-  if(!isNaN(amt)&&amt>0){
-    db.collection("admin_commands").add({type:'give',targetUid:uid,amount:amt,timestamp:Date.now(),fromName:currentUser.displayName});
-    showToast("💰 تم!","success","💰");
-  }
-}
-
-function adminTake(){
-  const uid=document.getElementById('admin-target').value;
-  if(!uid){showToast("اختر لاعب!","danger");return}
-  const amt=parseInt(prompt("كمية السحب؟","50"));
-  if(!isNaN(amt)&&amt>0){
-    db.collection("admin_commands").add({type:'take',targetUid:uid,amount:amt,timestamp:Date.now(),fromName:currentUser.displayName});
-    showToast("📉 تم!","success","");
-  }
-}
-
-function adminKick(){
-  const uid=document.getElementById('admin-target').value;
-  if(!uid){showToast("اختر لاعب!","danger");return}
-  if(confirm("طرد اللاعب؟")){
-    db.collection("admin_commands").add({type:'kick',targetUid:uid,timestamp:Date.now(),fromName:currentUser.displayName});
-    showToast("🚫 تم!","success","");
-  }
-}
-
-function triggerRain(amount){
-  const emojis=['🥕','🥕','🥕','','🥕','🌟'];
-  for(let i=0;i<60;i++){
-    setTimeout(()=>{
-      const el=document.createElement('div');
-      el.className='carrot-rain';
-      el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-      el.style.left=Math.random()*100+'vw';
-      el.style.animationDuration=(2+Math.random()*3)+'s';
-      el.style.fontSize=(1.5+Math.random()*1.5)+'rem';
-      document.body.appendChild(el);
-      setTimeout(()=>el.remove(),5000);
-    },i*50);
-  }
-  if(amount>0){
-    db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(amount)}).catch(()=>{});
-    showToast("️ ربحت "+amount+" 🥕 من المطر!","success","🌧️");
-  }
-}
-
-function showAnnounce(msg,from){
-  document.getElementById('announce-title').innerText='📢 إعلان من '+from;
-  document.getElementById('announce-msg').innerText=msg;
-  document.getElementById('announce-overlay').classList.add('show');
-}
-function closeAnnounce(){document.getElementById('announce-overlay').classList.remove('show')}
-
-// ===== إدارة الألعاب =====
-function addGame(){
-  const name=document.getElementById('g-name').value;
-  const desc=document.getElementById('g-desc').value;
-  const img=document.getElementById('g-img').value;
-  const code=document.getElementById('g-code').value;
-  const type=document.getElementById('g-type').value;
-  const prize=parseInt(document.getElementById('g-prize').value);
-  if(!name||!code){showToast("⚠️ الاسم والكود مطلوبان!","danger");return}
-  db.collection("custom_games").add({name,desc,image:img,code,type,prize,createdBy:currentUser.uid,createdAt:Date.now(),status:"active"}).then(()=>{
-    showToast("✅ تمت الإضافة!","success");
-    loadAdminGames();loadOnlineGames();
-    document.getElementById('g-name').value='';
-    document.getElementById('g-desc').value='';
-    document.getElementById('g-img').value='';
-    document.getElementById('g-code').value='';
-  }).catch(e=>showToast("❌ "+e.message,"danger"));
-}
-
-function deleteGame(id){
-  if(!confirm("حذف اللعبة؟"))return;
-  db.collection("custom_games").doc(id).delete().then(()=>{
-    showToast("✅ تم الحذف!","success");
-    loadAdminGames();loadOnlineGames();
-  });
-}
-
-function loadAdminGames(){
-  const list=document.getElementById('games-list');
-  list.innerHTML='جاري...';
-  db.collection("custom_games").where("status","==","active").onSnapshot(snap=>{
-    if(snap.empty){list.innerHTML='<p style="color:var(--muted);font-size:0.8rem">لا توجد ألعاب</p>';return}
-    let h='';
-    snap.forEach(doc=>{
-      const g=doc.data();
-      h+=`<div style="background:#f8fafc;padding:8px;border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;font-size:0.85rem"><div><b>${g.name}</b><br><small>${g.type==='online'?'👥 أونلاين':'🎮 أوفلاين'} - ${g.prize}🥕</small></div><button onclick="deleteGame('${doc.id}')" style="background:var(--red);color:#fff;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:800">🗑️</button></div>`;
-    });
-    list.innerHTML=h;
-  });
-}
-
-function loadOnlineGames(){
-  const grid=document.getElementById('online-games-grid');
-  grid.querySelectorAll('.custom-card').forEach(c=>c.remove());
-  db.collection("custom_games").where("status","==","active").where("type","==","online").onSnapshot(snap=>{
-    snap.forEach(doc=>{
-      const g=doc.data();
-      const icon=g.image?`<img src="${g.image}" style="width:100%;height:100%;object-fit:cover;border-radius:14px">`:'🎮';
-      const card=document.createElement('div');
-      card.className='game-card custom-card';
-      card.dataset.game=doc.id;
-      card.onclick=()=>selectGame(doc.id);
-      card.innerHTML=`<div class="game-thumb" style="background:linear-gradient(135deg,#6366f1,#4338ca)">${icon}</div><div class="game-info"><h4>${g.name}</h4><p>${g.desc}</p><span class="game-prize">${g.prize} 🥕</span></div>`;
-      grid.appendChild(card);
-    });
-  });
-}
-
-function selectGame(id){
-  selectedGame=id;
-  document.querySelectorAll('#online-games-grid .game-card').forEach(c=>c.classList.remove('selected'));
-  const t=document.querySelector(`#online-games-grid .game-card[data-game="${id}"]`);
-  if(t)t.classList.add('selected');
-  document.getElementById('selection-hint').classList.add('show');
-  showToast("تم اختيار اللعبة! اضغط تحدي بجانب لاعب","success","✅");
-}
-
-function listenToPlayers(){
-  db.collection("users_profile").where("status","==","online").onSnapshot(snap=>{
-    let html="",options='<option value="">-- اختر --</option>';
-    snap.forEach(doc=>{
-      if(doc.id!==currentUser.uid&&(Date.now()-(doc.data().lastActive||0)<300000)){
-        const d=doc.data();
-        const safeName=(d.fullName||'لاعب').replace(/'/g,"");
-        html+=`<div class="player-item"><div class="player-info"><img src="${d.photoURL||'https://via.placeholder.com/34'}" class="player-avatar-list"><div><div style="font-weight:800;font-size:0.9rem">${safeName}</div><div style="font-size:0.75rem;color:var(--green)"><span class="status-dot"></span>متصل</div></div></div><button class="btn-3d btn-games btn-sm-3d" onclick="sendChallenge('${doc.id}','${safeName}')">تحدي ⚔️</button></div>`;
-        options+=`<option value="${doc.id}">${safeName}</option>`;
-      }
-    });
-    document.getElementById("players-list").innerHTML=html||'<p style="color:var(--muted);font-size:0.85rem;padding:15px;text-align:center">لا يوجد متصلين</p>';
-    document.getElementById('admin-target').innerHTML=options;
-  });
-}
-
-function sendChallenge(tid,tname){
-  if(!selectedGame){showToast("⚠️ اختر لعبة أولاً!","danger");return}
-  db.collection("challenges").add({fromId:currentUser.uid,fromName:currentUser.displayName||"لاعب",toId:tid,gameType:selectedGame,status:"pending",timestamp:Date.now()}).then(()=>{
-    showToast("✅ تم إرسال التحدي!","success","⚔️");
-  });
-}
-
-function listenToChallenges(){
-  db.collection("challenges").where("toId","==",currentUser.uid).onSnapshot(snap=>{
-    snap.docChanges().forEach(ch=>{
-      if(ch.type==="added"){
-        const d=ch.doc.data();
-        if(d.status==="pending"&&(Date.now()-d.timestamp<60000)){
-          currentChallengeId=ch.doc.id;
-          document.getElementById("challenge-text").innerText=`[ ${d.fromName} ] يتحداك!`;
-          document.getElementById("modal-overlay").style.display="block";
-          document.getElementById("challenge-modal").classList.add("show");
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes modalBounce { 
+            from { opacity: 0; transform: scale(0.7); } 
+            to { opacity: 1; transform: scale(1); } 
         }
-      }
+    `;
+    document.head.appendChild(style);
+}
+
+// ===== باقي الدوال (كما هي) =====
+
+function loadOnlineGames() {
+    const grid = document.getElementById('online-games-grid');
+    grid.innerHTML = '';
+    
+    const defs = [
+        { id: 'xo', name: 'إكس أو', desc: 'اللعبة الأيقونية', icon: '❌', prize: 20, cls: 'thumb-xo' },
+        { id: 'tap', name: 'حرب السرعة', desc: 'اضغط أسرع!', icon: '⚡👆', prize: 15, cls: 'thumb-tap' },
+        { id: 'rps', name: 'حجر ورقة مقص', desc: 'حظ واستراتيجية', icon: '✊✋✌️', prize: 10, cls: 'thumb-rps' }
+    ];
+    
+    defs.forEach(g => grid.appendChild(createGameCard(g.id, g.name, g.desc, g.icon, 'online', g.prize, g.cls)));
+    
+    db.collection("custom_games").where("status", "==", "active").where("type", "==", "online").onSnapshot(snap => {
+        snap.forEach(doc => {
+            const g = doc.data();
+            const icon = g.image ? `<img src="${g.image}" style="width:100%;height:100%;object-fit:cover;border-radius:16px">` : '🎮';
+            grid.appendChild(createGameCard(doc.id, g.name, g.desc, icon, 'online', g.prize, null));
+        });
     });
-  });
-  db.collection("challenges").where("fromId","==",currentUser.uid).onSnapshot(snap=>{
-    snap.docChanges().forEach(ch=>{
-      const d=ch.doc.data();
-      if(d&&d.status==="accepted"){
-        ch.doc.ref.delete();
-        activeRoomId=d.roomId;
-        currentGameType=d.gameType;
-        closeAllModals();
-        enterGameRoom(currentGameType,d.toName);
-      }else if(d&&d.status==="rejected"){
-        ch.doc.ref.delete();
-        showToast("رفض الخصم التحدي.","danger","");
-      }
+}
+
+function loadOfflineCustomGames() {
+    const grid = document.getElementById('offline-games-grid');
+    grid.querySelectorAll('.custom-offline-card').forEach(c => c.remove());
+    
+    db.collection("custom_games").where("status", "==", "active").where("type", "==", "offline").onSnapshot(snap => {
+        snap.forEach(doc => {
+            const g = doc.data();
+            const icon = g.image ? `<img src="${g.image}" style="width:100%;height:100%;object-fit:cover;border-radius:16px">` : '';
+            const card = createGameCard(doc.id, g.name, g.desc, icon, 'offline', g.prize, null);
+            card.classList.add('custom-offline-card');
+            card.onclick = () => openCustomGame(doc.id, g.name, g.desc, g.code, g.prize);
+            grid.appendChild(card);
+        });
     });
-  });
 }
 
-function acceptChallenge(){
-  if(!currentChallengeId)return;
-  const ref=db.collection("challenges").doc(currentChallengeId);
-  ref.get().then(doc=>{
-    if(doc.exists){
-      const c=doc.data();
-      const roomRef=db.collection("rooms").doc();
-      activeRoomId=roomRef.id;
-      currentGameType=c.gameType;
-      const init={gameType:currentGameType,player1:c.fromId,p1Name:c.fromName,player2:currentUser.uid,p2Name:currentUser.displayName,status:"playing"};
-      if(currentGameType==="xo"){init.turn=c.fromId;init.board=["","","","","","","","",""];init.winner=null}
-      else if(currentGameType==="tap"){init.p1Clicks=50;init.p2Clicks=50}
-      else if(currentGameType==="rps"){init.p1Move="";init.p2Move="";init.winner=""}
-      roomRef.set(init).then(()=>{
-        ref.update({status:"accepted",roomId:activeRoomId,toName:currentUser.displayName});
-        closeAllModals();
-        enterGameRoom(currentGameType,c.fromName);
-      });
+function createGameCard(id, name, desc, icon, type, prize, cls) {
+    const div = document.createElement('div');
+    div.className = 'game-cover-card';
+    div.dataset.game = id;
+    div.dataset.type = type;
+    
+    if(type === 'online') {
+        div.onclick = () => selectGame(id, type, name);
     }
-  });
+    
+    const badge = type === 'online' 
+        ? '<span class="game-type-badge" style="background:var(--btn-games-bg)">أونلاين 👥</span>' 
+        : '<span class="game-type-badge" style="background:var(--btn-trade-bg)">أوفلاين 🎮</span>';
+    
+    div.innerHTML = `
+        <div class="game-thumb ${cls || ''}" style="${cls ? '' : 'background:linear-gradient(135deg,#6366f1,#4338ca)'}">${icon}</div>
+        <div class="game-info">
+            <h4>${name}</h4>
+            <p>${desc}</p>
+            <span class="game-prize">${prize} 🥕</span><br>
+            ${badge}
+        </div>
+    `;
+    return div;
 }
 
-function rejectChallenge(){
-  if(currentChallengeId)db.collection("challenges").doc(currentChallengeId).update({status:"rejected"});
-  closeAllModals();
+function selectGame(id, type, name) {
+    selectedGame = { id, type, name };
+    document.querySelectorAll('#online-games-grid .game-cover-card').forEach(c => c.classList.remove('selected'));
+    const target = document.querySelector(`#online-games-grid .game-cover-card[data-game="${id}"]`);
+    if(target) target.classList.add('selected');
+    document.getElementById('selection-hint').classList.add('show');
+    showToast(`تم اختيار: ${name}`, "success", "✅");
 }
 
-function closeAllModals(){
-  document.getElementById("modal-overlay").style.display="none";
-  document.getElementById("challenge-modal").classList.remove("show");
-}
-
-function enterGameRoom(gt,opp){
-  if(gt==="xo")enterXORoom(opp);
-  else if(gt==="tap")enterTapRoom(opp);
-  else if(gt==="rps")enterRPSRoom(opp);
-}
-
-function enterXORoom(opp){
-  switchTab("xo");
-  document.getElementById("xo-status").innerText="ضد: "+opp;
-  if(roomListener)roomListener();
-  roomListener=db.collection("rooms").doc(activeRoomId).onSnapshot(doc=>{
-    const d=doc.data();if(!d||d.gameType!=="xo")return;
-    const my=(currentUser.uid===d.player1)?"X":"O";
-    const isMy=(d.turn===currentUser.uid);
-    document.getElementById('xo-status').innerText=d.winner?(d.winner===currentUser.uid?"🏆 فزت!":(d.winner==="draw"?"تعادل!":"😢 خسرت!")):(isMy?`دورك (${my})`:"انتظر...");
-    let h="";
-    d.board.forEach((cell,i)=>{
-      const cls=cell==="X"?"xo-x":(cell==="O"?"xo-o":"");
-      h+=`<div class="xo-cell ${cls}" onclick="playXO(${i},${isMy},'${my}')">${cell}</div>`;
+function sendChallengeTo(tid, tname) {
+    if(!selectedGame) {
+        showToast("⚠️ اختر لعبة أولاً!", "danger", "❌");
+        return;
+    }
+    
+    db.collection("challenges").add({
+        fromId: currentUser.uid,
+        fromName: currentUser.displayName || "لاعب",
+        toId: tid,
+        gameType: selectedGame.id,
+        gameTypeName: selectedGame.name,
+        status: "pending",
+        timestamp: Date.now()
+    }).then(() => {
+        showToast(`✅ تم إرسال تحدي ${selectedGame.name} إلى ${tname}!`, "success", "⚔️");
     });
-    document.getElementById('xo-board').innerHTML=h;
-    if(d.winner){
-      roomListener();
-      if(d.winner===currentUser.uid)db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(20)});
-      setTimeout(()=>switchTab('online'),3500);
+}
+
+function listenToChallenges() {
+    db.collection("challenges").where("toId", "==", currentUser.uid).onSnapshot(snap => {
+        snap.docChanges().forEach(ch => {
+            if(ch.type === "added") {
+                const d = ch.doc.data();
+                if(d.status === "pending" && (Date.now() - d.timestamp < 60000)) {
+                    currentChallengeId = ch.doc.id;
+                    document.getElementById("challenge-text").innerText = `[ ${d.fromName} ] يتحداك في ${d.gameTypeName || 'لعبة'}!`;
+                    document.getElementById("modal-overlay").style.display = "block";
+                    document.getElementById("challenge-modal").classList.add("show");
+                }
+            }
+        });
+    });
+
+    db.collection("challenges").where("fromId", "==", currentUser.uid).onSnapshot(snap => {
+        snap.docChanges().forEach(ch => {
+            const d = ch.doc.data();
+            if(d && d.status === "accepted") {
+                change.doc.ref.delete();
+                activeRoomId = d.roomId;
+                currentGameType = d.gameType;
+                closeAllModals();
+                enterGameRoom(currentGameType, d.toName);
+            } else if(d && d.status === "rejected") {
+                change.doc.ref.delete();
+                showToast("رفض الخصم التحدي.", "danger", "❌");
+            }
+        });
+    });
+}
+
+function acceptChallenge() {
+    if(!currentChallengeId) return;
+    const ref = db.collection("challenges").doc(currentChallengeId);
+    ref.get().then(doc => {
+        if(doc.exists) {
+            const c = doc.data();
+            const roomRef = db.collection("rooms").doc();
+            activeRoomId = roomRef.id;
+            currentGameType = c.gameType;
+            
+            const init = {
+                gameType: currentGameType,
+                player1: c.fromId, p1Name: c.fromName,
+                player2: currentUser.uid, p2Name: currentUser.displayName,
+                status: "playing"
+            };
+            
+            if(currentGameType === "xo") {
+                init.turn = c.fromId;
+                init.board = ["","","","","","","","",""];
+                init.winner = null;
+            } else if(currentGameType === "tap") {
+                init.p1Clicks = 50;
+                init.p2Clicks = 50;
+            } else if(currentGameType === "rps") {
+                init.p1Move = "";
+                init.p2Move = "";
+                init.winner = "";
+            }
+            
+            roomRef.set(init).then(() => {
+                ref.update({ status: "accepted", roomId: activeRoomId, toName: currentUser.displayName });
+                closeAllModals();
+                enterGameRoom(currentGameType, c.fromName);
+            });
+        }
+    });
+}
+
+function rejectChallenge() {
+    if(currentChallengeId) db.collection("challenges").doc(currentChallengeId).update({ status: "rejected" });
+    closeAllModals();
+}
+
+function closeAllModals() {
+    document.getElementById("modal-overlay").style.display = "none";
+    document.getElementById("challenge-modal").classList.remove("show");
+}
+
+function enterGameRoom(gt, opp) {
+    if(gt === "xo") enterXORoom(opp);
+    else if(gt === "tap") enterTapRoom(opp);
+    else if(gt === "rps") enterRPSRoom(opp);
+    else {
+        db.collection("custom_games").doc(gt).get().then(doc => {
+            if(doc.exists) {
+                const g = doc.data();
+                openCustomGame(doc.id, g.name, 'ضد ' + opp, g.code, g.prize, activeRoomId);
+            } else {
+                showToast("اللعبة غير موجودة!", "danger");
+                switchTab('online');
+            }
+        });
     }
-  });
 }
 
-function playXO(i,isMy,my){
-  if(!isMy)return;
-  db.collection("rooms").doc(activeRoomId).get().then(doc=>{
-    const d=doc.data();
-    if(d.board[i]===""&&!d.winner){
-      d.board[i]=my;
-      const nt=(currentUser.uid===d.player1)?d.player2:d.player1;
-      const w=checkXOWinner(d.board);
-      const up={board:d.board,turn:nt};
-      if(w)up.winner=w==="X"?d.player1:(w==="O"?d.player2:"draw");
-      db.collection("rooms").doc(activeRoomId).update(up);
+function openCustomGame(id, name, desc, code, prize, roomId) {
+    currentCustomGameId = id;
+    currentCustomGamePrize = prize;
+    
+    document.getElementById('custom-game-title').innerText = name;
+    document.getElementById('custom-game-desc').innerText = desc;
+    
+    let injectedCode = code;
+    if(roomId) {
+        injectedCode = `<script>window.ACTIVE_ROOM_ID="${roomId}";window.CURRENT_USER_ID="${currentUser.uid}";<\/script>` + code;
     }
-  });
+    
+    document.getElementById('custom-game-iframe').srcdoc = injectedCode;
+    switchTab('custom-game');
 }
 
-function checkXOWinner(b){
-  const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-  for(let l of L){if(b[l[0]]&&b[l[0]]===b[l[1]]&&b[l[0]]===b[l[2]])return b[l[0]]}
-  return !b.includes("")?"draw":null;
-}
-
-function enterTapRoom(opp){
-  switchTab("tap");
-  document.getElementById("tap-status").innerText="ضد: "+opp;
-  document.getElementById("tap-arena").style.display="block";
-  document.getElementById("tap-btn").disabled=false;
-  if(roomListener)roomListener();
-  roomListener=db.collection("rooms").doc(activeRoomId).onSnapshot(doc=>{
-    const d=doc.data();if(!d||d.gameType!=="tap")return;
-    const total=d.p1Clicks+d.p2Clicks;
-    const p1=Math.max(0,(d.p1Clicks/total)*100);
-    const p2=Math.max(0,(d.p2Clicks/total)*100);
-    const amI=d.player1===currentUser.uid;
-    const my=amI?p1:p2,op=amI?p2:p1;
-    document.getElementById("tap-my").style.width=my+"%";
-    document.getElementById("tap-my").innerText=Math.round(my)+"%";
-    document.getElementById("tap-opp").style.width=op+"%";
-    document.getElementById("tap-opp").innerText=Math.round(op)+"%";
-    if(d.p1Clicks>=100||d.p2Clicks>=100){
-      roomListener();
-      document.getElementById("tap-btn").disabled=true;
-      const won=(amI&&d.p1Clicks>=100)||(!amI&&d.p2Clicks>=100);
-      document.getElementById("tap-status").innerText=won?"🏆 فزت بـ 15 🥕!":"😢 خسرت!";
-      if(won)db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(15)});
-      setTimeout(()=>{db.collection("rooms").doc(activeRoomId).delete();switchTab('online')},3500);
+function exitCustomGame() {
+    document.getElementById('custom-game-iframe').srcdoc = '';
+    currentCustomGameId = null;
+    currentCustomGamePrize = 0;
+    
+    if(activeRoomId) {
+        db.collection("rooms").doc(activeRoomId).delete().catch(() => {});
+        activeRoomId = null;
     }
-  });
+    
+    switchTab('online');
 }
 
-function tapClick(){
-  db.collection("rooms").doc(activeRoomId).get().then(doc=>{
-    const d=doc.data();
-    if(currentUser.uid===d.player1)db.collection("rooms").doc(activeRoomId).update({p1Clicks:d.p1Clicks+2,p2Clicks:Math.max(0,d.p2Clicks-1)});
-    else db.collection("rooms").doc(activeRoomId).update({p2Clicks:d.p2Clicks+2,p1Clicks:Math.max(0,d.p1Clicks-1)});
-  });
+// ===== الألعاب الأصلية =====
+
+function enterXORoom(opp) {
+    switchTab("xo");
+    document.getElementById("xo-status-text").innerText = `ضد: ${opp}`;
+    if(roomListener) roomListener();
+    roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => {
+        const d = doc.data();
+        if(!d || d.gameType !== "xo") return;
+        const myChar = (currentUser.uid === d.player1) ? "X" : "O";
+        const isMyTurn = (d.turn === currentUser.uid);
+        const statusText = d.winner 
+            ? (d.winner === currentUser.uid ? " فزت بـ 20 🥕!" : (d.winner === "draw" ? "تعادل!" : "😢 خسرت!"))
+            : (isMyTurn ? `دورك (${myChar})` : "انتظر دور الخصم...");
+        document.getElementById('xo-status-text').innerText = statusText;
+
+        let h = "";
+        d.board.forEach((cell, i) => {
+            const cls = cell === "X" ? "xo-x" : (cell === "O" ? "xo-o" : "");
+            h += `<div class="xo-cell ${cls}" onclick="playXOMove(${i}, ${isMyTurn}, '${myChar}')">${cell}</div>`;
+        });
+        document.getElementById('xo-board-div').innerHTML = h;
+
+        if(d.winner) {
+            roomListener();
+            if(d.winner === currentUser.uid) db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(20) });
+            setTimeout(() => switchTab('online'), 3500);
+        }
+    });
 }
 
-function enterRPSRoom(opp){
-  switchTab("rps");
-  document.getElementById("rps-status").innerText="ضد: "+opp;
-  document.getElementById("rps-arena").style.display="block";
-  document.getElementById("rps-result").innerText="";
-  enableRPS(true);
-  if(roomListener)roomListener();
-  roomListener=db.collection("rooms").doc(activeRoomId).onSnapshot(doc=>{
-    const d=doc.data();if(!d||d.gameType!=="rps")return;
-    const amI=d.player1===currentUser.uid;
-    const my=amI?d.p1Move:d.p2Move;
-    if(my!==""){document.getElementById("rps-status").innerText="تم! بانتظار الخصم...";enableRPS(false)}
-    if(d.p1Move!==""&&d.p2Move!==""){
-      const r=rpsWin(d.p1Move,d.p2Move);
-      let txt="";
-      enableRPS(false);
-      if(r==="draw")txt=" تعادل!";
-      else if((r==="p1"&&amI)||(r==="p2"&&!amI)){txt="🏆 فزت بـ 10 🥕!";db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(10)})}
-      else txt="😢 خسرت!";
-      document.getElementById("rps-result").innerText=txt;
-      roomListener();
-      setTimeout(()=>{if(amI)db.collection("rooms").doc(activeRoomId).delete();switchTab("online")},3500);
+function playXOMove(i, isMyTurn, myChar) {
+    if(!isMyTurn) return;
+    db.collection("rooms").doc(activeRoomId).get().then(doc => {
+        const d = doc.data();
+        if(d.board[i] === "" && !d.winner) {
+            d.board[i] = myChar;
+            const nt = (currentUser.uid === d.player1) ? d.player2 : d.player1;
+            const w = checkXOWinner(d.board);
+            const up = { board: d.board, turn: nt };
+            if(w) up.winner = w === "X" ? d.player1 : (w === "O" ? d.player2 : "draw");
+            db.collection("rooms").doc(activeRoomId).update(up);
+        }
+    });
+}
+
+function checkXOWinner(b) {
+    const L = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    for(let l of L) {
+        if(b[l[0]] && b[l[0]] === b[l[1]] && b[l[0]] === b[l[2]]) return b[l[0]];
     }
-  });
+    return !b.includes("") ? "draw" : null;
 }
 
-function rpsMove(m){
-  db.collection("rooms").doc(activeRoomId).get().then(doc=>{
-    if(!doc.exists)return;
-    const d=doc.data();
-    if(currentUser.uid===d.player1)db.collection("rooms").doc(activeRoomId).update({p1Move:m});
-    else db.collection("rooms").doc(activeRoomId).update({p2Move:m});
-  });
+function enterTapRoom(opp) {
+    switchTab("tap");
+    document.getElementById("tap-status-text").innerText = `ضد: ${opp}`;
+    document.getElementById("tap-arena").style.display = "block";
+    document.getElementById("tap-btn-action").disabled = false;
+    
+    if(roomListener) roomListener();
+    roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => {
+        const d = doc.data();
+        if(!d || d.gameType !== "tap") return;
+        
+        const total = d.p1Clicks + d.p2Clicks;
+        const p1 = Math.max(0, (d.p1Clicks / total) * 100);
+        const p2 = Math.max(0, (d.p2Clicks / total) * 100);
+        const amI = d.player1 === currentUser.uid;
+        const my = amI ? p1 : p2;
+        const op = amI ? p2 : p1;
+
+        document.getElementById("tap-my-bar").style.width = my + "%";
+        document.getElementById("tap-my-bar").innerText = Math.round(my) + "%";
+        document.getElementById("tap-opp-bar").style.width = op + "%";
+        document.getElementById("tap-opp-bar").innerText = Math.round(op) + "%";
+
+        if(d.p1Clicks >= 100 || d.p2Clicks >= 100) {
+            roomListener();
+            document.getElementById("tap-btn-action").disabled = true;
+            const won = (amI && d.p1Clicks >= 100) || (!amI && d.p2Clicks >= 100);
+            document.getElementById("tap-status-text").innerText = won ? "🏆 فزت بـ 15 🥕!" : " خسرت!";
+            if(won) db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(15) });
+            setTimeout(() => { db.collection("rooms").doc(activeRoomId).delete(); switchTab('online'); }, 3500);
+        }
+    });
 }
 
-function rpsWin(a,b){
-  if(a===b)return "draw";
-  if((a==="rock"&&b==="scissors")||(a==="paper"&&b==="rock")||(a==="scissors"&&b==="paper"))return "p1";
-  return "p2";
+function sendTapClick() {
+    db.collection("rooms").doc(activeRoomId).get().then(doc => {
+        const d = doc.data();
+        if(currentUser.uid === d.player1) {
+            db.collection("rooms").doc(activeRoomId).update({ p1Clicks: d.p1Clicks + 2, p2Clicks: Math.max(0, d.p2Clicks - 1) });
+        } else {
+            db.collection("rooms").doc(activeRoomId).update({ p2Clicks: d.p2Clicks + 2, p1Clicks: Math.max(0, d.p1Clicks - 1) });
+        }
+    });
 }
 
-function enableRPS(s){
-  document.getElementById("rps-rock").disabled=!s;
-  document.getElementById("rps-paper").disabled=!s;
-  document.getElementById("rps-scissors").disabled=!s;
+function enterRPSRoom(opp) {
+    switchTab("rps");
+    document.getElementById("rps-status-text").innerText = `ضد: ${opp}`;
+    document.getElementById("rps-arena").style.display = "block";
+    document.getElementById("rps-result").innerText = "";
+    enableRPS(true);
+    
+    if(roomListener) roomListener();
+    roomListener = db.collection("rooms").doc(activeRoomId).onSnapshot(doc => {
+        const d = doc.data();
+        if(!d || d.gameType !== "rps") return;
+        
+        const amI = d.player1 === currentUser.uid;
+        const my = amI ? d.p1Move : d.p2Move;
+        
+        if(my !== "") {
+            document.getElementById("rps-status-text").innerText = "تم الإرسال، انتظر الخصم...";
+            enableRPS(false);
+        }
+
+        if(d.p1Move !== "" && d.p2Move !== "") {
+            const r = rpsWin(d.p1Move, d.p2Move);
+            let txt = "";
+            enableRPS(false);
+            
+            if(r === "draw") txt = " تعادل!";
+            else if((r === "p1" && amI) || (r === "p2" && !amI)) {
+                txt = "🏆 فزت بـ 10 🥕!";
+                db.collection("users_profile").doc(currentUser.uid).update({ coins: firebase.firestore.FieldValue.increment(10) });
+            } else {
+                txt = "😢 خسرت!";
+            }
+            
+            document.getElementById("rps-result").innerText = txt;
+            roomListener();
+            
+            setTimeout(() => {
+                if(amI) db.collection("rooms").doc(activeRoomId).delete();
+                switchTab("online");
+            }, 3500);
+        }
+    });
 }
 
-function exitRoom(){if(roomListener)roomListener();switchTab("online")}
-
-function openGame(id){
-  if(id==='space'){switchTab('space')}
-  else if(id==='pvz'){switchTab('pvz')}
+function sendRPSMove(m) {
+    db.collection("rooms").doc(activeRoomId).get().then(doc => {
+        if(!doc.exists) return;
+        const d = doc.data();
+        if(currentUser.uid === d.player1) {
+            db.collection("rooms").doc(activeRoomId).update({ p1Move: m });
+        } else {
+            db.collection("rooms").doc(activeRoomId).update({ p2Move: m });
+        }
+    });
 }
 
-function buyUpgrade(t,c){
-  if((userProfile.coins||0)>=c){
-    const up={coins:firebase.firestore.FieldValue.increment(-c)};
-    let msg="";
-    if(t==='legend_title'){up.title="أسطورة 🏆";msg="تم تفعيل لقب أسطورة!"}
-    else if(t==='gold_frame'){up.frame="gold";msg="تم إضافة الإطار الذهبي!"}
-    else if(t==='luck_boost'){up.luckBoost=true;msg="مضاعف الجزر مفعل!"}
-    db.collection("users_profile").doc(currentUser.uid).update(up).then(()=>showToast(msg+" ✅","success","🎉"));
-  }else showToast("رصيدك غير كافٍ!","danger","❌");
+function rpsWin(a, b) {
+    if(a === b) return "draw";
+    if((a === "rock" && b === "scissors") || (a === "paper" && b === "rock") || (a === "scissors" && b === "paper")) return "p1";
+    return "p2";
 }
 
-// ===== لعبة الفضاء =====
-let spaceCanvas,spaceCtx,spaceInterval=null,playerX=185,bullets=[],enemies=[],spaceScore=0,stars=[];
-function initSpaceStars(){stars=[];for(let i=0;i<30;i++)stars.push({x:Math.random()*400,y:Math.random()*280,size:Math.random()*2,speed:Math.random()*1+0.5})}
-function startSpace(){
-  spaceCanvas=document.getElementById('space-canvas');
-  spaceCtx=spaceCanvas.getContext('2d');
-  if(spaceInterval)clearInterval(spaceInterval);
-  bullets=[];enemies=[];spaceScore=0;
-  document.getElementById('space-score').innerText='0';
-  initSpaceStars();
-  spaceCanvas.onmousemove=e=>{const r=spaceCanvas.getBoundingClientRect();playerX=(e.clientX-r.left)*(400/r.width)-15};
-  spaceCanvas.ontouchmove=e=>{const r=spaceCanvas.getBoundingClientRect();if(e.touches[0])playerX=(e.touches[0].clientX-r.left)*(400/r.width)-15};
-  spaceInterval=setInterval(()=>{
-    spaceCtx.fillStyle="#0f172a";spaceCtx.fillRect(0,0,400,280);
-    spaceCtx.fillStyle="white";stars.forEach(s=>{s.y+=s.speed;if(s.y>280)s.y=0;spaceCtx.fillRect(s.x,s.y,s.size,s.size)});
-    spaceCtx.fillStyle="#6366f1";spaceCtx.beginPath();spaceCtx.moveTo(playerX+15,230);spaceCtx.lineTo(playerX+30,260);spaceCtx.lineTo(playerX,260);spaceCtx.fill();
-    if(Math.random()<0.08)bullets.push({x:playerX+13,y:230});
-    spaceCtx.fillStyle="#76db41";for(let i=bullets.length-1;i>=0;i--){const b=bullets[i];b.y-=6;spaceCtx.fillRect(b.x,b.y,4,10);if(b.y<0)bullets.splice(i,1)}
-    if(Math.random()<0.04)enemies.push({x:Math.random()*380,y:-10,size:16});
-    spaceCtx.fillStyle="#ef4444";
-    for(let i=enemies.length-1;i>=0;i--){
-      const en=enemies[i];en.y+=2.2;spaceCtx.beginPath();spaceCtx.arc(en.x,en.y,en.size/2,0,Math.PI*2);spaceCtx.fill();
-      let hit=false;
-      for(let j=bullets.length-1;j>=0;j--){const b=bullets[j];if(b.x>en.x-10&&b.x<en.x+10&&b.y>en.y-10&&b.y<en.y+10){bullets.splice(j,1);hit=true;break}}
-      if(hit){enemies.splice(i,1);spaceScore+=10;document.getElementById('space-score').innerText=spaceScore;continue}
-      if(en.y>280||(Math.abs(en.x-(playerX+15))<15&&en.y>230)){
-        clearInterval(spaceInterval);spaceInterval=null;
-        const fc=Math.floor(spaceScore/20);
-        if(fc>0&&currentUser){
-          const mult=(userProfile.luckBoost)?2:1;
-          const rw=fc*mult;
-          db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(rw),luckBoost:false});
-          showToast("💥 ربحت "+rw+" 🥕!","success","🥕");
-        }else showToast("💥 تحطمت!","danger","");
-      }
+function enableRPS(s) {
+    document.getElementById("rps-rock").disabled = !s;
+    document.getElementById("rps-paper").disabled = !s;
+    document.getElementById("rps-scissors").disabled = !s;
+}
+
+function exitRoom() {
+    if(roomListener) roomListener();
+    switchTab("online");
+}
+
+function buyUpgrade(t, c) {
+    if((userProfile.coins || 0) >= c) {
+        const up = { coins: firebase.firestore.FieldValue.increment(-c) };
+        let msg = "";
+        if(t === 'legend_title') { up.title = "أسطورة 🏆"; msg = "تم تفعيل لقب أسطورة!"; }
+        else if(t === 'gold_frame') { up.frame = "gold"; msg = "تم إضافة الإطار الذهبي!"; }
+        else if(t === 'luck_boost') { up.luckBoost = true; msg = "مضاعف الجزر مفعل!"; }
+        
+        db.collection("users_profile").doc(currentUser.uid).update(up).then(() => {
+            showToast(msg + " ✅", "success", "🎉");
+        });
+    } else {
+        showToast("رصيدك غير كافٍ!", "danger", "❌");
     }
-    spaceCtx.fillStyle="#fff";spaceCtx.font="bold 13px Tajawal";spaceCtx.fillText("النقاط: "+spaceScore,15,25);
-  },1000/35);
 }
 
-// ===== لعبة PVZ =====
-let pvzCanvas,pvzCtx,pvzInterval=null,pvzSun=150,pvzWave=1,pvzPlants=[],pvzZombies=[],pvzProjectiles=[],pvzSunDrops=[],pvzSelected='sunflower',pvzActive=false,pvzFrame=0;
-function selectPlant(p){
-  pvzSelected=p;
-  document.querySelectorAll('.plant-selector').forEach(s=>s.classList.remove('active'));
-  document.querySelector(`.plant-selector[data-plant="${p}"]`).classList.add('active');
-}
-function startPVZ(){
-  pvzCanvas=document.getElementById('pvz-canvas');
-  pvzCtx=pvzCanvas.getContext('2d');
-  pvzSun=150;pvzWave=1;pvzPlants=[];pvzZombies=[];pvzProjectiles=[];pvzSunDrops=[];pvzFrame=0;pvzActive=true;
-  document.getElementById('pvz-sun').innerText=pvzSun;
-  document.getElementById('pvz-wave').innerText=pvzWave;
-  if(pvzInterval)clearInterval(pvzInterval);
-  pvzCanvas.onclick=e=>{
-    if(!pvzActive)return;
-    const r=pvzCanvas.getBoundingClientRect();
-    const x=(e.clientX-r.left)*(400/r.width),y=(e.clientY-r.top)*(300/r.height);
-    for(let i=pvzSunDrops.length-1;i>=0;i--){
-      const d=pvzSunDrops[i];
-      if(Math.abs(d.x-x)<20&&Math.abs(d.y-y)<20){pvzSun+=25;pvzSunDrops.splice(i,1);document.getElementById('pvz-sun').innerText=pvzSun;showToast("+25 ☀️","success","☀️");return}
-    }
-    const row=Math.floor(y/60),col=Math.floor(x/80);
-    if(row<0||row>=5||col<1||col>4)return;
-    const cost=pvzSelected==='peashooter'?100:50;
-    if(pvzSun>=cost){
-      if(!pvzPlants.some(p=>p.row===row&&p.col===col)){
-        pvzPlants.push({x:col*80+20,y:row*60+10,type:pvzSelected,row,col,health:pvzSelected==='wallnut'?300:100,sunTimer:0});
-        pvzSun-=cost;document.getElementById('pvz-sun').innerText=pvzSun;
-      }
-    }else showToast("☀️ شمس غير كافية!","danger");
-  };
-  pvzInterval=setInterval(pvzLoop,1000/30);
-  showToast(" ابدأ الزراعة!","success");
-}
-function pvzLoop(){
-  pvzFrame++;
-  pvzCtx.fillStyle='#5a8a3a';pvzCtx.fillRect(0,0,400,300);
-  pvzCtx.strokeStyle='rgba(0,0,0,0.1)';
-  for(let i=0;i<=5;i++){pvzCtx.beginPath();pvzCtx.moveTo(0,i*60);pvzCtx.lineTo(400,i*60);pvzCtx.stroke()}
-  if(pvzFrame%280===0)pvzSunDrops.push({x:50+Math.random()*300,y:0,targetY:50+Math.random()*200});
-  for(let i=pvzSunDrops.length-1;i>=0;i--){
-    const d=pvzSunDrops[i];if(d.y<d.targetY)d.y+=1;
-    pvzCtx.font='24px Arial';pvzCtx.fillText('☀️',d.x-12,d.y+8);
-  }
-  if(pvzFrame%Math.max(70,200-pvzWave*25)===0){
-    const row=Math.floor(Math.random()*5);
-    pvzZombies.push({x:400,y:row*60+15,row,speed:0.4+pvzWave*0.08,health:100+pvzWave*20});
-  }
-  for(let i=pvzPlants.length-1;i>=0;i--){
-    const p=pvzPlants[i];
-    const em=p.type==='sunflower'?'🌻':(p.type==='peashooter'?'':'🥜');
-    pvzCtx.font='32px Arial';pvzCtx.fillText(em,p.x,p.y+35);
-    if(p.type==='sunflower'){p.sunTimer++;if(p.sunTimer>=180){p.sunTimer=0;pvzSunDrops.push({x:p.x+5,y:p.y,targetY:p.y+30})}}
-    if(p.type==='peashooter'){if(pvzZombies.some(z=>z.row===p.row&&z.x>p.x)&&pvzFrame%50===0)pvzProjectiles.push({x:p.x+35,y:p.y+22,row:p.row})}
-  }
-  for(let i=pvzZombies.length-1;i>=0;i--){
-    const z=pvzZombies[i];
-    pvzCtx.font='32px Arial';pvzCtx.fillText('🧟',z.x,z.y+35);
-    const pp=pvzPlants.find(p=>p.row===z.row&&Math.abs(p.x+17-z.x)<25);
-    if(pp){pp.health-=0.6;if(pp.health<=0)pvzPlants.splice(pvzPlants.indexOf(pp),1)}
-    else z.x-=z.speed;
-    if(z.x<-20){endPVZ(false);return}
-  }
-  for(let i=pvzProjectiles.length-1;i>=0;i--){
-    const pr=pvzProjectiles[i];
-    pvzCtx.fillStyle='#22c55e';pvzCtx.beginPath();pvzCtx.arc(pr.x,pr.y,6,0,Math.PI*2);pvzCtx.fill();
-    pr.x+=4;
-    if(pr.x>420){pvzProjectiles.splice(i,1);continue}
-    let hit=false;
-    for(let j=pvzZombies.length-1;j>=0;j--){
-      const z=pvzZombies[j];
-      if(z.row===pr.row&&Math.abs(pr.x-z.x)<20){z.health-=25;hit=true;if(z.health<=0){pvzZombies.splice(j,1);pvzSun+=10;document.getElementById('pvz-sun').innerText=pvzSun}break}
-    }
-    if(hit)pvzProjectiles.splice(i,1);
-  }
-  if(pvzFrame%900===0){pvzWave++;document.getElementById('pvz-wave').innerText=pvzWave;showToast("🌊 الموجة "+pvzWave+"!","info","")}
-  if(pvzWave>5)endPVZ(true);
-}
-function endPVZ(won){
-  pvzActive=false;
-  if(pvzInterval)clearInterval(pvzInterval);pvzInterval=null;
-  if(won){
-    const rw=25*(userProfile.luckBoost?2:1);
-    db.collection("users_profile").doc(currentUser.uid).update({coins:firebase.firestore.FieldValue.increment(rw),luckBoost:false});
-    showToast(" فزت! ربحت "+rw+" 🥕","success","🏆");
-  }else showToast("😢 الزومبي اخترق دفاعاتك!","danger","🧟");
-}
-
-function switchTab(tab){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
-  document.getElementById(`page-${tab}`).classList.add('active');
-  const n=document.getElementById(`nav-${tab}`);if(n)n.classList.add('active');
-  if(tab!=='space'&&spaceInterval){clearInterval(spaceInterval);spaceInterval=null}
-  if(tab!=='pvz'&&pvzInterval){clearInterval(pvzInterval);pvzInterval=null;pvzActive=false}
+function switchTab(tab) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    document.getElementById(`page-${tab}`).classList.add('active');
+    const n = document.getElementById(`nav-${tab}`);
+    if(n) n.classList.add('active');
 }
 </script>
 </body>
